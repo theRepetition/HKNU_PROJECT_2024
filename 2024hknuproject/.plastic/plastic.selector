@@ -1,4 +1,0 @@
-repository "2024hknuproject@HKNU2024@cloud"
-  path "/"
-    br "/main"
-    co "/main"
