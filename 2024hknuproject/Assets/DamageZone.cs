@@ -7,7 +7,7 @@ public class DamageZone : MonoBehaviour
     public int damagePerSecond = 1; // 초당 데미지량
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.CompareTag("NPC"))
         {
             StartCoroutine(ApplyDamage(other.GetComponent<Health>()));
         }
@@ -15,7 +15,7 @@ public class DamageZone : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")|| other.CompareTag("NPC"))
         {
             StopAllCoroutines(); // 플레이어가 영역을 떠나면 데미지 중지
         }
