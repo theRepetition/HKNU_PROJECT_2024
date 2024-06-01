@@ -11,6 +11,14 @@ public class NPCHealth : Health
         Debug.Log("NPC has died. Recording death for later use.");
         // 예: 기록 저장
         // NPCManager.Instance.RecordNPCDeath(this);
-        Destroy(gameObject);
+        
+        StartCoroutine(HandleDeath());
+        TurnManager.Instance.NextTurn();
+    }
+    private IEnumerator HandleDeath()
+    {
+        yield return new WaitForSeconds(0.1f); // 약간의 지연
+        TurnManager.Instance.CheckForRealTimeMode();
+        Destroy(gameObject); // 검사가 끝난 후 오브젝트를 제거
     }
 }

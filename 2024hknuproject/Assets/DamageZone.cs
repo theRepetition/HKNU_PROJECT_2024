@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DamageZone : MonoBehaviour
 {
-    public int damagePerSecond = 1; // 초당 데미지량
+    public int damagePerSecond = 20; // 초당 데미지량
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") || other.CompareTag("NPC"))
