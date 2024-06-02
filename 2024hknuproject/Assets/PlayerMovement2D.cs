@@ -10,6 +10,7 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
     private Rigidbody2D rb;
     private Vector2 movement;
     private bool canMove = true;
+    private bool isTurnComplete = false;
 
     void Start()
     {
@@ -31,8 +32,9 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
                 movement.y = Input.GetAxis("Vertical");
             }
 
-            if (Input.GetKeyDown(KeyCode.Space))
+            if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete)
             {
+                Debug.Log("스페이스바 누름");
                 EndTurn();
             }
         }
@@ -85,10 +87,10 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
     }
 
     public void StartTurn()
-
-    {      
+    {
         currentActionPoints = maxActionPoints; // 턴이 시작될 때 행동력 초기화
         EnableMovement();
+        isTurnComplete = false; // 턴 시작 시 초기화
         Debug.Log("내 턴 시작");
         TurnManager.Instance.CheckForRealTimeMode();
     }
@@ -96,12 +98,11 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
     public void EndTurn()
     {
         DisableMovement();
+        isTurnComplete = true; // 턴 완료 설정
         TurnManager.Instance.NextTurn(); // 턴 종료 후 다음 턴으로 전환
     }
 
-    public bool IsTurnComplete => !canMove; // canMove가 false일 때 턴이 완료됨
+    public bool IsTurnComplete => isTurnComplete; // 턴 완료 여부
 
     public string Name => gameObject.name; // 이름 반환
-
-
 }

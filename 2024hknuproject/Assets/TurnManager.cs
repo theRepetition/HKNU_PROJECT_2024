@@ -29,6 +29,10 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        StartCoroutine(LogTurnTakerLayers()); // 5초마다 로그 출력 시작
+    }
 
     private IEnumerator LogTurnTakerLayers()
     {
@@ -101,13 +105,8 @@ public class TurnManager : MonoBehaviour
 
         if (!hasNPC)
         {
-            Debug.Log("턴제 종료");
             GameModeManager.Instance.SwitchToRealTimeMode();
             StopAllCoroutines(); // 모든 코루틴을 중지하여 턴 루틴을 종료함
-        }
-        else
-        {
-            Debug.Log("턴제 진행");
         }
     }
 
@@ -159,11 +158,12 @@ public class TurnManager : MonoBehaviour
 
             CurrentTurnTaker.EndTurn();
 
-            // NPC가 없으면 실시간 모드로 전환함
+            // 턴이 끝나면 NPC가 있는지 확인
             CheckForRealTimeMode();
 
             currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
 
+            // 다음 턴 시작 시 NPC가 있는지 확인
             CheckForRealTimeMode();
         }
     }
@@ -178,7 +178,24 @@ public class TurnManager : MonoBehaviour
             CurrentTurnTaker = turnTakers[currentTurnIndex];
             if (CurrentTurnTaker != null)
             {
+                // NPC 턴이면 플레이어 움직임 비활성화
+                if (CurrentTurnTaker is PlayerMovement2D)
+                {
+                    (CurrentTurnTaker as PlayerMovement2D).EnableMovement();
+                }
+                else
+                {
+                    var player = FindObjectOfType<PlayerMovement2D>();
+                    if (player != null)
+                    {
+                        player.DisableMovement();
+                    }
+                }
+
                 CurrentTurnTaker.StartTurn();
+
+                // 턴이 시작될 때 NPC가 있는지 확인
+                CheckForRealTimeMode();
             }
         }
 
