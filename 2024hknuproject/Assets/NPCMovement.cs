@@ -95,7 +95,7 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
     private void CheckForPlayer()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 5.0f, playerLayer);
-        if (hit.collider != null)
+        if (hit.collider != null && hit.collider.CompareTag("Player"))
         {
             GameModeManager.Instance.SwitchToTurnBasedMode();
         }
@@ -106,14 +106,25 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
         Debug.Log($"NPC {gameObject.name} died and is being unregistered.");
         TurnManager.Instance.UnregisterTurnTaker(this);
 
-        // NPC가 죽은 후 약간의 지연 후 NPC가 없는지 확인
+        // NPC가 죽은 후 처리
         StartCoroutine(HandleDeath());
     }
 
     private IEnumerator HandleDeath()
     {
         yield return new WaitForSeconds(0.1f); // 약간의 지연
-        TurnManager.Instance.CheckForRealTimeMode();
+
+        // 현재 턴 테이커가 이 NPC인 경우 턴을 넘김
+        if (TurnManager.Instance.CurrentTurnTaker == this)
+        {
+            TurnManager.Instance.NextTurn();
+        }
+        else
+        {
+            // NPC가 죽었을 때 플레이어의 턴이면 플레이어 턴 유지
+            TurnManager.Instance.CheckForRealTimeMode();
+        }
+
         Destroy(gameObject); // 검사가 끝난 후 오브젝트를 제거
     }
 }
