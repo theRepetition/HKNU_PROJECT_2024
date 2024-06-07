@@ -38,6 +38,10 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
                 HandleTurnBasedMovement();
                 HandleTurnBasedCombat();
             }
+            else
+            {
+                movement = Vector2.zero; // NPC 턴일 때는 움직임을 막음
+            }
         }
         else
         {
@@ -157,7 +161,7 @@ public class PlayerMovement2D : MonoBehaviour, ITurnTaker
     public void DisableMovement()
     {
         canMove = false;
-        movement = Vector2.zero;
+        movement = Vector2.zero; // DisableMovement 호출 시 이동 멈춤
     }
 
     public void StartTurn()

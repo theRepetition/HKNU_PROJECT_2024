@@ -1291,6 +1291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 10
+  projectileOwner: {fileID: 0}
 --- !u!1 &1214785631
 GameObject:
   m_ObjectHideFlags: 0
@@ -2103,6 +2104,8 @@ GameObject:
   - component: {fileID: 1681535520}
   - component: {fileID: 1681535519}
   - component: {fileID: 1681535523}
+  - component: {fileID: 1681535526}
+  - component: {fileID: 1681535525}
   - component: {fileID: 1681535524}
   m_Layer: 8
   m_Name: player_test
@@ -2272,12 +2275,39 @@ MonoBehaviour:
   m_GameObject: {fileID: 1681535517}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a400c375317dcf41a90d066093960dd, type: 3}
+  m_Script: {fileID: 11500000, guid: 15c454d72c2de3e4793e5f5b8437b2c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxActionPoints: 50
+--- !u!114 &1681535525
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681535517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 173c753cb2cf1384cb1f6f576b8bca04, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  maxActionPoints: 100
+--- !u!114 &1681535526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681535517}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b54a7c3faf86164da39461392be3b99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   projectilePrefab: {fileID: 1211494220}
+  maxProjectiles: 3
+  projectileDamage: 10
+  currentProjectiles: 0
 --- !u!1 &1814596895
 GameObject:
   m_ObjectHideFlags: 0

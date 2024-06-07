@@ -1,10 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectileCollisionHandler : MonoBehaviour
 {
     public int damage = 10;
+    public PlayerCombat projectileOwner;
 
     void OnCollisionEnter2D(Collision2D collision)
     {
@@ -19,5 +18,6 @@ public class ProjectileCollisionHandler : MonoBehaviour
 
         // 충돌 시 발사체를 즉시 제거
         Destroy(gameObject);
+        projectileOwner.NotifyProjectileDestroyed();
     }
 }
