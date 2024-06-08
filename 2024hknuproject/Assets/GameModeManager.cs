@@ -29,6 +29,11 @@ public class GameModeManager : MonoBehaviour
     {
         currentMode = GameMode.TurnBased;
         Debug.Log("Switched to Turn-Based Mode");
+
+        // 선공권을 랜덤하게 설정
+        ITurnTaker firstTurnTaker = TurnManager.Instance.GetRandomTurnTaker();
+        TurnManager.Instance.SetFirstTurnTaker(firstTurnTaker);
+
         TurnManager.Instance.StartTurnBasedMode();
     }
 
@@ -40,5 +45,10 @@ public class GameModeManager : MonoBehaviour
         {
             turnUI.ClearTurnText(); // 모드 전환 시 TurnUI 업데이트
         }
+    }
+
+    public GameMode GetCurrentMode()
+    {
+        return currentMode;
     }
 }

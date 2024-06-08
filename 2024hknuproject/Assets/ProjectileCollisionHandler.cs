@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class ProjectileCollisionHandler : MonoBehaviour
@@ -16,8 +18,13 @@ public class ProjectileCollisionHandler : MonoBehaviour
             Debug.Log($"대상 체력 감소: {targetHealth.GetCurrentHealth()}");
         }
 
+        // 충돌 시 발사체 소유자에게 알림
+        if (projectileOwner != null)
+        {
+            projectileOwner.NotifyProjectileDestroyed();
+        }
+
         // 충돌 시 발사체를 즉시 제거
         Destroy(gameObject);
-        projectileOwner.NotifyProjectileDestroyed();
     }
 }

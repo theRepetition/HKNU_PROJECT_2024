@@ -18,7 +18,7 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
         rb = GetComponent<Rigidbody2D>();
         TurnManager.Instance.RegisterTurnTaker(this);
         health = GetComponent<Health>();
-        Debug.Log($"NPC {gameObject.name} registered as TurnTaker.");
+       
     }
 
     private void Update()
@@ -103,7 +103,7 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
 
     private void Die()
     {
-        Debug.Log($"NPC {gameObject.name} died and is being unregistered.");
+        
         TurnManager.Instance.UnregisterTurnTaker(this);
 
         // NPC가 죽은 후 처리

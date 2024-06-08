@@ -29,52 +29,17 @@ public class TurnManager : MonoBehaviour
         }
     }
 
-    private void Start()
-    {
-        StartCoroutine(LogTurnTakerLayers()); // 5초마다 로그 출력 시작
-    }
-
-    private IEnumerator LogTurnTakerLayers()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(5f);
-            LogCurrentTurnTakers();
-        }
-    }
-
-    private void LogCurrentTurnTakers()
-    {
-        Debug.Log("Current TurnTakers:");
-        if (turnTakers.Count == 0)
-        {
-            Debug.Log("No TurnTakers registered.");
-        }
-        foreach (var turnTaker in turnTakers)
-        {
-            var monoBehaviour = turnTaker as MonoBehaviour;
-            if (monoBehaviour != null)
-            {
-                Debug.Log($"TurnTaker: {LayerMask.LayerToName(monoBehaviour.gameObject.layer)}");
-            }
-        }
-    }
-
     public void RegisterTurnTaker(ITurnTaker turnTaker)
     {
         turnTakers.Add(turnTaker);
-        Debug.Log($"Registered TurnTaker: {LayerMask.LayerToName((turnTaker as MonoBehaviour).gameObject.layer)}");
     }
 
     public void UnregisterTurnTaker(ITurnTaker turnTaker)
     {
-        Debug.Log($"UnregisterTurnTaker called for: {LayerMask.LayerToName((turnTaker as MonoBehaviour).gameObject.layer)}");
-
         if (turnTakers.Contains(turnTaker))
         {
             int indexToRemove = turnTakers.IndexOf(turnTaker);
             turnTakers.Remove(turnTaker);
-            Debug.Log($"Unregistered TurnTaker: {LayerMask.LayerToName((turnTaker as MonoBehaviour).gameObject.layer)}");
 
             // currentTurnIndex를 조정함
             if (indexToRemove <= currentTurnIndex && currentTurnIndex > 0)
@@ -82,16 +47,10 @@ public class TurnManager : MonoBehaviour
                 currentTurnIndex--;
             }
         }
-
-        Debug.Log("UnregisterTurnTaker finished.");
-        // NPC가 없으면 실시간 모드로 전환함
-        CheckForRealTimeMode();
     }
 
     public void CheckForRealTimeMode()
     {
-        Debug.Log("모드 확인");
-
         bool hasNPC = false;
         foreach (var turnTaker in turnTakers)
         {
@@ -144,12 +103,21 @@ public class TurnManager : MonoBehaviour
                     currentTurnIndex = 0;
                 }
 
-                // NPC가 없으면 실시간 모드로 전환함
-                CheckForRealTimeMode();
                 continue;
             }
 
             CurrentTurnTaker.StartTurn();
+            Debug.Log($"{CurrentTurnTaker.Name}의 턴 시작"); // 누구의 턴인지 로그 출력
+
+            // NPC 턴이면 플레이어 움직임 비활성화
+            if (!(CurrentTurnTaker is PlayerTurnManager))
+            {
+                var player = FindObjectOfType<PlayerTurnManager>();
+                if (player != null)
+                {
+                    player.DisableMovement();
+                }
+            }
 
             while (!CurrentTurnTaker.IsTurnComplete)
             {
@@ -157,9 +125,7 @@ public class TurnManager : MonoBehaviour
             }
 
             CurrentTurnTaker.EndTurn();
-
-            // 턴이 끝나면 NPC가 있는지 확인
-            CheckForRealTimeMode();
+            Debug.Log($"{CurrentTurnTaker.Name}의 턴 종료"); // 누구의 턴이 종료되었는지 로그 출력
 
             currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
 
@@ -179,20 +145,25 @@ public class TurnManager : MonoBehaviour
             if (CurrentTurnTaker != null)
             {
                 // NPC 턴이면 플레이어 움직임 비활성화
-                if (CurrentTurnTaker is PlayerMovement2D)
+                if (!(CurrentTurnTaker is PlayerTurnManager))
                 {
-                    (CurrentTurnTaker as PlayerMovement2D).EnableMovement();
-                }
-                else
-                {
-                    var player = FindObjectOfType<PlayerMovement2D>();
+                    var player = FindObjectOfType<PlayerTurnManager>();
                     if (player != null)
                     {
                         player.DisableMovement();
                     }
                 }
+                else
+                {
+                    var player = FindObjectOfType<PlayerTurnManager>();
+                    if (player != null)
+                    {
+                        player.EnableMovement();
+                    }
+                }
 
                 CurrentTurnTaker.StartTurn();
+                Debug.Log($"{CurrentTurnTaker.Name}의 턴 시작"); // 누구의 턴인지 로그 출력
 
                 // 턴이 시작될 때 NPC가 있는지 확인
                 CheckForRealTimeMode();
@@ -201,5 +172,19 @@ public class TurnManager : MonoBehaviour
 
         // NPC가 없는지 확인
         CheckForRealTimeMode();
+    }
+
+    public ITurnTaker GetRandomTurnTaker()
+    {
+        if (turnTakers.Count == 0)
+            return null;
+
+        int randomIndex = Random.Range(0, turnTakers.Count);
+        return turnTakers[randomIndex];
+    }
+
+    public void SetFirstTurnTaker(ITurnTaker turnTaker)
+    {
+        currentTurnIndex = turnTakers.IndexOf(turnTaker);
     }
 }
