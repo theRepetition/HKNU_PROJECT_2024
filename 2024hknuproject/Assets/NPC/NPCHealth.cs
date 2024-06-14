@@ -4,11 +4,16 @@ using UnityEngine;
 
 public class NPCHealth : Health
 {
-
     private IEnumerator HandleDeath()
     {
-        yield return new WaitForSeconds(0.1f); // 약간의 지연
+        yield return new WaitForSeconds(0.1f);
         TurnManager.Instance.CheckForRealTimeMode();
-        Destroy(gameObject); // 검사가 끝난 후 오브젝트를 제거
+        Destroy(gameObject);
+    }
+
+    protected override void Die()
+    {
+        base.Die();
+        StartCoroutine(HandleDeath());
     }
 }

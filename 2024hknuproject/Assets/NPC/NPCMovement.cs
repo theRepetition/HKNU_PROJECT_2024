@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NPCMovement : MonoBehaviour, ITurnTaker
@@ -10,15 +9,15 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
     private bool isTurnComplete;
     private Rigidbody2D rb;
     private Health health;
-
     public LayerMask playerLayer; // 플레이어 레이어
+    public NPCCombatAI npcCombatAI;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         TurnManager.Instance.RegisterTurnTaker(this);
         health = GetComponent<Health>();
-       
+        npcCombatAI = GetComponent<NPCCombatAI>();
     }
 
     private void Update()
@@ -39,46 +38,11 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
         {
             currentActionPoints = maxActionPoints;
             isTurnComplete = false;
-            StartCoroutine(NPCTurnRoutine());
+            npcCombatAI.StartTurn();
         }
         else
         {
             EndTurn();
-        }
-    }
-
-    private IEnumerator NPCTurnRoutine()
-    {
-        float turnDuration = 3.0f;
-        float elapsed = 0f;
-
-        while (elapsed < turnDuration)
-        {
-            if (currentActionPoints > 0)
-            {
-                Vector2 direction = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-                MoveCharacter(direction);
-                yield return new WaitForSeconds(1.0f);
-                elapsed += 1.0f;
-            }
-            else
-            {
-                yield return null;
-            }
-        }
-
-        EndTurn();
-    }
-
-    private void MoveCharacter(Vector2 direction)
-    {
-        Vector2 newPosition = rb.position + direction * moveSpeed * Time.fixedDeltaTime;
-        float distance = Vector2.Distance(rb.position, newPosition);
-
-        if (currentActionPoints >= distance)
-        {
-            rb.MovePosition(newPosition);
-            currentActionPoints -= Mathf.CeilToInt(distance);
         }
     }
 
@@ -103,7 +67,6 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
 
     private void Die()
     {
-        
         TurnManager.Instance.UnregisterTurnTaker(this);
 
         // NPC가 죽은 후 처리

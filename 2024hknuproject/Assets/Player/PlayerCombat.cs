@@ -1,17 +1,19 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerCombat : MonoBehaviour
+public class PlayerCombat : MonoBehaviour, ICombatant
 {
     public GameObject projectilePrefab; // 투사체 Prefab
+    public float projectileSpeed = 5f; // 투사체 속도
+    public int projectileDamage = 10; // 투사체 데미지
     public int maxProjectilesPerTurn = 3; // 턴당 최대 발사체 수
-    public int projectileDamage = 10; // 발사체 데미지
-    public float projectileLifetime = 5f; // 발사체가 사라지는 시간
     private int projectilesFiredThisTurn = 0; // 현재 턴에서 발사한 발사체 수
     private int projectilesOnField = 0; // 필드에 존재하는 발사체 수
+    public int maxActionPoints = 10; // 최대 행동력
+    private int currentActionPoints;
     private LineRenderer lineRenderer;
     private Vector2 aimDirection;
+    private bool isTurnComplete = false;
 
     void Start()
     {
@@ -35,7 +37,14 @@ public class PlayerCombat : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 좌클릭 해제
             {
-                ShootProjectile();
+                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 direction = (mousePosition - transform.position).normalized;
+                Attack(direction);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && projectilesOnField == 0)
+            {
+                EndTurn();
             }
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
@@ -47,7 +56,9 @@ public class PlayerCombat : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                ShootProjectile();
+                Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 direction = (mousePosition - transform.position).normalized;
+                Attack(direction);
                 lineRenderer.positionCount = 0; // 경로 숨기기
             }
         }
@@ -68,7 +79,7 @@ public class PlayerCombat : MonoBehaviour
         lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
     }
 
-    void ShootProjectile()
+    public void Attack(Vector2 direction)
     {
         lineRenderer.positionCount = 0; // 경로 숨기기
 
@@ -79,7 +90,7 @@ public class PlayerCombat : MonoBehaviour
             projectileRb = projectile.AddComponent<Rigidbody2D>();
         }
         projectileRb.isKinematic = true; // 발사체를 Kinematic으로 설정
-        projectileRb.velocity = aimDirection * 5f; // 발사체 속도 설정 (적절한 값으로 조정)
+        projectileRb.velocity = direction * projectileSpeed; // 발사체 속도 설정
 
         // 발사체와 플레이어의 충돌 무시
         Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), GetComponent<Collider2D>());
@@ -87,11 +98,11 @@ public class PlayerCombat : MonoBehaviour
         // 발사체에 충돌 핸들러 추가 및 데미지 설정
         ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
         collisionHandler.damage = projectileDamage;
-        collisionHandler.projectileOwner = this; // 발사체 소유자 설정
+        collisionHandler.projectileOwner = this;
 
         projectilesFiredThisTurn++; // 현재 턴에서 발사한 발사체 수 증가
         projectilesOnField++; // 필드에 존재하는 발사체 수 증가
-        StartCoroutine(DestroyProjectileAfterTime(projectile, projectileLifetime)); // 설정된 시간 후에 발사체 제거
+        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후에 발사체 제거
     }
 
     IEnumerator DestroyProjectileAfterTime(GameObject projectile, float time)
@@ -100,13 +111,8 @@ public class PlayerCombat : MonoBehaviour
         if (projectile != null)
         {
             Destroy(projectile);
-            projectilesOnField--; // 필드에 존재하는 발사체 수 감소
+            NotifyProjectileDestroyed();
         }
-    }
-
-    public void ResetProjectilesFired()
-    {
-        projectilesFiredThisTurn = 0; // 발사체 수 초기화
     }
 
     public void NotifyProjectileDestroyed()
@@ -114,7 +120,45 @@ public class PlayerCombat : MonoBehaviour
         projectilesOnField--; // 필드에 존재하는 발사체 수 감소
     }
 
-    public int ProjectilesFiredThisTurn => projectilesFiredThisTurn; // 발사체 수 반환
+    public void ResetProjectilesFired()
+    {
+        projectilesFiredThisTurn = 0; // 발사체 수 초기화
+    }
 
-    public int ProjectilesOnField => projectilesOnField; // 필드에 존재하는 발사체 수 반환
+    public void StartTurn()
+    {
+        currentActionPoints = maxActionPoints; // 턴이 시작될 때 행동력 초기화
+        isTurnComplete = false; // 턴 시작 시 초기화
+        ResetProjectilesFired(); // 발사체 수 초기화
+    }
+
+    public void EndTurn()
+    {
+        isTurnComplete = true; // 턴 완료 설정
+        TurnManager.Instance.NextTurn(); // 턴 종료 후 다음 턴으로 전환
+    }
+
+    public int MaxActionPoints => maxActionPoints;
+    public int CurrentActionPoints
+    {
+        get => currentActionPoints;
+        set => currentActionPoints = value;
+    }
+
+    public int MaxProjectilesPerTurn => maxProjectilesPerTurn;
+    public int ProjectilesFiredThisTurn
+    {
+        get => projectilesFiredThisTurn;
+        set => projectilesFiredThisTurn = value;
+    }
+
+    public GameObject ProjectilePrefab => projectilePrefab;
+    public float ProjectileSpeed => projectileSpeed;
+    public int ProjectileDamage => projectileDamage;
+
+    public int ProjectilesOnField
+    {
+        get => projectilesOnField;
+        set => projectilesOnField = value;
+    }
 }

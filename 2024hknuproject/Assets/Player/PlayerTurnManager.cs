@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerTurnManager : MonoBehaviour, ITurnTaker
@@ -21,7 +19,6 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     {
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == this)
         {
-            // 발사체가 존재하는 경우 턴을 넘기지 않음
             if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && playerCombat.ProjectilesOnField == 0)
             {
                 EndTurn();
@@ -35,7 +32,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
         isTurnComplete = false; // 턴 시작 시 초기화
 
         playerMovement.EnableMovement(); // 플레이어의 움직임 활성화
-        playerCombat.ResetProjectilesFired(); // 발사체 발사 횟수 초기화
+        playerCombat.ResetProjectilesFired(); // 발사체 수 초기화
         Debug.Log("내 턴 시작");
     }
 
