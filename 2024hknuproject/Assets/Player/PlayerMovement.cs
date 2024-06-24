@@ -8,10 +8,12 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 movement;
     private bool canMove = true;
+    private PlayerTurnManager turnManager;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        turnManager = GetComponent<PlayerTurnManager>();
     }
 
     void Update()
@@ -26,7 +28,15 @@ public class PlayerMovement : MonoBehaviour
     {
         if (movement != Vector2.zero)
         {
-            MoveCharacter(movement);
+            if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && turnManager.CurrentActionPoints > 0)
+            {
+                MoveCharacter(movement);
+                turnManager.CurrentActionPoints--; // 이동할 때마다 행동력 소모
+            }
+            else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
+            {
+                MoveCharacter(movement);
+            }
         }
     }
 

@@ -57,4 +57,10 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     {
         playerMovement.EnableMovement();
     }
+
+    public int CurrentActionPoints
+    {
+        get => currentActionPoints;
+        set => currentActionPoints = value;
+    }
 }

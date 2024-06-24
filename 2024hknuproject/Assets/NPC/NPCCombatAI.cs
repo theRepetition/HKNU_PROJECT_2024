@@ -35,8 +35,27 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             yield return new WaitForSeconds(1.0f);
         }
 
+        // 발사체가 남아있는지 체크하고 2초 대기
+        yield return StartCoroutine(WaitForProjectilesToDisappear(3.0f));
+
         EndTurn(); // 공격 후 턴 종료
     }
+
+    private IEnumerator WaitForProjectilesToDisappear(float delay)
+    {
+        float elapsed = 0f;
+        while (elapsed < delay)
+        {
+            if (GameObject.FindGameObjectsWithTag("Projectile").Length == 0)
+            {
+                break;
+            }
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+        yield return new WaitForSeconds(delay - elapsed);
+    }
+
 
     private void MoveToCover(int actionPoints)
     {
