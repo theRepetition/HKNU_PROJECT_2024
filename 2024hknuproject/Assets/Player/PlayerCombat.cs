@@ -15,6 +15,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
 
+    private HUDManager hudManager; // HUDManager 참조
+
     void Start()
     {
         lineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -24,6 +26,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
         // LineRenderer가 타일 위에 보이도록 Z축 조정
         lineRenderer.sortingOrder = 1;
+
+        hudManager = FindObjectOfType<HUDManager>(); // HUDManager 찾기
+        if (hudManager != null)
+        {
+            hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 초기화
+        }
     }
 
     void Update()
@@ -49,17 +57,22 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
         {
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && projectilesFiredThisTurn < maxProjectilesPerTurn)
             {
                 ShowAim();
             }
 
-            if (Input.GetMouseButtonUp(0))
+            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn)
             {
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
                 lineRenderer.positionCount = 0; // 경로 숨기기
+            }
+
+            if (Input.GetKeyDown(KeyCode.R)) // 재장전 키 (예: R 키)
+            {
+                Reload();
             }
         }
     }
@@ -81,6 +94,9 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void Attack(Vector2 direction)
     {
+        if (projectilesFiredThisTurn >= maxProjectilesPerTurn) // 탄환이 다 소모되면 공격 불가
+            return;
+
         lineRenderer.positionCount = 0; // 경로 숨기기
 
         GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
@@ -102,6 +118,9 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
         projectilesFiredThisTurn++; // 현재 턴에서 발사한 발사체 수 증가
         projectilesOnField++; // 필드에 존재하는 발사체 수 증가
+
+        hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 업데이트
+
         StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후에 발사체 제거
     }
 
@@ -123,11 +142,25 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     public void ResetProjectilesFired()
     {
         projectilesFiredThisTurn = 0; // 발사체 수 초기화
+        hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 업데이트
+    }
+
+    public void Reload()
+    {
+        projectilesFiredThisTurn = 0; // 발사체 수 초기화
+        Debug.Log("재장전 완료");
+
+        hudManager.UpdateBulletSlots(maxProjectilesPerTurn); // HUD 업데이트
+
+        // 턴제 모드일 때 재장전하면 턴 종료
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
+        {
+            EndTurn();
+        }
     }
 
     public void StartTurn()
     {
-        currentActionPoints = maxActionPoints; // 턴이 시작될 때 행동력 초기화
         isTurnComplete = false; // 턴 시작 시 초기화
         ResetProjectilesFired(); // 발사체 수 초기화
     }
