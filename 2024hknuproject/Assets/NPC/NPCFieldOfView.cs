@@ -37,7 +37,6 @@ public class NPCFieldOfView : MonoBehaviour
         // 플레이어와 NPC 사이의 각도 계산
         float angleToPlayer = Vector3.Angle(viewDirection, directionToPlayer);
         float distanceToPlayer = Vector3.Distance(transform.position, player.transform.position);
-        Debug.Log($"Angle to Player: {angleToPlayer}, Distance to Player: {distanceToPlayer}");
 
         if (angleToPlayer < viewAngle / 2 && distanceToPlayer < viewDistance)
         {
