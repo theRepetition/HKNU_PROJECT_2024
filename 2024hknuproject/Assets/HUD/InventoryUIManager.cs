@@ -23,8 +23,9 @@ public class InventoryUIManager : MonoBehaviour
         // 'I' 키를 눌러 인벤토리 패널의 활성화 상태를 토글
         if (Input.GetKeyDown(KeyCode.I))
         {
-            Debug.Log("I키 누름.");
-            inventoryPanel.SetActive(!inventoryPanel.activeSelf);
+            bool isActive = !inventoryPanel.activeSelf;
+            inventoryPanel.SetActive(isActive);
+
         }
     }
 
