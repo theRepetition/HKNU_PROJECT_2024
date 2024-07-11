@@ -7,6 +7,8 @@ public class InventoryUIManager : MonoBehaviour
 {
     public GameObject inventoryPanel; // 인벤토리 패널
     public Text itemInfoText; // 아이템 정보 텍스트
+    private PlayerMovement playerMovement;
+    private PlayerCombat playerCombat;
     private InventorySlot[] slots; // 인벤토리 슬롯들
     private Inventory inventory; // 인벤토리 인스턴스
 
@@ -16,6 +18,8 @@ public class InventoryUIManager : MonoBehaviour
         inventory = Inventory.instance;
         inventory.onItemChangedCallback += UpdateUI;
         inventoryPanel.SetActive(false); // 시작할 때 인벤토리 패널을 비활성화
+        playerMovement = FindObjectOfType<PlayerMovement>();
+        playerCombat = FindObjectOfType<PlayerCombat>();
     }
 
     void Update()
@@ -26,6 +30,20 @@ public class InventoryUIManager : MonoBehaviour
             bool isActive = !inventoryPanel.activeSelf;
             inventoryPanel.SetActive(isActive);
 
+            if (isActive)
+            {   
+                // 인벤토리 활성화 시
+
+                if (playerMovement != null) playerMovement.DisableMovement(); //인벤토리 열면 정지
+                if (playerCombat != null) playerCombat.enabled = false;
+            }
+            else
+            {
+                // 인벤토리 비활성화 시
+
+                if (playerMovement != null) playerMovement.EnableMovement(); //다시 움직임 활성화
+                if (playerCombat != null) playerCombat.enabled = true;
+            }
         }
     }
 
