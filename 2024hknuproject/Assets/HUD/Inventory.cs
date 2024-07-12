@@ -46,11 +46,29 @@ public class Inventory : MonoBehaviour
     // 아이템 제거 메서드
     public void Remove(Item item)
     {
-        items.Remove(item);
+        int index = items.IndexOf(item);
+        if (index != -1)
+        {
+            items[index] = null; // 아이템을 실제로 제거하는 대신 null로 설정
+        }
 
         if (onItemChangedCallback != null)
         {
             onItemChangedCallback.Invoke();
+        }
+    }
+
+    // 인덱스로 아이템 제거 메서드
+    public void RemoveAt(int index)
+    {
+        if (index >= 0 && index < items.Count)
+        {
+            items[index] = null; // 아이템을 실제로 제거하는 대신 null로 설정
+
+            if (onItemChangedCallback != null)
+            {
+                onItemChangedCallback.Invoke();
+            }
         }
     }
 

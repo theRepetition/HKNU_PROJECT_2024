@@ -9,9 +9,16 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     public Image icon; // 아이템 아이콘
     public Button removeButton; // 제거 버튼
-    public GameObject infoPanel; // 간략한 정보 패널
-    public TextMeshProUGUI infoText; // 간략한 정보 텍스트
     public Item item; // 슬롯에 저장된 아이템
+
+    private void Awake()
+    {
+        // 필요한 UI 요소가 할당되었는지 확인
+        if (icon == null || removeButton == null)
+        {
+            Debug.LogError("UI 요소가 할당되지 않았습니다.");
+        }
+    }
 
     public void AddItem(Item newItem)
     {
@@ -31,7 +38,8 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnRemoveButton()
     {
-        Inventory.instance.Remove(item);
+        int slotIndex = transform.GetSiblingIndex(); // 슬롯의 인덱스 가져오기
+        Inventory.instance.RemoveAt(slotIndex); // 해당 인덱스의 아이템 제거
         ClearSlot(); // 슬롯을 비우는 코드 추가
     }
 
@@ -45,16 +53,12 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (item != null)
-        {
-            infoPanel.SetActive(true);
-            infoText.text = $"{item.itemName}\n{item.description}";
-        }
+        // 이 메서드는 이제 빈 상태로 남깁니다.
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        infoPanel.SetActive(false);
+        // 이 메서드는 이제 빈 상태로 남깁니다.
     }
 
     // 아이템 반환 메서드 추가

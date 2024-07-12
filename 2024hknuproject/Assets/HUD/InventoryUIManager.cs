@@ -2,11 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class InventoryUIManager : MonoBehaviour
 {
     public GameObject inventoryPanel; // 인벤토리 패널
-    public Text itemInfoText; // 아이템 정보 텍스트
     private PlayerMovement playerMovement;
     private PlayerCombat playerCombat;
     private InventorySlot[] slots; // 인벤토리 슬롯들
@@ -31,7 +31,7 @@ public class InventoryUIManager : MonoBehaviour
             inventoryPanel.SetActive(isActive);
 
             if (isActive)
-            {   
+            {
                 // 인벤토리 활성화 시
 
                 if (playerMovement != null) playerMovement.DisableMovement(); //인벤토리 열면 정지
@@ -52,7 +52,7 @@ public class InventoryUIManager : MonoBehaviour
         List<Item> items = inventory.GetItems();
         for (int i = 0; i < slots.Length; i++)
         {
-            if (i < items.Count)
+            if (i < items.Count && items[i] != null)
             {
                 slots[i].AddItem(items[i]);
             }

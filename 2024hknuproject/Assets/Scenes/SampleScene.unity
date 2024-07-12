@@ -180,7 +180,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -320,8 +320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test
-    description: test
+    itemName: 4
+    description: 4
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 3
 --- !u!212 &114669476
@@ -385,7 +385,7 @@ Transform:
   m_GameObject: {fileID: 114669473}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -5.51, z: 0}
+  m_LocalPosition: {x: -9.422, y: -5.571, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -513,8 +513,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test
-    description: test
+    itemName: 6
+    description: 6
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 3
 --- !u!212 &133075268
@@ -578,7 +578,7 @@ Transform:
   m_GameObject: {fileID: 133075265}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -5.51, z: 0}
+  m_LocalPosition: {x: -11.82, y: -5.96, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -716,7 +716,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -791,7 +791,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -925,7 +925,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryPanel: {fileID: 1485687606}
-  itemInfoText: {fileID: 0}
 --- !u!1 &316052423
 GameObject:
   m_ObjectHideFlags: 0
@@ -980,7 +979,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1019,8 +1018,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 488419775}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -1194,7 +1191,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1233,8 +1230,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 832435190}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -1363,7 +1358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1402,8 +1397,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 611648092}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -1490,7 +1483,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1565,7 +1558,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1640,7 +1633,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1712,7 +1705,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1751,8 +1744,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 178449572}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -1946,7 +1937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1985,8 +1976,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 289373228}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -2264,7 +2253,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2303,8 +2292,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 843274756}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -2388,7 +2375,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2427,8 +2414,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1537804227}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -2512,7 +2497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2551,8 +2536,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1261258956}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -2639,7 +2622,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2891,8 +2874,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test
-    description: test
+    itemName: 2
+    description: 2
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 3
 --- !u!212 &697447792
@@ -2956,7 +2939,7 @@ Transform:
   m_GameObject: {fileID: 697447789}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -5.51, z: 0}
+  m_LocalPosition: {x: -7.051, y: -5.286, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2974,7 +2957,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a34a0d29536e65d478673bc674b5665a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemPrefab: {fileID: 0}
 --- !u!1 &728259955
 GameObject:
   m_ObjectHideFlags: 0
@@ -3032,7 +3014,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3182,7 +3164,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3257,7 +3239,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3352,8 +3334,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test
-    description: test
+    itemName: 5
+    description: 5
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 3
 --- !u!212 &817362106
@@ -3417,7 +3399,7 @@ Transform:
   m_GameObject: {fileID: 817362103}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -5.51, z: 0}
+  m_LocalPosition: {x: -10.63, y: -5.78, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3768,7 +3750,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3843,7 +3825,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4046,7 +4028,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4118,7 +4100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4157,8 +4139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 855485783}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -4526,7 +4506,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4565,8 +4545,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 772145940}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -4653,7 +4631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4760,7 +4738,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4799,8 +4777,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1545391666}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -4884,7 +4860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -4923,8 +4899,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1398400969}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -5128,7 +5102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5167,8 +5141,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 457605404}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -5605,7 +5577,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5968,7 +5940,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6040,7 +6012,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6079,8 +6051,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1843417091}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -6167,7 +6137,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6239,7 +6209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -6278,8 +6248,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1312924601}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -6370,7 +6338,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inventoryPanel: {fileID: 2096436533810302967, guid: a5376ad8a8ac9e94b834ab21bf0cb938, type: 3}
-  itemInfoText: {fileID: 0}
 --- !u!114 &1485687612
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6746,8 +6713,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test
-    description: test
+    itemName: 3
+    description: 3
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 3
 --- !u!212 &1518715880
@@ -6874,7 +6841,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -6949,7 +6916,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -7096,7 +7063,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7135,8 +7102,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 500488730}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -7295,7 +7260,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7334,8 +7299,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 64243685}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -7442,8 +7405,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   item:
-    itemName: test_weapon
-    description: test_weapon
+    itemName: 1
+    description: 1
     icon: {fileID: 21300000, guid: 7a9a717646256f1428173a16758829d4, type: 3}
     itemType: 0
 --- !u!212 &1670803456
@@ -7507,7 +7470,7 @@ Transform:
   m_GameObject: {fileID: 1670803454}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -8.07, y: -5.51, z: 0}
+  m_LocalPosition: {x: -5.74, y: -4.851, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7845,7 +7808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7884,8 +7847,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 1020712439}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -7969,7 +7930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -8008,8 +7969,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 728259957}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
@@ -8164,7 +8123,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 0}
   m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -10579,8 +10538,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -3.0681, y: 0}
+  m_SizeDelta: {x: 1085.1, y: 510}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2143611376
 GameObject:
@@ -10636,7 +10595,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -10675,8 +10634,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   icon: {fileID: 798586646}
   removeButton: {fileID: 8296956790487864238, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoPanel: {fileID: 2974455172924301343, guid: 276ee8f7f67eb0f47af851872c86fa34, type: 3}
-  infoText: {fileID: 866438031}
   item:
     itemName: 
     description: 
