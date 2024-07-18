@@ -14,84 +14,99 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private bool isTurnComplete; // 이 줄을 추가합니다.
     private Rigidbody2D rb;
     public LayerMask coverLayer;
+    public float weaponRange = 10f; // 무기의 사정거리
+    public float moveSpeed = 2f; // 이동 속도
+
+    private Vector2 targetPosition;
+    private bool isMoving;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
+    private void FixedUpdate()
+    {
+        if (isMoving)
+        {
+            Vector2 newPosition = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(newPosition);
+
+            if (Vector2.Distance(rb.position, targetPosition) < 0.1f)
+            {
+                isMoving = false;
+            }
+        }
+    }
+
     public IEnumerator ExecuteCombatAI(int actionPoints)
     {
-        // 엄폐물을 찾아 이동
-        MoveToCover(actionPoints);
-        yield return new WaitForSeconds(1.0f);
-
-        // 플레이어 공격
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            Vector2 direction = (player.transform.position - transform.position).normalized;
-            Attack(direction);
+            Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
+            float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
+
+            // 플레이어와의 거리를 계산하여 적절한 위치로 이동
+            if (distanceToPlayer > weaponRange)
+            {
+                MoveToPosition((Vector2)player.transform.position, actionPoints); // player.transform.position을 Vector2로 변환
+            }
+
+            yield return new WaitForSeconds(1.0f);
+
+            // 플레이어 공격
+            Attack(directionToPlayer);
             yield return new WaitForSeconds(1.0f);
         }
 
-        // 발사체가 남아있는지 체크하고 2초 대기
-        yield return StartCoroutine(WaitForProjectilesToDisappear(3.0f));
+        // 플레이어와 NPC 사이의 엄폐물 탐색 및 이동
+        FindBestCoverAndMove(actionPoints);
 
-        EndTurn(); // 공격 후 턴 종료
+        EndTurn(); // 턴 종료
     }
 
-    private IEnumerator WaitForProjectilesToDisappear(float delay)
+    private void FindBestCoverAndMove(int actionPoints)
     {
-        float elapsed = 0f;
-        while (elapsed < delay)
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player == null) return;
+
+        Collider2D[] coverObjects = Physics2D.OverlapCircleAll(rb.position, 5.0f, coverLayer);
+        Collider2D bestCover = null;
+        float bestCoverScore = float.MinValue;
+
+        foreach (var cover in coverObjects)
         {
-            if (GameObject.FindGameObjectsWithTag("Projectile").Length == 0)
+            Vector2 coverPosition = cover.transform.position;
+            Vector2 directionToCover = (coverPosition - rb.position).normalized;
+            Vector2 directionToPlayer = ((Vector2)player.transform.position - coverPosition).normalized; // player.transform.position을 Vector2로 변환
+
+            float coverScore = Vector2.Distance((Vector2)player.transform.position, coverPosition); // player.transform.position을 Vector2로 변환
+
+            if (coverScore > bestCoverScore)
             {
-                break;
+                bestCover = cover;
+                bestCoverScore = coverScore;
             }
-            yield return new WaitForSeconds(0.1f);
-            elapsed += 0.1f;
         }
-        yield return new WaitForSeconds(delay - elapsed);
+
+        if (bestCover != null)
+        {
+            Vector2 directionToCover = ((Vector2)bestCover.transform.position - rb.position).normalized;
+            MoveCharacter(directionToCover, actionPoints);
+        }
     }
 
-
-    private void MoveToCover(int actionPoints)
+    private void MoveToPosition(Vector2 position, int actionPoints)
     {
-        Collider2D[] coverObjects = Physics2D.OverlapCircleAll(transform.position, 5.0f, coverLayer);
-        if (coverObjects.Length > 0)
-        {
-            Collider2D nearestCover = coverObjects[0];
-            float nearestDistance = Vector2.Distance(transform.position, coverObjects[0].transform.position);
-
-            foreach (var cover in coverObjects)
-            {
-                float distance = Vector2.Distance(transform.position, cover.transform.position);
-                if (distance < nearestDistance)
-                {
-                    nearestCover = cover;
-                    nearestDistance = distance;
-                }
-            }
-
-            if (nearestCover != null)
-            {
-                Vector2 direction = (nearestCover.transform.position - transform.position).normalized;
-                MoveCharacter(direction, actionPoints);
-            }
-        }
+        targetPosition = position;
+        isMoving = true;
     }
 
     private void MoveCharacter(Vector2 direction, int actionPoints)
     {
-        Vector2 newPosition = rb.position + direction * 3f * Time.fixedDeltaTime;
-        float distance = Vector2.Distance(rb.position, newPosition);
-
-        if (distance > 0)
-        {
-            rb.MovePosition(newPosition);
-        }
+        targetPosition = rb.position + direction * 3f * actionPoints;
+        isMoving = true;
     }
 
     public void Attack(Vector2 direction)
