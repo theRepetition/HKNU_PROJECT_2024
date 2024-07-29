@@ -11,7 +11,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private int projectilesOnField = 0; // 필드에 존재하는 발사체 수
     public int maxActionPoints = 5; // 최대 행동력
     private int currentActionPoints;
-    private bool isTurnComplete; // 이 줄을 추가합니다.
+    private bool isTurnComplete; // 턴 완료  확인
     private Rigidbody2D rb;
     public LayerMask coverLayer;
     public float weaponRange = 10f; // 무기의 사정거리
@@ -19,9 +19,8 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
     private Vector2 targetPosition;
     private bool isMoving;
-    private float timeAtSamePosition;
-    private Vector2 lastPosition;
-
+    private float timeAtSamePosition; // 동일 위치에 머문 시간
+    private Vector2 lastPosition; // 마지막 위치
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -37,20 +36,6 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             if (Vector2.Distance(rb.position, targetPosition) < 0.1f)
             {
                 isMoving = false;
-            }
-
-            if (rb.position == lastPosition)
-            {
-                timeAtSamePosition += Time.fixedDeltaTime;
-                if (timeAtSamePosition >= 3.0f)
-                {
-                    isMoving = false;
-                }
-            }
-            else
-            {
-                lastPosition = rb.position;
-                timeAtSamePosition = 0f;
             }
         }
     }
@@ -79,10 +64,8 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         // 플레이어와 NPC 사이의 엄폐물 탐색 및 이동
         FindBestCoverAndMove(actionPoints);
 
-        // 움직임이 완료될 때까지 대기
-        yield return new WaitUntil(() => !isMoving);
-
-
+        // NPC가 3초 동안 움직임이 없으면 턴 종료
+        yield return new WaitForSeconds(3.0f);
         EndTurn(); // 턴 종료
     }
 
@@ -97,11 +80,16 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
         foreach (var cover in coverObjects)
         {
-            Vector2 coverPosition = cover.transform.position;
+            Vector2 coverPosition = (Vector2)cover.transform.position;
             Vector2 directionToCover = (coverPosition - rb.position).normalized;
-            Vector2 directionToPlayer = ((Vector2)player.transform.position - coverPosition).normalized; // player.transform.position을 Vector2로 변환
+            Vector2 directionToPlayerFromCover = ((Vector2)player.transform.position - coverPosition).normalized;
 
-            float coverScore = Vector2.Distance((Vector2)player.transform.position, coverPosition); // player.transform.position을 Vector2로 변환
+            // 플레이어와 엄폐물이 NPC-엄폐물-플레이어로 일직선상에 있는지 확인
+            float dotProduct = Vector2.Dot(directionToCover, directionToPlayerFromCover);
+
+            // 일직선상에 가까울수록 점수를 높게, NPC와 엄폐물 사이의 거리로 점수 조정
+            float distanceToNpc = Vector2.Distance(rb.position, coverPosition);
+            float coverScore = dotProduct - distanceToNpc;
 
             if (coverScore > bestCoverScore)
             {
@@ -121,16 +109,12 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     {
         targetPosition = position;
         isMoving = true;
-        lastPosition = rb.position;
-        timeAtSamePosition = 0f;
     }
 
     private void MoveCharacter(Vector2 direction, int actionPoints)
     {
         targetPosition = rb.position + direction * 3f * actionPoints;
         isMoving = true;
-        lastPosition = rb.position;
-        timeAtSamePosition = 0f;
     }
 
     public void Attack(Vector2 direction)
@@ -185,6 +169,8 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         currentActionPoints = maxActionPoints; // 턴이 시작될 때 행동력 초기화
         isTurnComplete = false; // 턴 시작 시 초기화
         ResetProjectilesFired(); // 발사체 수 초기화
+        timeAtSamePosition = 0f; // 시간을 초기화
+        lastPosition = rb.position; // 현재 위치를 저장
         StartCoroutine(ExecuteCombatAI(currentActionPoints));
     }
 
