@@ -19,6 +19,8 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
     private Vector2 targetPosition;
     private bool isMoving;
+    private float timeAtSamePosition;
+    private Vector2 lastPosition;
 
     private void Start()
     {
@@ -35,6 +37,20 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             if (Vector2.Distance(rb.position, targetPosition) < 0.1f)
             {
                 isMoving = false;
+            }
+
+            if (rb.position == lastPosition)
+            {
+                timeAtSamePosition += Time.fixedDeltaTime;
+                if (timeAtSamePosition >= 3.0f)
+                {
+                    isMoving = false;
+                }
+            }
+            else
+            {
+                lastPosition = rb.position;
+                timeAtSamePosition = 0f;
             }
         }
     }
@@ -62,6 +78,10 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
         // 플레이어와 NPC 사이의 엄폐물 탐색 및 이동
         FindBestCoverAndMove(actionPoints);
+
+        // 움직임이 완료될 때까지 대기
+        yield return new WaitUntil(() => !isMoving);
+
 
         EndTurn(); // 턴 종료
     }
@@ -101,12 +121,16 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     {
         targetPosition = position;
         isMoving = true;
+        lastPosition = rb.position;
+        timeAtSamePosition = 0f;
     }
 
     private void MoveCharacter(Vector2 direction, int actionPoints)
     {
         targetPosition = rb.position + direction * 3f * actionPoints;
         isMoving = true;
+        lastPosition = rb.position;
+        timeAtSamePosition = 0f;
     }
 
     public void Attack(Vector2 direction)
