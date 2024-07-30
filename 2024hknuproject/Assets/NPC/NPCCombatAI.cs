@@ -11,7 +11,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private int projectilesOnField = 0; // 필드에 존재하는 발사체 수
     public int maxActionPoints = 5; // 최대 행동력
     private int currentActionPoints;
-    private bool isTurnComplete; // 턴 완료  확인
+    private bool isTurnComplete; // 턴 완료 확인
     private Rigidbody2D rb;
     public LayerMask coverLayer;
     public float weaponRange = 10f; // 무기의 사정거리
@@ -21,6 +21,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private bool isMoving;
     private float timeAtSamePosition; // 동일 위치에 머문 시간
     private Vector2 lastPosition; // 마지막 위치
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -37,6 +38,21 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             {
                 isMoving = false;
             }
+
+            if (rb.position == lastPosition)
+            {
+                timeAtSamePosition += Time.fixedDeltaTime;
+                if (timeAtSamePosition >= 3.0f)
+                {
+                    isMoving = false;
+                    EndTurn(); // 3초 동안 움직임이 없으면 턴 종료
+                }
+            }
+            else
+            {
+                lastPosition = rb.position;
+                timeAtSamePosition = 0f;
+            }
         }
     }
 
@@ -51,7 +67,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             // 플레이어와의 거리를 계산하여 적절한 위치로 이동
             if (distanceToPlayer > weaponRange)
             {
-                MoveToPosition((Vector2)player.transform.position, actionPoints); // player.transform.position을 Vector2로 변환
+                MoveToPosition((Vector2)player.transform.position); // player.transform.position을 Vector2로 변환
             }
 
             yield return new WaitForSeconds(1.0f);
@@ -62,14 +78,13 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         }
 
         // 플레이어와 NPC 사이의 엄폐물 탐색 및 이동
-        FindBestCoverAndMove(actionPoints);
+        FindBestCoverAndMove();
 
-        // NPC가 3초 동안 움직임이 없으면 턴 종료
-        yield return new WaitForSeconds(3.0f);
-        EndTurn(); // 턴 종료
+        yield return new WaitForSeconds(3.0f); // NPC가 3초 동안 움직임이 없으면 턴 종료
+        EndTurn();
     }
 
-    private void FindBestCoverAndMove(int actionPoints)
+    private void FindBestCoverAndMove()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
@@ -100,20 +115,27 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
         if (bestCover != null)
         {
-            Vector2 directionToCover = ((Vector2)bestCover.transform.position - rb.position).normalized;
-            MoveCharacter(directionToCover, actionPoints);
+            Vector2 optimalPosition = CalculateOptimalPosition(bestCover.transform.position, player.transform.position);
+            MoveToPosition(optimalPosition);
         }
     }
 
-    private void MoveToPosition(Vector2 position, int actionPoints)
+    private Vector2 CalculateOptimalPosition(Vector2 coverPosition, Vector2 playerPosition)
+    {
+        Vector2 directionToPlayer = (playerPosition - coverPosition).normalized;
+        Vector2 optimalPosition = coverPosition - directionToPlayer * 1.0f; // 엄폐물 뒤 1.0f 거리로 이동
+        return optimalPosition;
+    }
+
+    private void MoveToPosition(Vector2 position)
     {
         targetPosition = position;
         isMoving = true;
     }
 
-    private void MoveCharacter(Vector2 direction, int actionPoints)
+    private void MoveCharacter(Vector2 direction)
     {
-        targetPosition = rb.position + direction * 3f * actionPoints;
+        targetPosition = rb.position + direction * 3f;
         isMoving = true;
     }
 
@@ -178,6 +200,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     {
         isTurnComplete = true; // 턴 완료 설정
         TurnManager.Instance.NextTurn(); // 턴 종료 후 다음 턴으로 전환
+        Debug.Log("Turn ended.");
     }
 
     public int MaxActionPoints => maxActionPoints;
