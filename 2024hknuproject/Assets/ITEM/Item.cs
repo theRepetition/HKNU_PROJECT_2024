@@ -41,12 +41,31 @@ public class Weapon : Item
 [System.Serializable]
 public class Ammo : Item
 {
-    public int amount;
+    public int damage;
+    public string effect;
+    public int quantity; // 남은 탄환 수량
+
+    public Ammo(string ammoName, int damage, string effect, Sprite icon, int quantity)
+    {
+        this.itemName = ammoName;
+        this.damage = damage;
+        this.effect = effect;
+        this.icon = icon;
+        this.quantity = quantity;
+        this.itemType = ItemType.Ammo; // 아이템 타입을 탄환으로 설정
+    }
 
     public override void Use()
     {
-        // 탄약 사용 로직
-        Debug.Log(itemName + " 탄약 사용됨");
+        if (quantity > 0)
+        {
+            quantity--;
+            Debug.Log($"{itemName} 탄환 사용됨. 남은 수량: {quantity}");
+        }
+        else
+        {
+            Debug.Log($"{itemName} 탄환이 없습니다.");
+        }
     }
 }
 

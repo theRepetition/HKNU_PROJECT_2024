@@ -1,12 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour, ICombatant
 {
     public GameObject projectilePrefab; // 투사체 Prefab
     public float projectileSpeed = 5f; // 투사체 속도
-    public int maxProjectilesPerTurn = 3; // 턴당 최대 발사체 수
+    public int maxProjectilesPerTurn = 6; // 턴당 최대 발사체 수
     private int projectilesFiredThisTurn = 0; // 현재 턴에서 발사한 발사체 수
     private int projectilesOnField = 0; // 필드에 존재하는 발사체 수
     public int maxActionPoints = 10; // 최대 행동력
@@ -14,11 +13,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private LineRenderer lineRenderer;
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
-    private HUDManager hudManager; // HUDManager 참조
 
-    public GameObject ammoInventoryUI; // 탄약 인벤토리 UI
-    public List<Ammo> loadedAmmo; // 장전된 탄약 목록
-    public List<Ammo> ammoInventory; // 플레이어의 탄약 인벤토리
+
+
+    private Ammo currentAmmo; // 현재 장전된 탄약
+
+    public int ProjectileDamage => currentAmmo != null ? currentAmmo.damage : 0; // 탄약의 피해량을 반환
 
     void Start()
     {
@@ -30,20 +30,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         // LineRenderer가 타일 위에 보이도록 Z축 조정
         lineRenderer.sortingOrder = 1;
 
-        hudManager = FindObjectOfType<HUDManager>(); // HUDManager 찾기
-        if (hudManager != null)
-        {
-            hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 초기화
-        }
 
-        // 탄약 종류 초기화
-        loadedAmmo = new List<Ammo>();
-        ammoInventory = new List<Ammo>
-        {
-            new Ammo("Regular", 10, "None"),
-            new Ammo("Explosive", 20, "Explosion"),
-            new Ammo("Poison", 5, "Poison")
-        };
+
     }
 
     void Update()
@@ -82,10 +70,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
                 lineRenderer.positionCount = 0; // 경로 숨기기
             }
 
-            if (Input.GetKeyDown(KeyCode.R)) // 재장전 키 (예: R 키)
-            {
-                ToggleAmmoInventoryUI();
-            }
+           
         }
     }
 
@@ -106,13 +91,10 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void Attack(Vector2 direction)
     {
-        if (projectilesFiredThisTurn >= maxProjectilesPerTurn || loadedAmmo.Count == 0) // 탄환이 다 소모되면 공격 불가
+        if (projectilesFiredThisTurn >= maxProjectilesPerTurn) // 탄환이 다 소모되면 공격 불가
             return;
 
         lineRenderer.positionCount = 0; // 경로 숨기기
-
-        Ammo currentAmmo = loadedAmmo[0];
-        loadedAmmo.RemoveAt(0); // 사용한 탄약 제거
 
         GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
@@ -128,13 +110,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
         // 발사체에 충돌 핸들러 추가 및 데미지 설정
         ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
-        collisionHandler.damage = currentAmmo.damage; // 현재 탄약의 데미지 사용
+        collisionHandler.damage = ProjectileDamage; // 탄약의 피해량 사용
         collisionHandler.projectileOwner = this;
 
         projectilesFiredThisTurn++; // 현재 턴에서 발사한 발사체 수 증가
         projectilesOnField++; // 필드에 존재하는 발사체 수 증가
 
-        hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 업데이트
 
         StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후에 발사체 제거
     }
@@ -157,22 +138,13 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     public void ResetProjectilesFired()
     {
         projectilesFiredThisTurn = 0; // 발사체 수 초기화
-        hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 업데이트
-    }
 
-    public void ToggleAmmoInventoryUI()
-    {
-        ammoInventoryUI.SetActive(!ammoInventoryUI.activeSelf);
     }
 
     public void LoadAmmo(Ammo ammo)
     {
-        if (loadedAmmo.Count < maxProjectilesPerTurn)
-        {
-            loadedAmmo.Add(ammo);
-        }
-
-        hudManager.UpdateBulletSlots(maxProjectilesPerTurn - projectilesFiredThisTurn); // HUD 업데이트
+        currentAmmo = ammo; // 현재 탄약 설정
+        Debug.Log($"Loaded {ammo.itemName} with {ammo.damage} damage.");
     }
 
     public void StartTurn()
@@ -203,11 +175,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public GameObject ProjectilePrefab => projectilePrefab;
     public float ProjectileSpeed => projectileSpeed;
-    public int ProjectileDamage => projectileDamage;
 
     public int ProjectilesOnField
     {
         get => projectilesOnField;
         set => projectilesOnField = value;
     }
+
+
 }

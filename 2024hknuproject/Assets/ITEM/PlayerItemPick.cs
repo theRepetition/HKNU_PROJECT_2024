@@ -17,16 +17,30 @@ public class PlayerItemPick : MonoBehaviour
 
     void PickUpItem()
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, pickupRange); // 플레이어 주변의 콜라이더 검사
+        GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("Bullet");
 
-        foreach (var collider in colliders)
+        foreach (var item in items)
         {
-            if (collider.CompareTag("Item"))
+            if (Vector2.Distance(transform.position, item.transform.position) <= pickupRange)
             {
-                ItemPickup itemPickup = collider.GetComponent<ItemPickup>();
+                ItemPickup itemPickup = item.GetComponent<ItemPickup>();
                 if (itemPickup != null)
                 {
                     itemPickup.PickUp();
+                    break;
+                }
+            }
+        }
+
+        foreach (var bullet in bullets)
+        {
+            if (Vector2.Distance(transform.position, bullet.transform.position) <= pickupRange)
+            {
+                AmmoPickup ammoPickup = bullet.GetComponent<AmmoPickup>();
+                if (ammoPickup != null)
+                {
+                    ammoPickup.PickUp();
                     break;
                 }
             }
