@@ -1,32 +1,39 @@
 using UnityEngine;
-using TMPro;
 using UnityEngine.UI;
+using TMPro;
 
 public class AmmoButton : MonoBehaviour
 {
-    public TMP_Text ammoNameText; // 탄약 이름 텍스트
-    public TMP_Text ammoQuantityText; // 탄약 수량 텍스트
-    public Image ammoIcon; // 탄약 아이콘 이미지
-
+    public TextMeshProUGUI ammoNameText;
+    public TextMeshProUGUI ammoQuantityText;
     private Ammo ammo;
 
-    public void SetAmmo(Ammo ammo)
+    public void SetAmmo(Ammo newAmmo)
     {
-        if (ammo == null)
-        {
-            Debug.LogError("Ammo is null in SetAmmo!");
-            return;
-        }
-
-        this.ammo = ammo;
-        ammoNameText.text = ammo.itemName; // 수정된 부분
-        ammoQuantityText.text = ammo.quantity.ToString();
-        ammoIcon.sprite = ammo.icon;
+        ammo = newAmmo;
+        UpdateUI();
     }
 
-    public void OnClick()
+    private void UpdateUI()
     {
-        // 장전 로직 추가
-        Debug.Log($"Ammo {ammo.itemName} selected with {ammo.quantity} bullets remaining."); // 수정된 부분
+        if (ammo != null)
+        {
+            ammoNameText.text = ammo.itemName;
+            ammoQuantityText.text = ammo.quantity.ToString();
+        }
+    }
+
+    public void OnAmmoButtonClicked()
+    {
+        if (ammo != null && ammo.quantity > 0)
+        {
+            PlayerCombat playerCombat = FindObjectOfType<PlayerCombat>();
+            if (playerCombat != null)
+            {
+                playerCombat.LoadAmmo(ammo);
+                ammo.quantity--; // 탄약 수량 감소
+                UpdateUI(); // UI 업데이트
+            }
+        }
     }
 }

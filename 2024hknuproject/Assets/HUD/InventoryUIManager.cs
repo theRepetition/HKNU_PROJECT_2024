@@ -5,18 +5,21 @@ using TMPro;
 
 public class InventoryUIManager : MonoBehaviour
 {
-    public static InventoryUIManager Instance { get; private set; } // 싱글톤 인스턴스
+    public static InventoryUIManager Instance { get; private set; }
 
     public GameObject inventoryPanel; // 인벤토리 패널
     public GameObject ammoInventoryPanel; // 탄약 인벤토리 패널
+    public GameObject ammoButtonPrefab; // 탄약 버튼 Prefab
+
+    public Button reloadButton; // 장전 완료 버튼
+    public Button rollbackButton; // 초기화 버튼
 
     private PlayerMovement playerMovement;
     private PlayerCombat playerCombat;
     private InventorySlot[] slots; // 인벤토리 슬롯들
     private Inventory inventory; // 인벤토리 인스턴스
 
-    // 탄약 버튼들
-    public AmmoButton[] ammoButtons;
+    private List<AmmoButton> ammoButtons = new List<AmmoButton>();
 
     private void Awake()
     {
@@ -40,11 +43,14 @@ public class InventoryUIManager : MonoBehaviour
 
         playerMovement = FindObjectOfType<PlayerMovement>();
         playerCombat = FindObjectOfType<PlayerCombat>();
+
+        // 장전 완료 및 초기화 버튼 이벤트 등록
+        reloadButton.onClick.AddListener(OnReloadButtonClicked);
+        rollbackButton.onClick.AddListener(OnRollbackButtonClicked);
     }
 
     void Update()
     {
-        // 'I' 키나 'R' 키를 눌러 인벤토리 패널의 활성화 상태를 토글
         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R))
         {
             bool isActive = !inventoryPanel.activeSelf;
@@ -53,17 +59,14 @@ public class InventoryUIManager : MonoBehaviour
 
             if (isActive)
             {
-                // 인벤토리 활성화 시
-                if (playerMovement != null) playerMovement.DisableMovement(); // 인벤토리 열면 정지
+                if (playerMovement != null) playerMovement.DisableMovement();
                 if (playerCombat != null) playerCombat.enabled = false;
 
-                // 탄약 버튼 업데이트
                 UpdateAmmoButtons();
             }
             else
             {
-                // 인벤토리 비활성화 시
-                if (playerMovement != null) playerMovement.EnableMovement(); // 다시 움직임 활성화
+                if (playerMovement != null) playerMovement.EnableMovement();
                 if (playerCombat != null) playerCombat.enabled = true;
             }
         }
@@ -87,32 +90,36 @@ public class InventoryUIManager : MonoBehaviour
 
     public void UpdateAmmoButtons()
     {
-        if (ammoButtons == null || ammoButtons.Length == 0)
+        foreach (Transform child in ammoInventoryPanel.transform)
         {
-            Debug.LogError("Ammo buttons are not set in the inspector!");
-            return;
+            Destroy(child.gameObject);
         }
+        ammoButtons.Clear();
 
-        Ammo[] ammoTypes = AmmoManager.Instance.GetAmmoList().ToArray(); // 탄약 종류 가져오기
-        if (ammoTypes == null)
+        List<Ammo> ammoTypes = AmmoManager.Instance.GetAmmoList();
+        foreach (Ammo ammo in ammoTypes)
         {
-            Debug.LogError("Ammo list is null!");
-            return;
+            GameObject ammoButtonObject = Instantiate(ammoButtonPrefab, ammoInventoryPanel.transform);
+            AmmoButton ammoButton = ammoButtonObject.GetComponent<AmmoButton>();
+            ammoButton.SetAmmo(ammo);
+            ammoButtons.Add(ammoButton);
         }
+    }
 
-        for (int i = 0; i < ammoButtons.Length; i++)
+    private void OnReloadButtonClicked()
+    {
+        // 장전 완료 로직
+        Debug.Log("Reload button clicked. Confirming ammo load.");
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
-            if (i < ammoTypes.Length)
-            {
-                if (ammoButtons[i] != null)
-                {
-                    ammoButtons[i].SetAmmo(ammoTypes[i]);
-                }
-                else
-                {
-                    Debug.LogError($"Ammo button at index {i} is null!");
-                }
-            }
+            TurnManager.Instance.NextTurn();
         }
+    }
+
+    private void OnRollbackButtonClicked()
+    {
+        // 초기화 로직
+        Debug.Log("Rollback button clicked. Resetting ammo load.");
+        // 필요한 초기화 작업을 추가
     }
 }

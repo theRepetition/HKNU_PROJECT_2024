@@ -8,9 +8,9 @@ public class AmmoPickup : MonoBehaviour
 
     public void PickUp()
     {
-        Debug.Log("탄약 주움: " + ammo.itemName);
+        Debug.Log($"탄약 주움: {ammo.itemName}");
         AmmoManager.Instance.AddAmmo(ammo);
-        InventoryUIManager.Instance.UpdateAmmoButtons();
-        Destroy(gameObject); // 탄약 오브젝트 제거
+        InventoryUIManager.Instance.UpdateAmmoButtons(); // UI 업데이트
+        Destroy(gameObject);
     }
 }
