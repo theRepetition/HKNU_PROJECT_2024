@@ -11,8 +11,6 @@ public class InventoryUIManager : MonoBehaviour
     public GameObject ammoInventoryPanel; // 탄약 인벤토리 패널
     public GameObject ammoButtonPrefab; // 탄약 버튼 Prefab
 
-    public Button reloadButton; // 장전 완료 버튼
-    public Button rollbackButton; // 초기화 버튼
 
     private PlayerMovement playerMovement;
     private PlayerCombat playerCombat;
@@ -44,9 +42,7 @@ public class InventoryUIManager : MonoBehaviour
         playerMovement = FindObjectOfType<PlayerMovement>();
         playerCombat = FindObjectOfType<PlayerCombat>();
 
-        // 장전 완료 및 초기화 버튼 이벤트 등록
-        reloadButton.onClick.AddListener(OnReloadButtonClicked);
-        rollbackButton.onClick.AddListener(OnRollbackButtonClicked);
+
     }
 
     void Update()
@@ -90,15 +86,22 @@ public class InventoryUIManager : MonoBehaviour
 
     public void UpdateAmmoButtons()
     {
+        if (AmmoManager.Instance == null)
+        {
+            Debug.LogError("AmmoManager instance is null!");
+            return;
+        }
+        // 탄약 패널 초기화
         foreach (Transform child in ammoInventoryPanel.transform)
         {
-            Destroy(child.gameObject);
+            Destroy(child.gameObject); // 모든 자식 오브젝트 제거
         }
         ammoButtons.Clear();
 
         List<Ammo> ammoTypes = AmmoManager.Instance.GetAmmoList();
         foreach (Ammo ammo in ammoTypes)
         {
+            Debug.Log($"Creating button for: {ammo.itemName}, Quantity: {ammo.quantity}");
             GameObject ammoButtonObject = Instantiate(ammoButtonPrefab, ammoInventoryPanel.transform);
             AmmoButton ammoButton = ammoButtonObject.GetComponent<AmmoButton>();
             ammoButton.SetAmmo(ammo);
@@ -106,20 +109,6 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
 
-    private void OnReloadButtonClicked()
-    {
-        // 장전 완료 로직
-        Debug.Log("Reload button clicked. Confirming ammo load.");
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
-        {
-            TurnManager.Instance.NextTurn();
-        }
-    }
 
-    private void OnRollbackButtonClicked()
-    {
-        // 초기화 로직
-        Debug.Log("Rollback button clicked. Resetting ammo load.");
-        // 필요한 초기화 작업을 추가
-    }
+
 }

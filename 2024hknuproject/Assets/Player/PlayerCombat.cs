@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour, ICombatant
@@ -13,12 +14,14 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private LineRenderer lineRenderer;
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
+    private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 리스트
 
 
 
     private Ammo currentAmmo; // 현재 장전된 탄약
 
-    public int ProjectileDamage => currentAmmo != null ? currentAmmo.damage : 0; // 탄약의 피해량을 반환
+    public int ProjectileDamage => currentLoadedAmmo.Count > 0 ? currentLoadedAmmo[0].damage : 0;
+    // 탄약의 피해량을 반환
 
     void Start()
     {
@@ -88,10 +91,18 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
         lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
     }
+    public void LogLoadedAmmo()
+    {
+        Debug.Log("Currently Loaded Ammo:");
+        for (int i = 0; i < currentLoadedAmmo.Count; i++)
+        {
+            Debug.Log($"Slot {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
+        }
+    }
 
     public void Attack(Vector2 direction)
     {
-        if (projectilesFiredThisTurn >= maxProjectilesPerTurn) // 탄환이 다 소모되면 공격 불가
+        if (projectilesFiredThisTurn >= maxProjectilesPerTurn || currentLoadedAmmo.Count == 0) // 탄환이 다 소모되면 공격 불가
             return;
 
         lineRenderer.positionCount = 0; // 경로 숨기기
@@ -110,15 +121,17 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
         // 발사체에 충돌 핸들러 추가 및 데미지 설정
         ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
-        collisionHandler.damage = ProjectileDamage; // 탄약의 피해량 사용
+        collisionHandler.damage = currentLoadedAmmo[0].damage; // 탄약의 피해량 사용
         collisionHandler.projectileOwner = this;
 
         projectilesFiredThisTurn++; // 현재 턴에서 발사한 발사체 수 증가
         projectilesOnField++; // 필드에 존재하는 발사체 수 증가
 
+        currentLoadedAmmo.RemoveAt(0); // 첫 번째 탄환을 제거
 
         StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후에 발사체 제거
     }
+
 
     IEnumerator DestroyProjectileAfterTime(GameObject projectile, float time)
     {
@@ -143,9 +156,22 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void LoadAmmo(Ammo ammo)
     {
-        currentAmmo = ammo; // 현재 탄약 설정
-        Debug.Log($"Loaded {ammo.itemName} with {ammo.damage} damage.");
+        if (currentLoadedAmmo.Count < maxProjectilesPerTurn)
+        {
+            Debug.Log($"Loading ammo: {ammo.itemName} into chamber.");
+            currentLoadedAmmo.Add(ammo);
+            Debug.Log($"Current loaded ammo count: {currentLoadedAmmo.Count}");
+
+            // Update the ammo chamber UI here if applicable
+        }
+        else
+        {
+            Debug.LogError("Chamber is full! Cannot load more ammo.");
+        }
     }
+
+
+
 
     public void StartTurn()
     {
@@ -182,5 +208,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         set => projectilesOnField = value;
     }
 
-
+    public void SetLoadedAmmo(List<Ammo> loadedAmmo)
+    {
+        currentLoadedAmmo = new List<Ammo>(loadedAmmo); // 장전된 탄약 설정
+    }
 }

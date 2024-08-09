@@ -21,7 +21,7 @@ public class AmmoManager : MonoBehaviour
 
     public void AddAmmo(Ammo ammo)
     {
-        Ammo existingAmmo = ammoTypes.Find(a => a.itemName == ammo.itemName); // 수정된 부분
+        Ammo existingAmmo = ammoTypes.Find(a => a.itemName == ammo.itemName); 
         if (existingAmmo != null)
         {
             existingAmmo.quantity += ammo.quantity;
@@ -29,6 +29,14 @@ public class AmmoManager : MonoBehaviour
         else
         {
             ammoTypes.Add(ammo);
+        }
+    }
+    public void LogAmmoInventory()
+    {
+        Debug.Log("Current Ammo Inventory:");
+        foreach (var ammo in ammoTypes)
+        {
+            Debug.Log($"Ammo Type: {ammo.itemName}, Quantity: {ammo.quantity}");
         }
     }
 
