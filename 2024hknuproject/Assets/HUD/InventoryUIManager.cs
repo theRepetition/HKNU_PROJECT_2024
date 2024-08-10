@@ -49,22 +49,26 @@ public class InventoryUIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R))
         {
-            bool isActive = !inventoryPanel.activeSelf;
-            inventoryPanel.SetActive(isActive);
-            ammoInventoryPanel.SetActive(isActive);
+            ToggleInventory();
+        }
+    }
+    public void ToggleInventory()
+    {
+        bool isActive = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(isActive);
+        ammoInventoryPanel.SetActive(isActive);
 
-            if (isActive)
-            {
-                if (playerMovement != null) playerMovement.DisableMovement();
-                if (playerCombat != null) playerCombat.enabled = false;
+        if (isActive)
+        {
+            if (playerMovement != null) playerMovement.DisableMovement();
+            if (playerCombat != null) playerCombat.enabled = false;
 
-                UpdateAmmoButtons();
-            }
-            else
-            {
-                if (playerMovement != null) playerMovement.EnableMovement();
-                if (playerCombat != null) playerCombat.enabled = true;
-            }
+            UpdateAmmoButtons();
+        }
+        else
+        {
+            if (playerMovement != null) playerMovement.EnableMovement();
+            if (playerCombat != null) playerCombat.enabled = true;
         }
     }
 

@@ -11,11 +11,12 @@ public class AmmoChamberUI : MonoBehaviour
     private List<GameObject> chamberSlots = new List<GameObject>(); // 현재 장전된 탄환 슬롯들
     private List<Ammo> loadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 목록
     private PlayerCombat playerCombat;
+    private InventoryUIManager inventoryUIManager;
 
     void Start()
     {
         playerCombat = FindObjectOfType<PlayerCombat>();
-
+        inventoryUIManager = FindObjectOfType<InventoryUIManager>();
         reloadButton.onClick.AddListener(Reload);
         resetButton.onClick.AddListener(ResetChamber);
 
@@ -82,7 +83,7 @@ public class AmmoChamberUI : MonoBehaviour
     // 장전 완료 처리
     public void Reload()
     {
-        
+        InventoryUIManager.Instance.ToggleInventory();
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
             // 턴제 모드일 경우, 플레이어의 턴에만 작동
@@ -102,6 +103,7 @@ public class AmmoChamberUI : MonoBehaviour
             LogChamberSlots();
             Debug.Log(loadedAmmo);
         }
+        
     }
 
 
