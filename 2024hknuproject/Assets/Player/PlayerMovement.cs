@@ -55,12 +55,10 @@ public class PlayerMovement : MonoBehaviour
     public void EnableMovement()
     {
         canMove = true;
-        
     }
 
     public void DisableMovement()
     {
-        
         canMove = false;
         movement = Vector2.zero;
     }

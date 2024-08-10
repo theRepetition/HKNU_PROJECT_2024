@@ -15,7 +15,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
     private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 리스트
-    private PlayerTurnManager playerturnmanager; // PlayerTurnManager 스크립트 참조
+
 
 
     private Ammo currentAmmo; // 현재 장전된 탄약
@@ -32,7 +32,6 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
         // LineRenderer가 타일 위에 보이도록 Z축 조정
         lineRenderer.sortingOrder = 1;
-        
 
 
 
@@ -56,7 +55,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
             if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && projectilesOnField == 0)
             {
-                playerturnmanager.EndTurn();
+                EndTurn();
             }
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
@@ -157,18 +156,17 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void LoadAmmo(Ammo ammo)
     {
-        Debug.LogError("123");
         if (currentLoadedAmmo.Count < maxProjectilesPerTurn)
         {
             Debug.Log($"Loading ammo: {ammo.itemName} into chamber.");
             currentLoadedAmmo.Add(ammo);
             Debug.Log($"Current loaded ammo count: {currentLoadedAmmo.Count}");
 
-            
+            // Update the ammo chamber UI here if applicable
         }
         else
         {
-            Debug.LogError("탄창 꽉참");
+            Debug.LogError("Chamber is full! Cannot load more ammo.");
         }
     }
 
@@ -183,7 +181,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void EndTurn()
     {
-
+        isTurnComplete = true; // 턴 완료 설정
+        TurnManager.Instance.NextTurn(); // 턴 종료 후 다음 턴으로 전환
     }
 
     public int MaxActionPoints => maxActionPoints;
@@ -211,9 +210,6 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void SetLoadedAmmo(List<Ammo> loadedAmmo)
     {
-        Debug.Log("SetLoadedAmmo called.");
-        Debug.Log($"Loaded ammo count: {loadedAmmo.Count}");
-        
         currentLoadedAmmo = new List<Ammo>(loadedAmmo); // 장전된 탄약 설정
     }
 }
