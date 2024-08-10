@@ -11,11 +11,14 @@ public class AmmoChamberUI : MonoBehaviour
     private List<GameObject> chamberSlots = new List<GameObject>(); // 현재 장전된 탄환 슬롯들
     private List<Ammo> loadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 목록
     private PlayerCombat playerCombat;
+    private PlayerTurnManager playerTurnManager;
+    private PlayerMovement playerMovement;
 
     void Start()
     {
         playerCombat = FindObjectOfType<PlayerCombat>();
-
+        playerTurnManager = FindObjectOfType<PlayerTurnManager>();
+        playerMovement = FindObjectOfType<PlayerMovement>();
         reloadButton.onClick.AddListener(Reload);
         resetButton.onClick.AddListener(ResetChamber);
 
@@ -82,27 +85,28 @@ public class AmmoChamberUI : MonoBehaviour
     // 장전 완료 처리
     public void Reload()
     {
-        
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
+        Debug.Log("Reload function called");
+        // 턴제 모드에서 플레이어의 턴일 때
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased &&
+            TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
         {
-            // 턴제 모드일 경우, 플레이어의 턴에만 작동
-            if (TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
-            {
-                playerCombat.LogLoadedAmmo();
-                playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
-                playerCombat.EndTurn(); // 턴 종료
-            }
-        }
-        else
-        {
-            // 턴제가 아닐 경우 언제든지 작동
             playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
-            AmmoManager.Instance.LogAmmoInventory();
-            playerCombat.LogLoadedAmmo();
-            LogChamberSlots();
-            Debug.Log(loadedAmmo);
+            
+            playerTurnManager.EndTurn(); // 턴 종료
+            
+        }   
+        else if (GameModeManager.Instance.currentMode != GameModeManager.GameMode.RealTime)
+        {
+            playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
         }
+
+        // 인벤토리 창 닫기 및 게임 재개
+        InventoryUIManager.Instance.CloseInventory();
+        Time.timeScale = 1f;
+        playerCombat.LogLoadedAmmo();
     }
+
+
 
 
     // 장전 초기화

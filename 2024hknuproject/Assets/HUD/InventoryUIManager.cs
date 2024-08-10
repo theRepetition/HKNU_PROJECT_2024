@@ -55,18 +55,27 @@ public class InventoryUIManager : MonoBehaviour
 
             if (isActive)
             {
-                if (playerMovement != null) playerMovement.DisableMovement();
+               
                 if (playerCombat != null) playerCombat.enabled = false;
 
                 UpdateAmmoButtons();
+                // 인벤토리가 열리면 게임을 일시정지
+                playerMovement.DisableMovement();
+               
             }
             else
             {
-                if (playerMovement != null) playerMovement.EnableMovement();
+               
                 if (playerCombat != null) playerCombat.enabled = true;
+                if (playerMovement != null) playerMovement.EnableMovement();
+                
+
             }
         }
     }
+
+
+
 
     public void UpdateUI()
     {
@@ -83,7 +92,29 @@ public class InventoryUIManager : MonoBehaviour
             }
         }
     }
+    public void CloseInventory()
+{
+    inventoryPanel.SetActive(false);
+    ammoInventoryPanel.SetActive(false);
 
+    // 현재 게임이 턴제 모드인지 확인
+    if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
+    {
+        // 플레이어의 턴인 경우에만 움직임과 전투를 활성화
+        var playerTurnManager = playerCombat.GetComponent<PlayerTurnManager>();
+        if (playerTurnManager != null && TurnManager.Instance.CurrentTurnTaker == playerTurnManager)
+        {
+            if (playerMovement != null) playerMovement.EnableMovement();
+            if (playerCombat != null) playerCombat.enabled = true;
+        }
+    }
+    else
+    {
+        // 턴제 모드가 아닌 경우에는 바로 활성화
+        if (playerMovement != null) playerMovement.EnableMovement();
+        if (playerCombat != null) playerCombat.enabled = true;
+    }
+}
     public void UpdateAmmoButtons()
     {
         if (AmmoManager.Instance == null)
