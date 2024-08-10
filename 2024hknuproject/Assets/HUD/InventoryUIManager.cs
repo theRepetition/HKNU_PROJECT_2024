@@ -53,10 +53,15 @@ public class InventoryUIManager : MonoBehaviour
         }
     }
     public void ToggleInventory()
-    {
+    {   
+        Debug.Log("인벤토리 토글");
+
+        Debug.Log($"현재 InventoryPanel 활성 상태: {inventoryPanel.activeSelf}");
+        Debug.Log($"현재 AmmoInventoryPanel 활성 상태: {ammoInventoryPanel.activeSelf}");
         bool isActive = !inventoryPanel.activeSelf;
         inventoryPanel.SetActive(isActive);
         ammoInventoryPanel.SetActive(isActive);
+        Debug.Log($"Inventory는 이제 {(isActive ? "열림" : "닫힘")} 상태");
 
         if (isActive)
         {
@@ -67,6 +72,30 @@ public class InventoryUIManager : MonoBehaviour
         }
         else
         {
+            if (playerMovement != null) playerMovement.EnableMovement();
+            if (playerCombat != null) playerCombat.enabled = true;
+        }
+        
+    }
+    public void CloseInventory()
+    {
+        inventoryPanel.SetActive(false);
+        ammoInventoryPanel.SetActive(false);
+
+        // 현재 게임이 턴제 모드인지 확인
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
+        {
+            // 플레이어의 턴인 경우에만 움직임과 전투를 활성화
+            var playerTurnManager = playerCombat.GetComponent<PlayerTurnManager>();
+            if (playerTurnManager != null && TurnManager.Instance.CurrentTurnTaker == playerTurnManager)
+            {
+                if (playerMovement != null) playerMovement.EnableMovement();
+                if (playerCombat != null) playerCombat.enabled = true;
+            }
+        }
+        else
+        {
+            // 턴제 모드가 아닌 경우에는 바로 활성화
             if (playerMovement != null) playerMovement.EnableMovement();
             if (playerCombat != null) playerCombat.enabled = true;
         }
