@@ -18,7 +18,7 @@ public class AmmoChamberUI : MonoBehaviour
         playerTurnManager = FindObjectOfType<PlayerTurnManager>();
         playerCombat = FindObjectOfType<PlayerCombat>();
         inventoryUIManager = FindObjectOfType<InventoryUIManager>();
-        reloadButton.onClick.AddListener(Reload);
+        
         resetButton.onClick.AddListener(ResetChamber);
 
         InitializeChamberSlots(6); // 약실에 슬롯 6개 생성 
@@ -82,16 +82,18 @@ public class AmmoChamberUI : MonoBehaviour
 
 
     // 장전 완료 처리
+    // 장전 완료 처리
     public void Reload()
     {
-        
+        Debug.Log($"Reload called from: {new System.Diagnostics.StackTrace()}");
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
             // 턴제 모드일 경우, 플레이어의 턴에만 작동
             if (TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
             {
-                playerCombat.LogLoadedAmmo();
+                
                 playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
+                loadedAmmo.Clear();
                 playerCombat.EndTurn(); // 턴 종료
             }
         }
@@ -99,23 +101,47 @@ public class AmmoChamberUI : MonoBehaviour
         {
             // 턴제가 아닐 경우 언제든지 작동
             playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
-            AmmoManager.Instance.LogAmmoInventory();
-            playerCombat.LogLoadedAmmo();
-            LogChamberSlots();
-            Debug.Log(loadedAmmo);
+            
+
+          
+        }
+
+        // 약실 슬롯을 초기화
+        foreach (var slot in chamberSlots)
+        {
+            slot.GetComponent<Image>().sprite = null; // 슬롯 이미지 초기화
         }
         InventoryUIManager.Instance.CloseInventory();
     }
 
 
-    // 장전 초기화
+
     public void ResetChamber()
     {
-        loadedAmmo.Clear();
+        foreach (var ammo in loadedAmmo)
+        {
+            Ammo existingAmmo = AmmoManager.Instance.ammoTypes.Find(a => a.itemName == ammo.itemName);
+            if (existingAmmo != null)
+            {
+                // 인벤토리에 동일한 종류의 탄약이 있으면 수량을 더해줌
+                existingAmmo.quantity += 1;
+            }
+            else
+            {
+                // 인벤토리에 동일한 종류의 탄약이 없으면 새로운 탄약을 추가
+                AmmoManager.Instance.ammoTypes.Add(new Ammo(ammo.itemName, ammo.damage, ammo.effect, ammo.icon, 1));
+            }
+        }
+
+        loadedAmmo.Clear(); // 리스트 초기화
+
         foreach (var slot in chamberSlots)
         {
             slot.GetComponent<Image>().sprite = null; // 슬롯 이미지 초기화
         }
     }
+    
+    
+    
 
 }

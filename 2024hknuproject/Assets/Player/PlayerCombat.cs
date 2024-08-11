@@ -15,7 +15,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
     private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 리스트
-
+    private PlayerTurnManager playerTurnManager;
 
 
     private Ammo currentAmmo; // 현재 장전된 탄약
@@ -25,6 +25,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     void Start()
     {
+        playerTurnManager = FindObjectOfType<PlayerTurnManager>();
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.startWidth = 0.1f;
         lineRenderer.endWidth = 0.1f;
@@ -55,7 +56,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
             if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && projectilesOnField == 0)
             {
-                EndTurn();
+                playerTurnManager.EndTurn();
             }
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
@@ -102,7 +103,9 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void Attack(Vector2 direction)
     {
+        Debug.Log(currentLoadedAmmo.Count);
         if (projectilesFiredThisTurn >= maxProjectilesPerTurn || currentLoadedAmmo.Count == 0) // 탄환이 다 소모되면 공격 불가
+            
             return;
 
         lineRenderer.positionCount = 0; // 경로 숨기기
@@ -150,7 +153,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void ResetProjectilesFired()
     {
-        projectilesFiredThisTurn = 0; // 발사체 수 초기화
+        projectilesFiredThisTurn = 0;
 
     }
 
@@ -161,8 +164,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
             Debug.Log($"Loading ammo: {ammo.itemName} into chamber.");
             currentLoadedAmmo.Add(ammo);
             Debug.Log($"Current loaded ammo count: {currentLoadedAmmo.Count}");
-
-            // Update the ammo chamber UI here if applicable
+            
+            
         }
         else
         {
@@ -175,14 +178,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void StartTurn()
     {
-        isTurnComplete = false; // 턴 시작 시 초기화
-        ResetProjectilesFired(); // 발사체 수 초기화
+        
     }
 
     public void EndTurn()
     {
-        isTurnComplete = true; // 턴 완료 설정
-        TurnManager.Instance.NextTurn(); // 턴 종료 후 다음 턴으로 전환
+        
     }
 
     public int MaxActionPoints => maxActionPoints;
@@ -210,6 +211,29 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void SetLoadedAmmo(List<Ammo> loadedAmmo)
     {
-        currentLoadedAmmo = new List<Ammo>(loadedAmmo); // 장전된 탄약 설정
+        Debug.Log("SetLoadedAmmo called from: " + new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name);
+        currentLoadedAmmo.Clear();
+        foreach (Ammo ammo in loadedAmmo)
+        {
+            // 각 Ammo 객체를 복제하여 새로운 인스턴스를 리스트에 추가
+            Ammo clonedAmmo = new Ammo(ammo.itemName, ammo.damage, ammo.effect, ammo.icon, ammo.quantity);
+            currentLoadedAmmo.Add(clonedAmmo);
+            
+        }
+        loadedAmmo.Clear();
+        //Debug.Log("플레이어 컴뱃에서 Loadedammo:");
+       // for (int i = 0; i < loadedAmmo.Count; i++)
+       // {
+          //  Debug.Log($"슬롯 {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
+       // }
+       // Debug.Log("플레이어 컴뱃에서 CurrentLoadedammo:");
+       // for (int i = 0; i < currentLoadedAmmo.Count; i++)
+      //  {
+       //     Debug.Log($"슬롯 {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
+       // }
+        
+        //장전된 탄약 설정
+        projectilesFiredThisTurn = 0; // 발사체 발사 수 초기화
+        
     }
 }

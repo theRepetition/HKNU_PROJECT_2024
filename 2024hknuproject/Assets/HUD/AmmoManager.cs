@@ -31,14 +31,7 @@ public class AmmoManager : MonoBehaviour
             ammoTypes.Add(ammo);
         }
     }
-    public void LogAmmoInventory()
-    {
-        Debug.Log("Current Ammo Inventory:");
-        foreach (var ammo in ammoTypes)
-        {
-            Debug.Log($"Ammo Type: {ammo.itemName}, Quantity: {ammo.quantity}");
-        }
-    }
+    
 
     public List<Ammo> GetAmmoList()
     {
