@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.drag = 0; // Rigidbody의 drag 설정을 0으로 유지
         turnManager = GetComponent<PlayerTurnManager>();
     }
 
@@ -26,17 +27,9 @@ public class PlayerMovement : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (movement != Vector2.zero)
+        if (canMove)
         {
-            if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && turnManager.CurrentActionPoints > 0)
-            {
-                MoveCharacter(movement);
-                turnManager.CurrentActionPoints--; // 이동할 때마다 행동력 소모
-            }
-            else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
-            {
-                MoveCharacter(movement);
-            }
+            MoveCharacter(movement);
         }
     }
 
@@ -44,12 +37,27 @@ public class PlayerMovement : MonoBehaviour
     {
         movement.x = Input.GetAxis("Horizontal");
         movement.y = Input.GetAxis("Vertical");
+        movement.Normalize(); // 대각선 움직임의 속도를 일정하게 유지
     }
 
     void MoveCharacter(Vector2 direction)
     {
-        Vector2 newPosition = rb.position + direction * speed * Time.fixedDeltaTime;
-        rb.MovePosition(newPosition);
+        if (direction != Vector2.zero)
+        {
+            if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && turnManager.CurrentActionPoints > 0)
+            {
+                rb.velocity = direction * speed;
+                turnManager.CurrentActionPoints--; // 이동할 때마다 행동력 소모
+            }
+            else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
+            {
+                rb.velocity = direction * speed;
+            }
+        }
+        else
+        {
+            rb.velocity = Vector2.zero; // 입력이 없을 경우 속도를 0으로 설정
+        }
     }
 
     public void EnableMovement()
@@ -60,6 +68,6 @@ public class PlayerMovement : MonoBehaviour
     public void DisableMovement()
     {
         canMove = false;
-        movement = Vector2.zero;
+        rb.velocity = Vector2.zero; // 움직임을 멈출 때 바로 멈추도록 설정
     }
 }
