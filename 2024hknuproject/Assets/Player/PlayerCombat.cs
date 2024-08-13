@@ -79,26 +79,20 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     void ShowAim()
     {
-        if (currentLoadedAmmo.Count > 0)
-        {
-            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            aimDirection = (mousePosition - transform.position).normalized;
+        // 항상 플레이어의 현재 위치를 시작 위치로 설정
+        Vector3 playerPosition = transform.position;
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        aimDirection = (mousePosition - playerPosition).normalized;
 
-            // 경로 표시
-            lineRenderer.positionCount = 2;
-            lineRenderer.SetPosition(0, transform.position);
-            lineRenderer.SetPosition(1, transform.position + (Vector3)(aimDirection * 10f)); // 임의의 길이 설정
+        // 경로 표시
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, playerPosition);
+        lineRenderer.SetPosition(1, playerPosition + (Vector3)(aimDirection * 10f)); // 임의의 길이 설정
 
-            // LineRenderer가 타일 위에 보이도록 Z축 조정
-            lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
-            lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
-        }
-        else
-        {
-            lineRenderer.positionCount = 0; // 탄환이 없으면 조준 막대기 숨기기
-        }
+        // LineRenderer가 타일 위에 보이도록 Z축 조정
+        lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
+        lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
     }
-
 
     public void LogLoadedAmmo()
     {
