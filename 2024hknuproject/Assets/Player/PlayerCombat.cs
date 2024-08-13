@@ -44,7 +44,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         {
             if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 좌클릭 유지
             {
-                ShowAim();
+                ShowAim(); // 매 프레임마다 에임을 갱신
             }
 
             if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 좌클릭 해제
@@ -61,37 +61,39 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
         {
-            if (Input.GetMouseButtonDown(0) && projectilesFiredThisTurn < maxProjectilesPerTurn)
+            if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 좌클릭 유지
             {
-                ShowAim();
+                ShowAim(); // 매 프레임마다 에임을 갱신
             }
 
-            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn)
+            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 좌클릭 해제
             {
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
                 lineRenderer.positionCount = 0; // 경로 숨기기
             }
-
-           
         }
     }
 
+
     void ShowAim()
     {
+        // 항상 플레이어의 현재 위치를 시작 위치로 설정
+        Vector3 playerPosition = transform.position;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        aimDirection = (mousePosition - transform.position).normalized;
+        aimDirection = (mousePosition - playerPosition).normalized;
 
         // 경로 표시
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, transform.position + (Vector3)(aimDirection * 10f)); // 임의의 길이 설정
+        lineRenderer.SetPosition(0, playerPosition);
+        lineRenderer.SetPosition(1, playerPosition + (Vector3)(aimDirection * 10f)); // 임의의 길이 설정
 
         // LineRenderer가 타일 위에 보이도록 Z축 조정
         lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
         lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
     }
+
     public void LogLoadedAmmo()
     {
         Debug.Log("Currently Loaded Ammo:");
