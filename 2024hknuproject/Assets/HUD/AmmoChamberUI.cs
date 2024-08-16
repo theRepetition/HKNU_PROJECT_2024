@@ -93,8 +93,9 @@ public class AmmoChamberUI : MonoBehaviour
             {
                 
                 playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 전달
+                playerTurnManager.EndTurn(); // 턴 종료
                 loadedAmmo.Clear();
-                playerCombat.EndTurn(); // 턴 종료
+               
             }
         }
         else
