@@ -9,6 +9,8 @@ TagManager:
   - Projectile
   - Item
   - Bullet
+  - RightBoundary
+  - LeftBoundary
   layers:
   - Default
   - TransparentFX

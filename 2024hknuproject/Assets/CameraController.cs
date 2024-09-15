@@ -1,64 +1,91 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
-    public float speed = 5.0f; // WASD Ű �Է¿� ���� ī�޶� �̵� �ӵ�
-    public float mouseEdgeScrollSpeed = 3.0f; // ���콺 �����ڸ� �̵� �ӵ�
-    public float edgeSize = 10.0f; // ȭ�� �����ڸ� ���� ũ��
-    public float maxMouseEdgeDistance = 50.0f; // ���콺 �̵��� ���� �ִ� ī�޶� �̵� ����
-    public Transform player; // �÷��̾� ��ġ�� �����ϱ� ���� ����
+    public float speed = 5.0f; // 카메라 이동 속도
+    public Transform player; // 플레이어 위치 참조
+    public CanvasGroup fadeCanvasGroup; // 페이드 인/아웃을 위한 CanvasGroup
+    public float fadeDuration = 0.5f; // 페이드 효과 지속 시간
 
-    private Vector3 offset; // �÷��̾�� ī�޶� ������ �Ÿ�
-    private Vector3 initialCameraPosition; // ī�޶��� �ʱ� ��ġ
+    private Vector3 offset; // 플레이어와 카메라 사이의 거리
+    private bool isTransitioning = false; // 카메라가 이동 중인지 여부
+    private bool shouldFollowPlayer = true; // 카메라가 플레이어를 따라가는지 여부
 
     void Start()
     {
-        // �÷��̾� ������Ʈ�� ã�Ƽ� ����
+        // 플레이어 오브젝트가 설정되지 않았다면 자동으로 찾음
         if (player == null)
         {
             player = GameObject.FindWithTag("Player").transform;
         }
 
         offset = transform.position - player.position;
-        initialCameraPosition = transform.position;
+
+        // 게임 시작 시 알파값을 0으로 설정하여 화면이 밝은 상태로 시작
+        fadeCanvasGroup.alpha = 0f;
     }
 
     void Update()
     {
-        // WASD Ű �Է¿� ���� ī�޶� �̵�
-        float moveHorizontal = Input.GetAxis("Horizontal");
-        float moveVertical = Input.GetAxis("Vertical");
+        if (isTransitioning || !shouldFollowPlayer)
+            return;
 
-        Vector3 movement = new Vector3(moveHorizontal, moveVertical, 0);
-        transform.position += movement * speed * Time.deltaTime;
+        // 플레이어를 부드럽게 따라가는 부분
+        Vector3 targetPosition = player.position + offset;
+        transform.position = Vector3.Lerp(transform.position, targetPosition, speed * Time.deltaTime);
+    }
 
-        // ���콺 ��ġ�� ���� ī�޶� �̵�
-        Vector3 mousePosition = Input.mousePosition;
-        if (mousePosition.x > Screen.width - edgeSize && transform.position.x < initialCameraPosition.x + maxMouseEdgeDistance)
-        {
-            transform.position += Vector3.right * mouseEdgeScrollSpeed * Time.deltaTime;
-        }
-        else if (mousePosition.x < edgeSize && transform.position.x > initialCameraPosition.x - maxMouseEdgeDistance)
-        {
-            transform.position += Vector3.left * mouseEdgeScrollSpeed * Time.deltaTime;
-        }
-        if (mousePosition.y > Screen.height - edgeSize && transform.position.y < initialCameraPosition.y + maxMouseEdgeDistance)
-        {
-            transform.position += Vector3.up * mouseEdgeScrollSpeed * Time.deltaTime;
-        }
-        else if (mousePosition.y < edgeSize && transform.position.y > initialCameraPosition.y - maxMouseEdgeDistance)
-        {
-            transform.position += Vector3.down * mouseEdgeScrollSpeed * Time.deltaTime;
-        }
+    // 트리거가 발동되면 방 이동을 처리하는 함수
+    public void TriggerRoomTransition()
+    {
+        StartCoroutine(HandleRoomTransition());
+    }
 
-        // ���콺�� ȭ�� �߾����� ���ƿ��� �÷��̾� �߽����� ī�޶� �̵�
-        if (mousePosition.x >= edgeSize && mousePosition.x <= Screen.width - edgeSize &&
-            mousePosition.y >= edgeSize && mousePosition.y <= Screen.height - edgeSize)
+    // 암전 및 카메라 동작을 처리하는 코루틴
+    private IEnumerator HandleRoomTransition()
+    {
+        isTransitioning = true;  // 카메라 이동 중
+        shouldFollowPlayer = false;  // 카메라가 플레이어 추적 중지
+
+        // 1. 페이드 아웃 (화면을 어둡게 만듦)
+        yield return StartCoroutine(FadeOut());
+
+        // 2. 카메라 또는 플레이어 이동
+        // 이 부분에서 카메라 이동이나 플레이어 위치를 전환
+        // 예: transform.position = 새로운 방 위치;
+        yield return new WaitForSeconds(0.5f); // 이동하는 동안 잠시 기다림
+        shouldFollowPlayer = true;  // 카메라가 다시 플레이어를 추적
+        isTransitioning = false;  // 카메라 이동 종료
+        yield return new WaitForSeconds(0.5f); // 이동하는 동안 잠시 기다림
+        // 3. 페이드 인 (화면을 다시 밝게 만듦)
+        yield return StartCoroutine(FadeIn());
+
+        
+    }
+
+    // 화면을 어둡게 만드는 함수 (페이드 아웃)
+    private IEnumerator FadeOut()
+    {
+        float t = 0f;
+        while (t < fadeDuration)
         {
-            Vector3 targetPosition = player.position + offset;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, speed * Time.deltaTime);
+            t += Time.deltaTime;
+            fadeCanvasGroup.alpha = Mathf.Lerp(0f, 1f, t / fadeDuration);  // Alpha 값을 0에서 1로 변화
+            yield return null;
+        }
+    }
+
+    // 화면을 밝게 만드는 함수 (페이드 인)
+    private IEnumerator FadeIn()
+    {
+        float t = 0f;
+        while (t < fadeDuration)
+        {
+            t += Time.deltaTime;
+            fadeCanvasGroup.alpha = Mathf.Lerp(1f, 0f, t / fadeDuration);  // Alpha 값을 1에서 0으로 변화
+            yield return null;
         }
     }
 }

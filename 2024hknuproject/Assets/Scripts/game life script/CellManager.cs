@@ -1,22 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class CellManager : MonoBehaviour
 {
     public GameObject player;
+    public GameObject leftBoundaryObject; // 왼쪽 경계 오브젝트 직접 설정
+    public GameObject rightBoundaryObject; // 오른쪽 경계 오브젝트 직접 설정
     public GameObject[] objectsToRandomize; // 셀 내 랜덤 배치될 오브젝트들
     public Vector2 randomPositionRange; // 오브젝트 배치 시 사용할 위치 범위
 
     // 플레이어가 트리거로 왼쪽 또는 오른쪽 경계에 부딪히면 호출
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("LeftBoundary")) // 왼쪽 경계 트리거에 부딪히면
+        if (collision.gameObject == leftBoundaryObject) // 왼쪽 경계 트리거에 부딪히면
         {
             TeleportPlayerToRight();
             RandomizeObjects();
         }
-        else if (collision.CompareTag("RightBoundary")) // 오른쪽 경계 트리거에 부딪히면
+        else if (collision.gameObject == rightBoundaryObject) // 오른쪽 경계 트리거에 부딪히면
         {
             TeleportPlayerToLeft();
             RandomizeObjects();
@@ -26,18 +26,16 @@ public class CellManager : MonoBehaviour
     // 플레이어를 오른쪽 경계로 순간이동
     void TeleportPlayerToRight()
     {
-        // 오른쪽 경계의 위치를 트리거의 Transform으로 받아옴
-        Transform rightBoundary = GameObject.FindWithTag("RightBoundary").transform;
-        player.transform.position = new Vector2(rightBoundary.position.x, player.transform.position.y);
+        // 오른쪽 경계의 위치를 오브젝트의 Transform으로 받아옴
+        player.transform.position = new Vector2(rightBoundaryObject.transform.position.x - 1f, player.transform.position.y); // 약간의 여유를 줌
         Debug.Log("Player teleported to the right.");
     }
 
     // 플레이어를 왼쪽 경계로 순간이동
     void TeleportPlayerToLeft()
     {
-        // 왼쪽 경계의 위치를 트리거의 Transform으로 받아옴
-        Transform leftBoundary = GameObject.FindWithTag("LeftBoundary").transform;
-        player.transform.position = new Vector2(leftBoundary.position.x, player.transform.position.y);
+        // 왼쪽 경계의 위치를 오브젝트의 Transform으로 받아옴
+        player.transform.position = new Vector2(leftBoundaryObject.transform.position.x + 1f, player.transform.position.y); // 약간의 여유를 줌
         Debug.Log("Player teleported to the left.");
     }
 
