@@ -8,7 +8,7 @@ public class CameraController : MonoBehaviour
     public Transform player; // 플레이어 위치 참조
     public CanvasGroup fadeCanvasGroup; // 페이드 인/아웃을 위한 CanvasGroup
     public float fadeDuration = 0.5f; // 페이드 효과 지속 시간
-
+    public PlayerMovement playermovement; //이동 제한 관리
     private Vector3 offset; // 플레이어와 카메라 사이의 거리
     private bool isTransitioning = false; // 카메라가 이동 중인지 여부
     private bool shouldFollowPlayer = true; // 카메라가 플레이어를 따라가는지 여부
@@ -51,18 +51,19 @@ public class CameraController : MonoBehaviour
 
         // 1. 페이드 아웃 (화면을 어둡게 만듦)
         yield return StartCoroutine(FadeOut());
-
         // 2. 카메라 또는 플레이어 이동
         // 이 부분에서 카메라 이동이나 플레이어 위치를 전환
         // 예: transform.position = 새로운 방 위치;
         yield return new WaitForSeconds(0.5f); // 이동하는 동안 잠시 기다림
+        playermovement.DisableMovement();//플레이어 이동 멈춤
         shouldFollowPlayer = true;  // 카메라가 다시 플레이어를 추적
         isTransitioning = false;  // 카메라 이동 종료
         yield return new WaitForSeconds(0.5f); // 이동하는 동안 잠시 기다림
         // 3. 페이드 인 (화면을 다시 밝게 만듦)
         yield return StartCoroutine(FadeIn());
+        playermovement.EnableMovement();// 이동활성화
 
-        
+
     }
 
     // 화면을 어둡게 만드는 함수 (페이드 아웃)
