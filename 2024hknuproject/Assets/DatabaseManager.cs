@@ -30,22 +30,143 @@ public class DatabaseManager : MonoBehaviour
 
             using (var command = connection.CreateCommand())
             {
-                // æ∆¿Ã≈€ ≈◊¿Ã∫Ì ª˝º∫
+                // ÏïÑÏù¥ÌÖú ÌÖåÏù¥Î∏î ÏÉùÏÑ±
                 command.CommandText = "CREATE TABLE IF NOT EXISTS Items (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Description TEXT, Value INTEGER)";
                 command.ExecuteNonQuery();
 
-                // π´±‚ ≈◊¿Ã∫Ì ª˝º∫
+                // Î¨¥Í∏∞ ÌÖåÏù¥Î∏î ÏÉùÏÑ±
                 command.CommandText = "CREATE TABLE IF NOT EXISTS Weapons (Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, ProjectileSpeed REAL, Damage INTEGER, MagazineCapacity INTEGER, ProjectileShape TEXT)";
                 command.ExecuteNonQuery();
 
-                // ºº¿Ã∫Í µ•¿Ã≈Õ ≈◊¿Ã∫Ì ª˝º∫
+                // ÏÑ∏Ïù¥Î∏å Îç∞Ïù¥ÌÑ∞ ÌÖåÏù¥Î∏î ÏÉùÏÑ±
                 command.CommandText = "CREATE TABLE IF NOT EXISTS SaveData (Id INTEGER PRIMARY KEY AUTOINCREMENT, PlayerX REAL, PlayerY REAL, PlayerZ REAL, PlayerHealth INTEGER)";
+                command.ExecuteNonQuery();
+
+                // Î≥¥ÏÉÅ ÌíÄ ÌÖåÏù¥Î∏î ÏÉùÏÑ±
+                command.CommandText = "CREATE TABLE IF NOT EXISTS RewardPool (Id INTEGER PRIMARY KEY AUTOINCREMENT, ItemName TEXT, ItemDescription TEXT, ItemType TEXT, ItemEffect REAL, ItemIcon TEXT, ItemRarity INTEGER)";
+                command.ExecuteNonQuery();
+
+                // NPC ÌÖåÏù¥Î∏î ÏÉùÏÑ±
+                command.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS NPCs (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT NOT NULL,
+                        Dialogue TEXT,
+                        PositionX REAL,
+                        PositionY REAL,
+                        PositionZ REAL,
+                        NPCType TEXT,
+                        IsInteractable INTEGER,
+                        State INTEGER)";
                 command.ExecuteNonQuery();
 
                 Debug.Log("Tables created successfully.");
             }
         }
     }
+
+    // NPC Îç∞Ïù¥ÌÑ∞ ÏÇΩÏûÖ
+    public void InsertNPC(string name, string dialogue, Vector3 position, string npcType, bool isInteractable, int state)
+    {
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = @"
+                    INSERT INTO NPCs (Name, Dialogue, PositionX, PositionY, PositionZ, NPCType, IsInteractable, State)
+                    VALUES (@name, @dialogue, @x, @y, @z, @npcType, @isInteractable, @state)";
+                command.Parameters.AddWithValue("@name", name);
+                command.Parameters.AddWithValue("@dialogue", dialogue);
+                command.Parameters.AddWithValue("@x", position.x);
+                command.Parameters.AddWithValue("@y", position.y);
+                command.Parameters.AddWithValue("@z", position.z);
+                command.Parameters.AddWithValue("@npcType", npcType);
+                command.Parameters.AddWithValue("@isInteractable", isInteractable ? 1 : 0);
+                command.Parameters.AddWithValue("@state", state);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+    // NPC Îç∞Ïù¥ÌÑ∞ Ï°∞Ìöå
+    public void GetNPCs()
+    {
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT * FROM NPCs";
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        string name = reader["Name"].ToString();
+                        string dialogue = reader["Dialogue"].ToString();
+                        Vector3 position = new Vector3(reader.GetFloat(2), reader.GetFloat(3), reader.GetFloat(4));
+                        string npcType = reader["NPCType"].ToString();
+                        bool isInteractable = reader.GetInt32(6) == 1;
+                        int state = reader.GetInt32(7);
+
+                        Debug.Log($"NPC Name: {name} | Dialogue: {dialogue} | Position: {position} | Type: {npcType} | Interactable: {isInteractable} | State: {state}");
+                    }
+                }
+            }
+        }
+    }
+
+    // Î≥¥ÏÉÅ ÌíÄ ÏïÑÏù¥ÌÖú ÏÇΩÏûÖ
+    public void InsertRewardItem(string itemName, string itemDescription, string itemType, float itemEffect, string itemIcon, int itemRarity)
+    {
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "INSERT INTO RewardPool (ItemName, ItemDescription, ItemType, ItemEffect, ItemIcon, ItemRarity) VALUES (@itemName, @itemDescription, @itemType, @itemEffect, @itemIcon, @itemRarity)";
+                command.Parameters.AddWithValue("@itemName", itemName);
+                command.Parameters.AddWithValue("@itemDescription", itemDescription);
+                command.Parameters.AddWithValue("@itemType", itemType);
+                command.Parameters.AddWithValue("@itemEffect", itemEffect);
+                command.Parameters.AddWithValue("@itemIcon", itemIcon);
+                command.Parameters.AddWithValue("@itemRarity", itemRarity);
+                command.ExecuteNonQuery();
+            }
+        }
+    }
+
+    // Î≥¥ÏÉÅ ÌíÄ ÏïÑÏù¥ÌÖú Ï°∞Ìöå
+    public void GetRewardItems()
+    {
+        using (var connection = new SqliteConnection(dbPath))
+        {
+            connection.Open();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = "SELECT * FROM RewardPool";
+
+                using (IDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Debug.Log("Item Name: " + reader["ItemName"] +
+                                  " | Description: " + reader["ItemDescription"] +
+                                  " | Type: " + reader["ItemType"] +
+                                  " | Effect: " + reader["ItemEffect"] +
+                                  " | Icon: " + reader["ItemIcon"] +
+                                  " | Rarity: " + reader["ItemRarity"]);
+                    }
+                }
+            }
+        }
+    }
+
 
     public void InsertItem(string name, string description, int value)
     {
