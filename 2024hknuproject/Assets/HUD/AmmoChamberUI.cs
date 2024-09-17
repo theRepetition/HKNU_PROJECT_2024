@@ -1,38 +1,41 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class AmmoChamberUI : MonoBehaviour
 {
-    public GameObject chamberSlotPrefab; // ÅºÈ¯ ½½·Ô ÇÁ¸®ÆÕ
-    public Transform chamberPanel; // ÅºÈ¯ÀÌ ¹èÄ¡µÉ ÆĞ³Î
-    public Button reloadButton; // ÀåÀü ¿Ï·á ¹öÆ°
-    public Button resetButton; // ÃÊ±âÈ­ ¹öÆ°
-    private PlayerTurnManager playerTurnManager;
-    private List<GameObject> chamberSlots = new List<GameObject>(); // ÇöÀç ÀåÀüµÈ ÅºÈ¯ ½½·Ôµé
-    private List<Ammo> loadedAmmo = new List<Ammo>(); // ÇöÀç ÀåÀüµÈ Åº¾à ¸ñ·Ï
-    private PlayerCombat playerCombat;
-    private InventoryUIManager inventoryUIManager;
+    public GameObject chamberSlotPrefab; // íƒ„í™˜ ìŠ¬ë¡¯ì„ ìœ„í•œ í”„ë¦¬íŒ¹
+    public Transform chamberPanel; // íƒ„í™˜ ìŠ¬ë¡¯ë“¤ì´ ìœ„ì¹˜í•  íŒ¨ë„
+    public Button reloadButton; // ì¬ì¥ì „ ë²„íŠ¼
+    public Button resetButton; // ì´ˆê¸°í™” ë²„íŠ¼
+    private PlayerTurnManager playerTurnManager; // í”Œë ˆì´ì–´ í„´ ë§¤ë‹ˆì € ì°¸ì¡°
+    private List<GameObject> chamberSlots = new List<GameObject>(); // ìƒì„±ëœ íƒ„í™˜ ìŠ¬ë¡¯ë“¤
+    private List<Ammo> loadedAmmo = new List<Ammo>(); // ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸
+    private PlayerCombat playerCombat; // í”Œë ˆì´ì–´ ì „íˆ¬ ê´€ë¦¬
+    private InventoryUIManager inventoryUIManager; // ì¸ë²¤í† ë¦¬ UI ê´€ë¦¬ì
 
     void Start()
     {
-        playerTurnManager = FindObjectOfType<PlayerTurnManager>();
-        playerCombat = FindObjectOfType<PlayerCombat>();
-        inventoryUIManager = FindObjectOfType<InventoryUIManager>();
-        
-        resetButton.onClick.AddListener(ResetChamber);
+        playerTurnManager = FindObjectOfType<PlayerTurnManager>(); // PlayerTurnManagerë¥¼ ì°¾ì•„ì„œ í• ë‹¹
+        playerCombat = FindObjectOfType<PlayerCombat>(); // PlayerCombatì„ ì°¾ì•„ì„œ í• ë‹¹
+        inventoryUIManager = FindObjectOfType<InventoryUIManager>(); // InventoryUIManagerë¥¼ ì°¾ì•„ì„œ í• ë‹¹
 
-        InitializeChamberSlots(6); // ¾à½Ç¿¡ ½½·Ô 6°³ »ı¼º 
+        resetButton.onClick.AddListener(ResetChamber); // ì´ˆê¸°í™” ë²„íŠ¼ì— ResetChamber í•¨ìˆ˜ ì—°ê²°
+
+        InitializeChamberSlots(6); // ì´ˆê¸° ìŠ¬ë¡¯ ê°œìˆ˜ 6ê°œë¡œ ì„¤ì •
     }
 
-    // ¾à½Ç ½½·Ô ÃÊ±âÈ­
+    // íƒ„í™˜ ìŠ¬ë¡¯ì„ ì´ˆê¸°í™”í•˜ëŠ” í•¨ìˆ˜
     void InitializeChamberSlots(int slotCount)
     {
         for (int i = 0; i < slotCount; i++)
         {
-            GameObject slot = Instantiate(chamberSlotPrefab, chamberPanel);
-            chamberSlots.Add(slot);
+            GameObject slot = Instantiate(chamberSlotPrefab, chamberPanel); // ìŠ¬ë¡¯ í”„ë¦¬íŒ¹ì„ íŒ¨ë„ì— ìƒì„±
+            chamberSlots.Add(slot); // ìƒì„±ëœ ìŠ¬ë¡¯ì„ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
         }
     }
+
+    // í˜„ì¬ ì¥ì „ëœ ìŠ¬ë¡¯ ì •ë³´ ë¡œê¹… í•¨ìˆ˜
     public void LogChamberSlots()
     {
         Debug.Log("Current Chamber Slots:");
@@ -50,20 +53,20 @@ public class AmmoChamberUI : MonoBehaviour
         }
     }
 
-    // Åº¾à ÀåÀü
+    // íƒ„ì•½ì„ ì¥ì „í•˜ëŠ” í•¨ìˆ˜
     public void LoadAmmo(Ammo ammo)
     {
         if (loadedAmmo.Count < chamberSlots.Count)
         {
-            loadedAmmo.Add(ammo);
-            var slotIndex = loadedAmmo.Count - 1;
-            var slotImage = chamberSlots[slotIndex].GetComponent<Image>();
+            loadedAmmo.Add(ammo); // ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
+            var slotIndex = loadedAmmo.Count - 1; // ìŠ¬ë¡¯ ì¸ë±ìŠ¤ ì„¤ì •
+            var slotImage = chamberSlots[slotIndex].GetComponent<Image>(); // ìŠ¬ë¡¯ì˜ ì´ë¯¸ì§€ ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜´
 
             if (slotImage != null)
             {
-                if (ammo.icon != null)
+                if (ammo.icon != null) // ì•„ì´ì½˜ì´ ì„¤ì •ë˜ì–´ ìˆìœ¼ë©´
                 {
-                    slotImage.sprite = ammo.icon;
+                    slotImage.sprite = ammo.icon; // ìŠ¬ë¡¯ ì´ë¯¸ì§€ì— íƒ„ì•½ ì•„ì´ì½˜ ì„¤ì •
                     Debug.Log($"Slot {slotIndex} updated with {ammo.itemName} icon.");
                 }
                 else
@@ -78,71 +81,59 @@ public class AmmoChamberUI : MonoBehaviour
         }
     }
 
-
-
-
-    // ÀåÀü ¿Ï·á Ã³¸®
-    // ÀåÀü ¿Ï·á Ã³¸®
+    // ì¬ì¥ì „ ì²˜ë¦¬ í•¨ìˆ˜
     public void Reload()
     {
         Debug.Log($"Reload called from: {new System.Diagnostics.StackTrace()}");
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
-            // ÅÏÁ¦ ¸ğµåÀÏ °æ¿ì, ÇÃ·¹ÀÌ¾îÀÇ ÅÏ¿¡¸¸ ÀÛµ¿
+            // í„´ì œ ëª¨ë“œì—ì„œ í”Œë ˆì´ì–´ì˜ í„´ì¼ ë•Œë§Œ ì¬ì¥ì „ ê°€ëŠ¥
             if (TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
             {
-                
-                playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat¿¡ ÀåÀüµÈ Åº¾à Àü´Ş
-                playerTurnManager.EndTurn(); // ÅÏ Á¾·á
-                loadedAmmo.Clear();
-               
+                playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombatì— ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸ ì „ë‹¬
+                playerTurnManager.EndTurn(); // í„´ ì¢…ë£Œ
+                loadedAmmo.Clear(); // ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
             }
         }
         else
         {
-            // ÅÏÁ¦°¡ ¾Æ´Ò °æ¿ì ¾ğÁ¦µçÁö ÀÛµ¿
-            playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat¿¡ ÀåÀüµÈ Åº¾à Àü´Ş
-            
-
-          
+            // ì‹¤ì‹œê°„ ëª¨ë“œì—ì„œ ì¬ì¥ì „ ì²˜ë¦¬
+            playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombatì— ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸ ì „ë‹¬
         }
 
-        // ¾à½Ç ½½·ÔÀ» ÃÊ±âÈ­
+        // ì¬ì¥ì „ í›„ ìŠ¬ë¡¯ì˜ ì´ë¯¸ì§€ ì´ˆê¸°í™”
         foreach (var slot in chamberSlots)
         {
-            slot.GetComponent<Image>().sprite = null; // ½½·Ô ÀÌ¹ÌÁö ÃÊ±âÈ­
+            slot.GetComponent<Image>().sprite = null; // ìŠ¬ë¡¯ ì´ë¯¸ì§€ ë¹„ìš°ê¸°
         }
-        InventoryUIManager.Instance.CloseInventory();
+        InventoryUIManager.Instance.CloseInventory(); // ì¸ë²¤í† ë¦¬ ë‹«ê¸°
     }
 
-
-
+    // íƒ„ì•½ ìŠ¬ë¡¯ ì´ˆê¸°í™” í•¨ìˆ˜
     public void ResetChamber()
     {
         foreach (var ammo in loadedAmmo)
         {
+            // íƒ„ì•½ ë§¤ë‹ˆì €ì—ì„œ ë™ì¼í•œ ì´ë¦„ì˜ íƒ„ì•½ì„ ì°¾ì•„ ì¸ë²¤í† ë¦¬ì— ì¶”ê°€
             Ammo existingAmmo = AmmoManager.Instance.ammoTypes.Find(a => a.itemName == ammo.itemName);
             if (existingAmmo != null)
             {
-                // ÀÎº¥Åä¸®¿¡ µ¿ÀÏÇÑ Á¾·ùÀÇ Åº¾àÀÌ ÀÖÀ¸¸é ¼ö·®À» ´õÇØÁÜ
+                // ì¸ë²¤í† ë¦¬ì— ë™ì¼í•œ íƒ„ì•½ì´ ìˆì„ ê²½ìš° ìˆ˜ëŸ‰ ì¦ê°€
                 existingAmmo.quantity += 1;
             }
             else
             {
-                // ÀÎº¥Åä¸®¿¡ µ¿ÀÏÇÑ Á¾·ùÀÇ Åº¾àÀÌ ¾øÀ¸¸é »õ·Î¿î Åº¾àÀ» Ãß°¡
+                // ì¸ë²¤í† ë¦¬ì— ë™ì¼í•œ íƒ„ì•½ì´ ì—†ì„ ê²½ìš° ìƒˆë¡œ ì¶”ê°€
                 AmmoManager.Instance.ammoTypes.Add(new Ammo(ammo.itemName, ammo.damage, ammo.effect, ammo.icon, 1));
             }
         }
 
-        loadedAmmo.Clear(); // ¸®½ºÆ® ÃÊ±âÈ­
+        loadedAmmo.Clear(); // ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
 
+        // ëª¨ë“  ìŠ¬ë¡¯ ì´ë¯¸ì§€ ì´ˆê¸°í™”
         foreach (var slot in chamberSlots)
         {
-            slot.GetComponent<Image>().sprite = null; // ½½·Ô ÀÌ¹ÌÁö ÃÊ±âÈ­
+            slot.GetComponent<Image>().sprite = null;
         }
     }
-    
-    
-    
-
 }

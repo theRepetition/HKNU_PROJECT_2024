@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class PlayerCombat : MonoBehaviour, ICombatant
 {
-    public GameObject projectilePrefab; // Åõ»çÃ¼ Prefab
-    public float projectileSpeed = 5f; // Åõ»çÃ¼ ¼Óµµ
-    public int maxProjectilesPerTurn = 6; // ÅÏ´ç ÃÖ´ë ¹ß»çÃ¼ ¼ö
-    private int projectilesFiredThisTurn = 0; // ÇöÀç ÅÏ¿¡¼­ ¹ß»çÇÑ ¹ß»çÃ¼ ¼ö
-    private int projectilesOnField = 0; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö
-    public int maxActionPoints = 10; // ÃÖ´ë Çàµ¿·Â
+    public GameObject projectilePrefab; // ë°œì‚¬ì²´ Prefab
+    public float projectileSpeed = 5f; // ë°œì‚¬ì²´ ì†ë„
+    public int maxProjectilesPerTurn = 6; // í„´ë‹¹ ìµœëŒ€ ë°œì‚¬ì²´ ìˆ˜
+    private int projectilesFiredThisTurn = 0; // ì´ë²ˆ í„´ì— ë°œì‚¬í•œ ë°œì‚¬ì²´ ìˆ˜
+    private int projectilesOnField = 0; // í•„ë“œì— ì¡´ì¬í•˜ëŠ” ë°œì‚¬ì²´ ìˆ˜
+    public int maxActionPoints = 10; // ìµœëŒ€ í–‰ë™ í¬ì¸íŠ¸
     private int currentActionPoints;
     private LineRenderer lineRenderer;
     private Vector2 aimDirection;
     private bool isTurnComplete = false;
-    private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // ÇöÀç ÀåÀüµÈ Åº¾à ¸®½ºÆ®
+    private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // í˜„ì¬ ì¥ì „ëœ íƒ„ì•½ ë¦¬ìŠ¤íŠ¸
     private PlayerTurnManager playerTurnManager;
+    private bool CanCombat = true;
 
-
-    private Ammo currentAmmo; // ÇöÀç ÀåÀüµÈ Åº¾à
+    private Ammo currentAmmo; // í˜„ì¬ ì‚¬ìš© ì¤‘ì¸ íƒ„ì•½
 
     public int ProjectileDamage => currentLoadedAmmo.Count > 0 ? currentLoadedAmmo[0].damage : 0;
-    // Åº¾àÀÇ ÇÇÇØ·®À» ¹İÈ¯
+    // íƒ„ì•½ì´ ìˆì„ ë•Œ ì²« ë²ˆì§¸ íƒ„ì•½ì˜ ë°ë¯¸ì§€ë¥¼ ë°˜í™˜
 
     void Start()
     {
@@ -29,88 +29,82 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.startWidth = 0.1f;
         lineRenderer.endWidth = 0.1f;
-        lineRenderer.positionCount = 0; // ÃÊ±â¿¡´Â °æ·Î¸¦ Ç¥½ÃÇÏÁö ¾ÊÀ½
+        lineRenderer.positionCount = 0; // ì´ˆê¸°ì—ëŠ” ë¼ì¸ì„ ê·¸ë¦¬ì§€ ì•ŠìŒ
 
-        // LineRenderer°¡ Å¸ÀÏ À§¿¡ º¸ÀÌµµ·Ï ZÃà Á¶Á¤
+        // LineRendererì˜ Zì¶•ì„ í†µí•´ 2Dì—ì„œ ì•ë’¤ë¥¼ ì¡°ì •
         lineRenderer.sortingOrder = 1;
-
-
-
     }
 
     void Update()
     {
+        if (!CanCombat) // Combatì´ ë¶ˆê°€ëŠ¥í•  ë•ŒëŠ” ì•„ë¬´ ì‘ì—…ë„ í•˜ì§€ ì•ŠìŒ
+            return;
+
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>())
         {
-            if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ¸¶¿ì½º ÁÂÅ¬¸¯ À¯Áö
+            if (Input.GetMouseButton(0)) // ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ì„ í´ë¦­í–ˆì„ ë•Œ
             {
-                ShowAim(); // ¸Å ÇÁ·¹ÀÓ¸¶´Ù ¿¡ÀÓÀ» °»½Å
+                ShowAim(); // ì¡°ì¤€ì„  í‘œì‹œ
             }
 
-            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ¸¶¿ì½º ÁÂÅ¬¸¯ ÇØÁ¦
+            if (Input.GetMouseButtonUp(0)) // ë§ˆìš°ìŠ¤ ë²„íŠ¼ì„ ë†“ì•˜ì„ ë•Œ
             {
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
-            }
-
-            if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && projectilesOnField == 0)
-            {
-                playerTurnManager.EndTurn();
+                lineRenderer.positionCount = 0; // ë¼ì¸ ì´ˆê¸°í™”
             }
         }
         else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
         {
-            if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ¸¶¿ì½º ÁÂÅ¬¸¯ À¯Áö
+            if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ë§ˆìš°ìŠ¤ ì™¼ìª½ ë²„íŠ¼ì„ í´ë¦­í–ˆì„ ë•Œ
             {
-                ShowAim(); // ¸Å ÇÁ·¹ÀÓ¸¶´Ù ¿¡ÀÓÀ» °»½Å
+                ShowAim(); // ì¡°ì¤€ì„  í‘œì‹œ
             }
 
-            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ¸¶¿ì½º ÁÂÅ¬¸¯ ÇØÁ¦
+            if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // ë§ˆìš°ìŠ¤ ë²„íŠ¼ì„ ë†“ì•˜ì„ ë•Œ
             {
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
-                lineRenderer.positionCount = 0; // °æ·Î ¼û±â±â
+                lineRenderer.positionCount = 0; // ë¼ì¸ ì´ˆê¸°í™”
             }
         }
     }
 
-
     void ShowAim()
     {
-        // Ç×»ó ÇÃ·¹ÀÌ¾îÀÇ ÇöÀç À§Ä¡¸¦ ½ÃÀÛ À§Ä¡·Î ¼³Á¤
+        // í•­ìƒ í”Œë ˆì´ì–´ì˜ ìœ„ì¹˜ì—ì„œ ë§ˆìš°ìŠ¤ ìœ„ì¹˜ë¡œ ì¡°ì¤€
         Vector3 playerPosition = transform.position;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         aimDirection = (mousePosition - playerPosition).normalized;
 
-        // °æ·Î Ç¥½Ã
+        // ì¡°ì¤€ì„ ì„ ê·¸ë¦°ë‹¤
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, playerPosition);
-        lineRenderer.SetPosition(1, playerPosition + (Vector3)(aimDirection * 10f)); // ÀÓÀÇÀÇ ±æÀÌ ¼³Á¤
+        lineRenderer.SetPosition(1, playerPosition + (Vector3)(aimDirection * 10f)); // ì¡°ì¤€ì„ ì˜ ê¸¸ì´ ì„¤ì •
 
-        // LineRenderer°¡ Å¸ÀÏ À§¿¡ º¸ÀÌµµ·Ï ZÃà Á¶Á¤
+        // Zì¶•ì„ í†µí•´ 2D í™”ë©´ì—ì„œì˜ ë¼ì¸ ê¹Šì´ ì„¤ì •
         lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
         lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));
     }
 
     public void LogLoadedAmmo()
     {
-        Debug.Log("Currently Loaded Ammo:");
+        Debug.Log("í˜„ì¬ ì¥ì „ëœ íƒ„ì•½:");
         for (int i = 0; i < currentLoadedAmmo.Count; i++)
         {
-            Debug.Log($"Slot {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
+            Debug.Log($"ìŠ¬ë¡¯ {i + 1}: {currentLoadedAmmo[i].itemName}, ìˆ˜ëŸ‰: {currentLoadedAmmo[i].quantity}");
         }
     }
 
     public void Attack(Vector2 direction)
     {
         Debug.Log(currentLoadedAmmo.Count);
-        if (projectilesFiredThisTurn >= maxProjectilesPerTurn || currentLoadedAmmo.Count == 0) // ÅºÈ¯ÀÌ ´Ù ¼Ò¸ğµÇ¸é °ø°İ ºÒ°¡
-            
+        if (projectilesFiredThisTurn >= maxProjectilesPerTurn || currentLoadedAmmo.Count == 0) // ë°œì‚¬ì²´ ìµœëŒ€ì¹˜ ë˜ëŠ” íƒ„ì•½ì´ ì—†ì„ ë•Œ
             return;
 
-        lineRenderer.positionCount = 0; // °æ·Î ¼û±â±â
+        lineRenderer.positionCount = 0; // ì¡°ì¤€ì„  ì œê±°
 
         GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
@@ -118,25 +112,24 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         {
             projectileRb = projectile.AddComponent<Rigidbody2D>();
         }
-        projectileRb.isKinematic = true; // ¹ß»çÃ¼¸¦ KinematicÀ¸·Î ¼³Á¤
-        projectileRb.velocity = direction * projectileSpeed; // ¹ß»çÃ¼ ¼Óµµ ¼³Á¤
+        projectileRb.isKinematic = true; // ë°œì‚¬ì²´ëŠ” Kinematic ì„¤ì •
+        projectileRb.velocity = direction * projectileSpeed; // ë°œì‚¬ì²´ ì†ë„ ì„¤ì •
 
-        // ¹ß»çÃ¼¿Í ÇÃ·¹ÀÌ¾îÀÇ Ãæµ¹ ¹«½Ã
+        // ë°œì‚¬ì²´ì™€ í”Œë ˆì´ì–´ ê°„ì˜ ì¶©ëŒ ë°©ì§€
         Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), GetComponent<Collider2D>());
 
-        // ¹ß»çÃ¼¿¡ Ãæµ¹ ÇÚµé·¯ Ãß°¡ ¹× µ¥¹ÌÁö ¼³Á¤
+        // ë°œì‚¬ì²´ì˜ ì¶©ëŒ ì²˜ë¦¬ ë° ë°ë¯¸ì§€ ì„¤ì •
         ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
-        collisionHandler.damage = currentLoadedAmmo[0].damage; // Åº¾àÀÇ ÇÇÇØ·® »ç¿ë
+        collisionHandler.damage = currentLoadedAmmo[0].damage; // ì¥ì „ëœ íƒ„ì•½ì˜ ë°ë¯¸ì§€ ì ìš©
         collisionHandler.projectileOwner = this;
 
-        projectilesFiredThisTurn++; // ÇöÀç ÅÏ¿¡¼­ ¹ß»çÇÑ ¹ß»çÃ¼ ¼ö Áõ°¡
-        projectilesOnField++; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö Áõ°¡
+        projectilesFiredThisTurn++; // ë°œì‚¬í•œ ë°œì‚¬ì²´ ìˆ˜ ì¦ê°€
+        projectilesOnField++; // í•„ë“œì— ì¡´ì¬í•˜ëŠ” ë°œì‚¬ì²´ ìˆ˜ ì¦ê°€
 
-        currentLoadedAmmo.RemoveAt(0); // Ã¹ ¹øÂ° ÅºÈ¯À» Á¦°Å
+        currentLoadedAmmo.RemoveAt(0); // ì²« ë²ˆì§¸ íƒ„ì•½ ì‚¬ìš© í›„ ì œê±°
 
-        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5ÃÊ ÈÄ¿¡ ¹ß»çÃ¼ Á¦°Å
+        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5ì´ˆ í›„ ë°œì‚¬ì²´ ì œê±°
     }
-
 
     IEnumerator DestroyProjectileAfterTime(GameObject projectile, float time)
     {
@@ -150,42 +143,36 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void NotifyProjectileDestroyed()
     {
-        projectilesOnField--; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö °¨¼Ò
+        projectilesOnField--; // í•„ë“œì— ì¡´ì¬í•˜ëŠ” ë°œì‚¬ì²´ ìˆ˜ ê°ì†Œ
     }
 
     public void ResetProjectilesFired()
     {
-        projectilesFiredThisTurn = 0;
-
+        projectilesFiredThisTurn = 0; // ë°œì‚¬ì²´ ìˆ˜ ì´ˆê¸°í™”
     }
 
     public void LoadAmmo(Ammo ammo)
     {
         if (currentLoadedAmmo.Count < maxProjectilesPerTurn)
         {
-            Debug.Log($"Loading ammo: {ammo.itemName} into chamber.");
-            currentLoadedAmmo.Add(ammo);
-            Debug.Log($"Current loaded ammo count: {currentLoadedAmmo.Count}");
-            
-            
+            Debug.Log($"íƒ„ì•½ ì¥ì „: {ammo.itemName}");
+            currentLoadedAmmo.Add(ammo); // íƒ„ì•½ ì¥ì „
+            Debug.Log($"í˜„ì¬ ì¥ì „ëœ íƒ„ì•½ ìˆ˜: {currentLoadedAmmo.Count}");
         }
         else
         {
-            Debug.LogError("Chamber is full! Cannot load more ammo.");
+            Debug.LogError("íƒ„ì•½ì‹¤ì´ ê°€ë“ ì°¼ìŠµë‹ˆë‹¤! ë” ì´ìƒ ì¥ì „í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 
-
-
-
     public void StartTurn()
     {
-        
+        // í„´ ì‹œì‘ ì‹œ í•„ìš”í•œ ë¡œì§ ì¶”ê°€ ê°€ëŠ¥
     }
 
     public void EndTurn()
     {
-        
+        // í„´ ì¢…ë£Œ ì‹œ í•„ìš”í•œ ë¡œì§ ì¶”ê°€ ê°€ëŠ¥
     }
 
     public int MaxActionPoints => maxActionPoints;
@@ -213,29 +200,28 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     public void SetLoadedAmmo(List<Ammo> loadedAmmo)
     {
-        Debug.Log("SetLoadedAmmo called from: " + new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name);
-        currentLoadedAmmo.Clear();
+        Debug.Log("SetLoadedAmmo í˜¸ì¶œë¨");
+        currentLoadedAmmo.Clear(); // ê¸°ì¡´ íƒ„ì•½ ì œê±°
         foreach (Ammo ammo in loadedAmmo)
         {
-            // °¢ Ammo °´Ã¼¸¦ º¹Á¦ÇÏ¿© »õ·Î¿î ÀÎ½ºÅÏ½º¸¦ ¸®½ºÆ®¿¡ Ãß°¡
+            // ê° íƒ„ì•½ ê°ì²´ë¥¼ ë³µì‚¬í•˜ì—¬ ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
             Ammo clonedAmmo = new Ammo(ammo.itemName, ammo.damage, ammo.effect, ammo.icon, ammo.quantity);
             currentLoadedAmmo.Add(clonedAmmo);
-            
         }
-        loadedAmmo.Clear();
-        //Debug.Log("ÇÃ·¹ÀÌ¾î ÄÄ¹î¿¡¼­ Loadedammo:");
-       // for (int i = 0; i < loadedAmmo.Count; i++)
-       // {
-          //  Debug.Log($"½½·Ô {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
-       // }
-       // Debug.Log("ÇÃ·¹ÀÌ¾î ÄÄ¹î¿¡¼­ CurrentLoadedammo:");
-       // for (int i = 0; i < currentLoadedAmmo.Count; i++)
-      //  {
-       //     Debug.Log($"½½·Ô {i + 1}: {currentLoadedAmmo[i].itemName}, Quantity: {currentLoadedAmmo[i].quantity}");
-       // }
-        
-        //ÀåÀüµÈ Åº¾à ¼³Á¤
-        projectilesFiredThisTurn = 0; // ¹ß»çÃ¼ ¹ß»ç ¼ö ÃÊ±âÈ­
-        
+        loadedAmmo.Clear(); // ì „ë‹¬ëœ ë¦¬ìŠ¤íŠ¸ ì´ˆê¸°í™”
+        projectilesFiredThisTurn = 0; // ë°œì‚¬ì²´ ìˆ˜ ì´ˆê¸°í™”
+    }
+    // ì „íˆ¬ ê°€ëŠ¥ ìƒíƒœë¡œ ì „í™˜
+    public void EnableCombat()
+    {
+        CanCombat = true;
+        Debug.Log("ì „íˆ¬ ê°€ëŠ¥ ìƒíƒœë¡œ ì „í™˜ë¨");
+    }
+
+    // ì „íˆ¬ ë¶ˆê°€ëŠ¥ ìƒíƒœë¡œ ì „í™˜
+    public void DisableCombat()
+    {
+        CanCombat = false;
+        Debug.Log("ì „íˆ¬ ë¶ˆê°€ëŠ¥ ìƒíƒœë¡œ ì „í™˜ë¨");
     }
 }

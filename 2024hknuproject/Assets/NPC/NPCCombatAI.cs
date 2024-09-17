@@ -3,49 +3,53 @@ using UnityEngine;
 
 public class NPCCombatAI : MonoBehaviour, ICombatant
 {
-    public GameObject projectilePrefab; // Åõ»çÃ¼ Prefab
-    public float projectileSpeed = 5f; // Åõ»çÃ¼ ¼Óµµ
-    public int projectileDamage = 10; // Åõ»çÃ¼ µ¥¹ÌÁö
-    public int maxProjectilesPerTurn = 3; // ÅÏ´ç ÃÖ´ë ¹ß»çÃ¼ ¼ö
-    private int projectilesFiredThisTurn = 0; // ÇöÀç ÅÏ¿¡¼­ ¹ß»çÇÑ ¹ß»çÃ¼ ¼ö
-    private int projectilesOnField = 0; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö
-    public int maxActionPoints = 5; // ÃÖ´ë Çàµ¿·Â
-    private int currentActionPoints;
-    private bool isTurnComplete; // ÅÏ ¿Ï·á È®ÀÎ
-    private Rigidbody2D rb;
-    public LayerMask coverLayer;
-    public float weaponRange = 10f; // ¹«±âÀÇ »çÁ¤°Å¸®
-    public float moveSpeed = 2f; // ÀÌµ¿ ¼Óµµ
+    public GameObject projectilePrefab; // ë°œì‚¬ì²´ í”„ë¦¬íŒ¹
+    public float projectileSpeed = 5f; // ë°œì‚¬ì²´ ì†ë„
+    public int projectileDamage = 10; // ë°œì‚¬ì²´ í”¼í•´ëŸ‰
+    public int maxProjectilesPerTurn = 3; // í„´ë‹¹ ìµœëŒ€ ë°œì‚¬ì²´ ìˆ˜
+    private int projectilesFiredThisTurn = 0; // ì´ë²ˆ í„´ì— ë°œì‚¬ëœ ë°œì‚¬ì²´ ìˆ˜
+    private int projectilesOnField = 0; // í•„ë“œì— ë‚¨ì•„ìˆëŠ” ë°œì‚¬ì²´ ìˆ˜
+    public int maxActionPoints = 5; // ìµœëŒ€ í–‰ë™ í¬ì¸íŠ¸
+    private int currentActionPoints; // í˜„ì¬ ë‚¨ì€ í–‰ë™ í¬ì¸íŠ¸
+    private bool isTurnComplete; // í„´ì´ ì™„ë£Œë˜ì—ˆëŠ”ì§€ ì—¬ë¶€
+    private Rigidbody2D rb; // NPCì˜ Rigidbody2D ì»´í¬ë„ŒíŠ¸
+    public LayerMask coverLayer; // ì—„íë¬¼ ë ˆì´ì–´
+    public float weaponRange = 10f; // ë¬´ê¸° ì‚¬ê±°ë¦¬
+    public float moveSpeed = 2f; // ì´ë™ ì†ë„
 
-    private Vector2 targetPosition;
-    private bool isMoving;
-    private float timeAtSamePosition; // µ¿ÀÏ À§Ä¡¿¡ ¸Ó¹® ½Ã°£
-    private Vector2 lastPosition; // ¸¶Áö¸· À§Ä¡
+    private Vector2 targetPosition; // ëª©í‘œ ìœ„ì¹˜
+    private bool isMoving; // ì´ë™ ì¤‘ì¸ì§€ ì—¬ë¶€
+    private float timeAtSamePosition; // ë™ì¼í•œ ìœ„ì¹˜ì— ë¨¸ë¬¸ ì‹œê°„
+    private Vector2 lastPosition; // ë§ˆì§€ë§‰ ìœ„ì¹˜
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>(); // Rigidbody2D ì»´í¬ë„ŒíŠ¸ ê°€ì ¸ì˜¤ê¸°
     }
 
     private void FixedUpdate()
     {
-        if (isMoving)
+        // NPCê°€ ì´ë™ ì¤‘ì¼ ë•Œ
+        if (isMoving && !isTurnComplete) // í„´ì´ ì¢…ë£Œëœ ìƒíƒœê°€ ì•„ë‹ ë•Œë§Œ ì´ë™ ì²˜ë¦¬
         {
             Vector2 newPosition = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
             rb.MovePosition(newPosition);
 
-            if (Vector2.Distance(rb.position, targetPosition) < 0.1f)
+            if (Vector2.Distance(rb.position, targetPosition) < 0.1f) // ëª©í‘œ ìœ„ì¹˜ì— ë„ë‹¬í•˜ë©´ ì´ë™ ì¢…ë£Œ
             {
                 isMoving = false;
             }
 
-            if (rb.position == lastPosition)
+            if (rb.position == lastPosition) // NPCê°€ ê°™ì€ ìœ„ì¹˜ì— ë¨¸ë¬´ëŠ”ì§€ í™•ì¸
             {
                 timeAtSamePosition += Time.fixedDeltaTime;
-                if (timeAtSamePosition >= 3.0f)
+                if (timeAtSamePosition >= 3.0f) // 3ì´ˆ ì´ìƒ ê°™ì€ ìœ„ì¹˜ì— ìˆìœ¼ë©´ í„´ ì¢…ë£Œ
                 {
                     isMoving = false;
-                    EndTurn(); // 3ÃÊ µ¿¾È ¿òÁ÷ÀÓÀÌ ¾øÀ¸¸é ÅÏ Á¾·á
+                    if (!isTurnComplete) // í„´ì´ ì¢…ë£Œë˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì—ë§Œ EndTurn() í˜¸ì¶œ
+                    {
+                        EndTurn();
+                    }
                 }
             }
             else
@@ -56,34 +60,43 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         }
     }
 
+    // NPCì˜ ì „íˆ¬ AIë¥¼ ì‹¤í–‰í•˜ëŠ” ì½”ë£¨í‹´
     public IEnumerator ExecuteCombatAI(int actionPoints)
     {
+        if (isTurnComplete) yield break; // í„´ì´ ì´ë¯¸ ëë‚¬ë‹¤ë©´ ë” ì´ìƒ ì§„í–‰í•˜ì§€ ì•ŠìŒ
+
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
             Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
             float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
 
-            // ÇÃ·¹ÀÌ¾î¿ÍÀÇ °Å¸®¸¦ °è»êÇÏ¿© ÀûÀıÇÑ À§Ä¡·Î ÀÌµ¿
+            // í”Œë ˆì´ì–´ì™€ì˜ ê±°ë¦¬ê°€ ë¬´ê¸° ì‚¬ê±°ë¦¬ ë°–ì´ë©´ ì´ë™
             if (distanceToPlayer > weaponRange)
             {
-                MoveToPosition((Vector2)player.transform.position); // player.transform.positionÀ» Vector2·Î º¯È¯
+                MoveToPosition((Vector2)player.transform.position);
+                yield return new WaitUntil(() => !isMoving); // ì´ë™ì´ ëë‚  ë•Œê¹Œì§€ ëŒ€ê¸°
             }
 
             yield return new WaitForSeconds(1.0f);
 
-            // ÇÃ·¹ÀÌ¾î °ø°İ
+            // í”Œë ˆì´ì–´ ê³µê²©
             Attack(directionToPlayer);
             yield return new WaitForSeconds(1.0f);
         }
 
-        // ÇÃ·¹ÀÌ¾î¿Í NPC »çÀÌÀÇ ¾öÆó¹° Å½»ö ¹× ÀÌµ¿
+        // ì—„íë¬¼ì„ ì°¾ê³  ì´ë™
         FindBestCoverAndMove();
 
-        yield return new WaitForSeconds(3.0f); // NPC°¡ 3ÃÊ µ¿¾È ¿òÁ÷ÀÓÀÌ ¾øÀ¸¸é ÅÏ Á¾·á
-        EndTurn();
+        yield return new WaitForSeconds(3.0f); // NPCëŠ” 3ì´ˆ ë™ì•ˆ ëŒ€ê¸°
+
+        if (!isTurnComplete) // í„´ì´ ì¢…ë£Œë˜ì§€ ì•Šì•˜ì„ ê²½ìš°ì—ë§Œ EndTurn() í˜¸ì¶œ
+        {
+            EndTurn();
+        }
     }
 
+    // ê°€ì¥ ì í•©í•œ ì—„íë¬¼ì„ ì°¾ì•„ ì´ë™í•˜ëŠ” í•¨ìˆ˜
     private void FindBestCoverAndMove()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -99,10 +112,8 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
             Vector2 directionToCover = (coverPosition - rb.position).normalized;
             Vector2 directionToPlayerFromCover = ((Vector2)player.transform.position - coverPosition).normalized;
 
-            // ÇÃ·¹ÀÌ¾î¿Í ¾öÆó¹°ÀÌ NPC-¾öÆó¹°-ÇÃ·¹ÀÌ¾î·Î ÀÏÁ÷¼±»ó¿¡ ÀÖ´ÂÁö È®ÀÎ
+            // ì—„íë¬¼ì´ í”Œë ˆì´ì–´ì™€ NPC ì‚¬ì´ì— ìˆëŠ”ì§€ í™•ì¸
             float dotProduct = Vector2.Dot(directionToCover, directionToPlayerFromCover);
-
-            // ÀÏÁ÷¼±»ó¿¡ °¡±î¿ï¼ö·Ï Á¡¼ö¸¦ ³ô°Ô, NPC¿Í ¾öÆó¹° »çÀÌÀÇ °Å¸®·Î Á¡¼ö Á¶Á¤
             float distanceToNpc = Vector2.Distance(rb.position, coverPosition);
             float coverScore = dotProduct - distanceToNpc;
 
@@ -120,25 +131,22 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         }
     }
 
+    // ìµœì ì˜ ì—„íë¬¼ ìœ„ì¹˜ë¥¼ ê³„ì‚°í•˜ëŠ” í•¨ìˆ˜
     private Vector2 CalculateOptimalPosition(Vector2 coverPosition, Vector2 playerPosition)
     {
         Vector2 directionToPlayer = (playerPosition - coverPosition).normalized;
-        Vector2 optimalPosition = coverPosition - directionToPlayer * 1.0f; // ¾öÆó¹° µÚ 1.0f °Å¸®·Î ÀÌµ¿
+        Vector2 optimalPosition = coverPosition - directionToPlayer * 1.0f; // ì—„íë¬¼ì—ì„œ í”Œë ˆì´ì–´ì™€ 1.0f ë–¨ì–´ì§„ ìœ„ì¹˜ë¡œ ì´ë™
         return optimalPosition;
     }
 
+    // NPCë¥¼ ëª©í‘œ ìœ„ì¹˜ë¡œ ì´ë™ì‹œí‚¤ëŠ” í•¨ìˆ˜
     private void MoveToPosition(Vector2 position)
     {
         targetPosition = position;
         isMoving = true;
     }
 
-    private void MoveCharacter(Vector2 direction)
-    {
-        targetPosition = rb.position + direction * 3f;
-        isMoving = true;
-    }
-
+    // NPC ê³µê²© í•¨ìˆ˜
     public void Attack(Vector2 direction)
     {
         if (projectilesFiredThisTurn >= maxProjectilesPerTurn)
@@ -150,59 +158,67 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         {
             projectileRb = projectile.AddComponent<Rigidbody2D>();
         }
-        projectileRb.isKinematic = true; // ¹ß»çÃ¼¸¦ KinematicÀ¸·Î ¼³Á¤
-        projectileRb.velocity = direction * projectileSpeed; // ¹ß»çÃ¼ ¼Óµµ ¼³Á¤
+        projectileRb.isKinematic = true; // ë°œì‚¬ì²´ë¥¼ Kinematicìœ¼ë¡œ ì„¤ì •
+        projectileRb.velocity = direction * projectileSpeed; // ë°œì‚¬ì²´ ì†ë„ ì„¤ì •
 
-        // ¹ß»çÃ¼¿Í NPCÀÇ Ãæµ¹ ¹«½Ã
+        // NPCì™€ ë°œì‚¬ì²´ì˜ ì¶©ëŒ ë¬´ì‹œ
         Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), GetComponent<Collider2D>());
 
-        // ¹ß»çÃ¼¿¡ Ãæµ¹ ÇÚµé·¯ Ãß°¡ ¹× µ¥¹ÌÁö ¼³Á¤
+        // ë°œì‚¬ì²´ ì¶©ëŒ í•¸ë“¤ëŸ¬ ì¶”ê°€ ë° í”¼í•´ëŸ‰ ì„¤ì •
         ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
         collisionHandler.damage = projectileDamage;
         collisionHandler.projectileOwner = this;
 
-        projectilesFiredThisTurn++; // ÇöÀç ÅÏ¿¡¼­ ¹ß»çÇÑ ¹ß»çÃ¼ ¼ö Áõ°¡
-        projectilesOnField++; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö Áõ°¡
-        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5ÃÊ ÈÄ¿¡ ¹ß»çÃ¼ Á¦°Å
+        projectilesFiredThisTurn++; // ì´ë²ˆ í„´ì— ë°œì‚¬ëœ ë°œì‚¬ì²´ ìˆ˜ ì¦ê°€
+        projectilesOnField++; // í•„ë“œì— ìˆëŠ” ë°œì‚¬ì²´ ìˆ˜ ì¦ê°€
+        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5ì´ˆ í›„ ë°œì‚¬ì²´ íŒŒê´´
     }
 
+    // ë°œì‚¬ì²´ë¥¼ ì¼ì • ì‹œê°„ì´ ì§€ë‚œ í›„ íŒŒê´´í•˜ëŠ” ì½”ë£¨í‹´
     IEnumerator DestroyProjectileAfterTime(GameObject projectile, float time)
     {
         yield return new WaitForSeconds(time);
         if (projectile != null)
         {
             Destroy(projectile);
-            projectilesOnField--; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö °¨¼Ò
+            projectilesOnField--; // í•„ë“œì—ì„œ ë°œì‚¬ì²´ ì œê±°
         }
     }
 
+    // ë°œì‚¬ì²´ê°€ íŒŒê´´ë˜ì—ˆìŒì„ ì•Œë¦¬ëŠ” í•¨ìˆ˜
     public void NotifyProjectileDestroyed()
     {
-        projectilesOnField--; // ÇÊµå¿¡ Á¸ÀçÇÏ´Â ¹ß»çÃ¼ ¼ö °¨¼Ò
+        projectilesOnField--; // í•„ë“œì—ì„œ ë°œì‚¬ì²´ ìˆ˜ ê°ì†Œ
     }
 
+    // í„´ì´ ì‹œì‘ë  ë•Œ ë°œì‚¬ì²´ ìˆ˜ ì´ˆê¸°í™”
     public void ResetProjectilesFired()
     {
-        projectilesFiredThisTurn = 0; // ¹ß»çÃ¼ ¼ö ÃÊ±âÈ­
+        projectilesFiredThisTurn = 0;
     }
 
+    // NPCì˜ í„´ ì‹œì‘
     public void StartTurn()
     {
-        currentActionPoints = maxActionPoints; // ÅÏÀÌ ½ÃÀÛµÉ ¶§ Çàµ¿·Â ÃÊ±âÈ­
-        isTurnComplete = false; // ÅÏ ½ÃÀÛ ½Ã ÃÊ±âÈ­
-        ResetProjectilesFired(); // ¹ß»çÃ¼ ¼ö ÃÊ±âÈ­
-        timeAtSamePosition = 0f; // ½Ã°£À» ÃÊ±âÈ­
-        lastPosition = rb.position; // ÇöÀç À§Ä¡¸¦ ÀúÀå
-        StartCoroutine(ExecuteCombatAI(currentActionPoints));
+        currentActionPoints = maxActionPoints; // í–‰ë™ í¬ì¸íŠ¸ ì´ˆê¸°í™”
+        isTurnComplete = false; // í„´ ì™„ë£Œ ìƒíƒœ ì´ˆê¸°í™”
+        ResetProjectilesFired(); // ë°œì‚¬ì²´ ìˆ˜ ì´ˆê¸°í™”
+        timeAtSamePosition = 0f;
+        lastPosition = rb.position;
+        StartCoroutine(ExecuteCombatAI(currentActionPoints)); // ì „íˆ¬ AI ì‹¤í–‰
     }
 
+    // NPCì˜ í„´ ì¢…ë£Œ
     public void EndTurn()
     {
-        isTurnComplete = true; // ÅÏ ¿Ï·á ¼³Á¤
-        TurnManager.Instance.NextTurn(); // ÅÏ Á¾·á ÈÄ ´ÙÀ½ ÅÏÀ¸·Î ÀüÈ¯
+        if (isTurnComplete) return; // ì´ë¯¸ í„´ì´ ì¢…ë£Œëœ ê²½ìš° ì‹¤í–‰í•˜ì§€ ì•ŠìŒ
+
+        isTurnComplete = true; // í„´ ì¢…ë£Œ ìƒíƒœë¡œ ë³€ê²½
+        TurnManager.Instance.NextTurn(); // ë‹¤ìŒ í„´ìœ¼ë¡œ ë„˜ì–´ê°
         Debug.Log("Turn ended.");
     }
 
+    // ICombatant ì¸í„°í˜ì´ìŠ¤ êµ¬í˜„
     public int MaxActionPoints => maxActionPoints;
     public int CurrentActionPoints
     {

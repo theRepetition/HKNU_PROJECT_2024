@@ -2,62 +2,66 @@ using UnityEngine;
 
 public class PlayerTurnManager : MonoBehaviour, ITurnTaker
 {
-    public int maxActionPoints = 10; // �ִ� �ൿ��
-    private int currentActionPoints;
-    private bool isTurnComplete = false;
-    public PlayerMovement playerMovement;
-    private PlayerCombat playerCombat;
+    public int maxActionPoints = 10; // 최대 행동 포인트
+    private int currentActionPoints; // 현재 행동 포인트
+    private bool isTurnComplete = false; // 턴 완료 여부
+    public PlayerMovement playerMovement; // 플레이어의 이동 스크립트
+    private PlayerCombat playerCombat; // 플레이어의 전투 스크립트
 
     void Start()
     {
-        playerMovement = GetComponent<PlayerMovement>();
-        playerCombat = GetComponent<PlayerCombat>();
-        TurnManager.Instance.RegisterTurnTaker(this);
+        playerMovement = GetComponent<PlayerMovement>(); // PlayerMovement 스크립트를 가져옴
+        playerCombat = GetComponent<PlayerCombat>(); // PlayerCombat 스크립트를 가져옴
+        TurnManager.Instance.RegisterTurnTaker(this); // TurnManager에 이 오브젝트를 턴 참여자로 등록
     }
 
     void Update()
     {
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == this)
-        {
-            if (Input.GetKeyDown(KeyCode.Space) && !isTurnComplete && playerCombat.ProjectilesOnField == 0)
-            {
-                EndTurn();
-            }
-        }
+        
     }
 
+    // 턴을 시작하는 함수
     public void StartTurn()
     {
-        currentActionPoints = maxActionPoints; // ���� ���۵� �� �ൿ�� �ʱ�ȭ
-        isTurnComplete = false; // �� ���� �� �ʱ�ȭ
+        currentActionPoints = maxActionPoints; // 턴 시작 시 행동 포인트를 최대치로 초기화
+        isTurnComplete = false; // 턴이 완료되지 않은 상태로 설정
 
-        playerMovement.EnableMovement(); // �÷��̾��� ������ Ȱ��ȭ
-        playerCombat.ResetProjectilesFired(); // �߻�ü �� �ʱ�ȭ
-        Debug.Log("�� �� ����");
+        playerMovement.EnableMovement(); // 플레이어의 이동을 활성화
+        playerCombat.EnableCombat(); // 공격 활성화
+        playerCombat.ResetProjectilesFired(); // 발사체 수 초기화
+        Debug.Log("플레이어 턴 시작");
     }
 
+    // 턴을 종료하는 함수
     public void EndTurn()
     {
-        playerMovement.DisableMovement(); // �÷��̾��� ������ ��Ȱ��ȭ
-        isTurnComplete = true; // �� �Ϸ� ����
-        Debug.Log("�� ����");
-        TurnManager.Instance.NextTurn(); // �� ���� �� ���� ������ ��ȯ
+        playerCombat.DisableCombat(); // 공격 비활성
+        playerMovement.DisableMovement(); // 플레이어의 이동을 비활성화
+        isTurnComplete = true; // 턴 완료 상태로 설정
+        
+        Debug.Log("플레이어 턴 종료");
+        TurnManager.Instance.NextTurn(); // 다음 턴으로 이동
     }
 
-    public bool IsTurnComplete => isTurnComplete; // �� �Ϸ� ����
+    // 턴 완료 상태를 반환
+    public bool IsTurnComplete => isTurnComplete;
 
-    public string Name => gameObject.name; // �̸� ��ȯ
+    // 게임 오브젝트의 이름을 반환
+    public string Name => gameObject.name;
 
+    // 이동 비활성화 함수
     public void DisableMovement()
     {
         playerMovement.DisableMovement();
     }
 
+    // 이동 활성화 함수
     public void EnableMovement()
     {
         playerMovement.EnableMovement();
     }
 
+    // 현재 행동 포인트를 가져오거나 설정
     public int CurrentActionPoints
     {
         get => currentActionPoints;

@@ -6,23 +6,24 @@ public class TurnManager : MonoBehaviour
 {
     public static TurnManager Instance;
 
-    private List<ITurnTaker> turnTakers = new List<ITurnTaker>();
-    private int currentTurnIndex;
-    public ITurnTaker CurrentTurnTaker { get; private set; }
+    private List<ITurnTaker> turnTakers = new List<ITurnTaker>(); // í„´ ì°¸ì—¬ì ëª©ë¡
+    private int currentTurnIndex; // í˜„ì¬ í„´ ì¸ë±ìŠ¤
+    public ITurnTaker CurrentTurnTaker { get; private set; } // í˜„ì¬ í„´ì„ ê°€ì§„ ì°¸ì—¬ì
 
-    public List<ITurnTaker> TurnTakers => turnTakers; // TurnTakers ¸®½ºÆ®¿¡ ´ëÇÑ Á¢±ÙÀÚ
+    public List<ITurnTaker> TurnTakers => turnTakers; // í„´ ì°¸ì—¬ì ëª©ë¡ ë°˜í™˜
 
-    public string npcLayerName = "npcLayer"; // NPC ·¹ÀÌ¾î ÀÌ¸§
+    public string npcLayerName = "npcLayer"; // NPC ë ˆì´ì–´ ì´ë¦„
     private int npcLayer;
-    public float maxDistanceFromPlayer = 15f; // ÇÃ·¹ÀÌ¾î¿Í NPC °£ÀÇ ÃÖ´ë °Å¸®
+    public float maxDistanceFromPlayer = 15f; // í”Œë ˆì´ì–´ì™€ NPC ê°„ì˜ ìµœëŒ€ ê±°ë¦¬
 
     private void Awake()
     {
+        // ì‹±ê¸€í†¤ íŒ¨í„´ êµ¬í˜„
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            npcLayer = LayerMask.NameToLayer(npcLayerName); // NPC ·¹ÀÌ¾î ¼³Á¤
+            npcLayer = LayerMask.NameToLayer(npcLayerName); // NPC ë ˆì´ì–´ ì„¤ì •
         }
         else
         {
@@ -30,9 +31,10 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    // í„´ ì°¸ì—¬ìë¥¼ ë“±ë¡í•˜ëŠ” í•¨ìˆ˜
     public void RegisterTurnTaker(ITurnTaker turnTaker)
     {
-        // Áßº¹ µî·Ï ¹æÁö: ¸®½ºÆ®¿¡ ÀÌ¹Ì ÀÖ´ÂÁö È®ÀÎ
+        // ì¤‘ë³µ ë“±ë¡ ë°©ì§€: ë¦¬ìŠ¤íŠ¸ì— ì´ë¯¸ ìˆëŠ”ì§€ í™•ì¸
         if (!turnTakers.Contains(turnTaker))
         {
             turnTakers.Add(turnTaker);
@@ -42,6 +44,8 @@ public class TurnManager : MonoBehaviour
             Debug.LogWarning($"TurnTaker '{(turnTaker as MonoBehaviour)?.gameObject.name}' is already registered.");
         }
     }
+
+    // NPCê°€ í”Œë ˆì´ì–´ ê·¼ì²˜ì— ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
     private bool IsNpcInRangeOfPlayer(ITurnTaker npc, float range)
     {
         var npcObject = (npc as MonoBehaviour)?.gameObject;
@@ -53,7 +57,7 @@ public class TurnManager : MonoBehaviour
         return Vector2.Distance(npcObject.transform.position, playerObject.transform.position) <= range;
     }
 
-
+    // í„´ ì°¸ì—¬ìë¥¼ í•´ì œí•˜ëŠ” í•¨ìˆ˜
     public void UnregisterTurnTaker(ITurnTaker turnTaker)
     {
         if (turnTakers.Contains(turnTaker))
@@ -61,7 +65,7 @@ public class TurnManager : MonoBehaviour
             int indexToRemove = turnTakers.IndexOf(turnTaker);
             turnTakers.Remove(turnTaker);
 
-            // currentTurnIndex¸¦ Á¶Á¤ÇÔ
+            // í˜„ì¬ í„´ ì¸ë±ìŠ¤ë¥¼ ì¡°ì •
             if (indexToRemove <= currentTurnIndex && currentTurnIndex > 0)
             {
                 currentTurnIndex--;
@@ -69,6 +73,7 @@ public class TurnManager : MonoBehaviour
         }
     }
 
+    // NPCê°€ ì—†ìœ¼ë©´ ì‹¤ì‹œê°„ ëª¨ë“œë¡œ ì „í™˜í•˜ëŠ” í•¨ìˆ˜
     public void CheckForRealTimeMode()
     {
         bool hasNPC = false;
@@ -85,14 +90,13 @@ public class TurnManager : MonoBehaviour
         if (!hasNPC)
         {
             GameModeManager.Instance.SwitchToRealTimeMode();
-            StopAllCoroutines(); // ¸ğµç ÄÚ·çÆ¾À» ÁßÁöÇÏ¿© ÅÏ ·çÆ¾À» Á¾·áÇÔ
+            StopAllCoroutines(); // ëª¨ë“  ì½”ë£¨í‹´ì„ ì¤‘ì§€í•˜ì—¬ í„´ ë£¨í”„ ì¢…ë£Œ
         }
     }
 
-
+    // í„´ì œ ëª¨ë“œë¥¼ ì‹œì‘í•˜ëŠ” í•¨ìˆ˜
     public void StartTurnBasedMode()
     {
-        // ÇÃ·¹ÀÌ¾îÀÇ À§Ä¡¸¦ ±âÁØÀ¸·Î ±ÙÃ³¿¡ ÀÖ´Â NPC¸¸ ÅÏ Å×ÀÌÄ¿ ¸®½ºÆ®¿¡ µî·Ï
         var playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject == null)
         {
@@ -114,22 +118,17 @@ public class TurnManager : MonoBehaviour
             }
         }
 
-        // ÇÃ·¹ÀÌ¾îµµ ¸®½ºÆ®¿¡ Ãß°¡
+        // í”Œë ˆì´ì–´ë„ í„´ ì°¸ì—¬ì ë¦¬ìŠ¤íŠ¸ì— ì¶”ê°€
         var playerTurnTaker = playerObject.GetComponent<ITurnTaker>();
         if (playerTurnTaker != null)
         {
             RegisterTurnTaker(playerTurnTaker);
         }
 
-        
-
         StartCoroutine(TurnRoutine());
     }
 
-
-    
-
-
+    // ë””ë²„ê¹…ìš©ìœ¼ë¡œ í˜„ì¬ í„´ ì°¸ì—¬ìë¥¼ ì¶œë ¥í•˜ëŠ” í•¨ìˆ˜
     public void DebugTurnTakers()
     {
         Debug.Log("Current Turn Takers:");
@@ -146,32 +145,32 @@ public class TurnManager : MonoBehaviour
             }
         }
     }
-private void CheckForRemainingTurnTakers()
-{
-    // ÇÃ·¹ÀÌ¾î¸¦ Á¦¿ÜÇÑ ´Ù¸¥ TurnTaker°¡ ÀÖ´ÂÁö È®ÀÎ
-    bool hasOtherTurnTakers = false;
 
-    foreach (var turnTaker in turnTakers)
+    // í”Œë ˆì´ì–´ ì™¸ì— í„´ ì°¸ì—¬ìê°€ ë‚¨ì•„ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
+    private void CheckForRemainingTurnTakers()
     {
-        if (!(turnTaker is PlayerTurnManager))
+        bool hasOtherTurnTakers = false;
+
+        foreach (var turnTaker in turnTakers)
         {
-            hasOtherTurnTakers = true;
-            break;
+            if (!(turnTaker is PlayerTurnManager))
+            {
+                hasOtherTurnTakers = true;
+                break;
+            }
+        }
+
+        // ë‹¤ë¥¸ í„´ ì°¸ì—¬ìê°€ ì—†ìœ¼ë©´ ì‹¤ì‹œê°„ ëª¨ë“œë¡œ ì „í™˜
+        if (!hasOtherTurnTakers)
+        {
+            GameModeManager.Instance.SwitchToRealTimeMode();
+            StopAllCoroutines();
+            Debug.Log("No more NPCs. Switching to real-time mode.");
         }
     }
 
-    // ´Ù¸¥ TurnTaker°¡ ¾øÀ¸¸é ½Ç½Ã°£ ¸ğµå·Î ÀüÈ¯
-    if (!hasOtherTurnTakers)
-    {
-        GameModeManager.Instance.SwitchToRealTimeMode();
-        StopAllCoroutines();
-        Debug.Log("No more NPCs. Switching to real-time mode.");
-    }
-}
-
-
-
-private IEnumerator TurnRoutine()
+    // í„´ì„ ê´€ë¦¬í•˜ëŠ” ì½”ë£¨í‹´
+    private IEnumerator TurnRoutine()
     {
         while (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
@@ -179,6 +178,7 @@ private IEnumerator TurnRoutine()
         }
     }
 
+    // í„´ ì°¸ì—¬ìê°€ í„´ì„ ì°¨ë¡€ëŒ€ë¡œ ìˆ˜í–‰í•˜ëŠ” í•¨ìˆ˜
     private IEnumerator TakeTurns()
     {
         while (true)
@@ -191,18 +191,19 @@ private IEnumerator TurnRoutine()
 
             CurrentTurnTaker = turnTakers[currentTurnIndex];
 
-            // NPCÀÇ ÅÏÀÌ ½ÃÀÛµÉ ¶§ °Å¸® Ã¼Å© ÈÄ Á¦°Å
+            // NPCê°€ í”Œë ˆì´ì–´ ë²”ìœ„ ë°–ì— ìˆìœ¼ë©´ í„´ì—ì„œ ì œê±°
             if (!(CurrentTurnTaker is PlayerTurnManager) && !IsNpcInRangeOfPlayer(CurrentTurnTaker, maxDistanceFromPlayer))
             {
                 UnregisterTurnTaker(CurrentTurnTaker);
                 continue;
             }
+
             if (CurrentTurnTaker is PlayerTurnManager)
             {
                 CheckForRemainingNPCs();
             }
 
-            // CurrentTurnTaker°¡ À¯È¿ÇÑÁö È®ÀÎÇÔ
+            // ìœ íš¨í•œ í„´ ì°¸ì—¬ìì¸ì§€ í™•ì¸
             if (CurrentTurnTaker == null || CurrentTurnTaker as MonoBehaviour == null)
             {
                 turnTakers.RemoveAt(currentTurnIndex);
@@ -215,9 +216,9 @@ private IEnumerator TurnRoutine()
             }
 
             CurrentTurnTaker.StartTurn();
-            Debug.Log($"{CurrentTurnTaker.Name}ÀÇ ÅÏ ½ÃÀÛ"); // ´©±¸ÀÇ ÅÏÀÎÁö ·Î±× Ãâ·Â
+            Debug.Log($"{CurrentTurnTaker.Name}ì˜ í„´ ì‹œì‘");
 
-            // NPC ÅÏÀÌ¸é ÇÃ·¹ÀÌ¾î ¿òÁ÷ÀÓ ºñÈ°¼ºÈ­
+            // NPCë¼ë©´ í”Œë ˆì´ì–´ ì´ë™ ë¹„í™œì„±í™”
             if (!(CurrentTurnTaker is PlayerTurnManager))
             {
                 var player = FindObjectOfType<PlayerTurnManager>();
@@ -233,85 +234,78 @@ private IEnumerator TurnRoutine()
             }
 
             CurrentTurnTaker.EndTurn();
-            Debug.Log($"{CurrentTurnTaker.Name}ÀÇ ÅÏ Á¾·á"); // ´©±¸ÀÇ ÅÏÀÌ Á¾·áµÇ¾ú´ÂÁö ·Î±× Ãâ·Â
+            Debug.Log($"{CurrentTurnTaker.Name}ì˜ í„´ ì¢…ë£Œ");
 
             currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
 
-            // ´ÙÀ½ ÅÏ ½ÃÀÛ ½Ã NPC°¡ ÀÖ´ÂÁö È®ÀÎ
+            // NPCê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ì—¬ ì‹¤ì‹œê°„ ëª¨ë“œ ì „í™˜ ì²´í¬
             CheckForRealTimeMode();
         }
     }
 
-
-
-public void NextTurn()
-{
+    // ë‹¤ìŒ í„´ìœ¼ë¡œ ë„˜ì–´ê°€ëŠ” í•¨ìˆ˜
+    public void NextTurn()
+    {
         StartCoroutine(CheckForNearbyNPCsAndEndTurnIfNone());
         currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
-        // µğ¹ö±×: ÇöÀç µî·ÏµÈ TurnTaker ¸ñ·Ï Ãâ·Â
-        DebugTurnTakers();
-        // ÇöÀç ÅÏ Å×ÀÌÄ¿°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é NPC °Ë»ç ¼öÇà
+        DebugTurnTakers(); // í˜„ì¬ í„´ ì°¸ì—¬ì ë””ë²„ê¹… ì •ë³´ ì¶œë ¥
+
         if (turnTakers.Count > 0)
-    {
-        CurrentTurnTaker = turnTakers[currentTurnIndex];
-
-        if (!(CurrentTurnTaker is PlayerTurnManager) && !IsNpcInRangeOfPlayer(CurrentTurnTaker, maxDistanceFromPlayer))
         {
-            UnregisterTurnTaker(CurrentTurnTaker);
-            NextTurn();  // Àç±ÍÀûÀ¸·Î ´ÙÀ½ ÅÏÀ¸·Î ³Ñ¾î°¡±â
-            return;
-        }
+            CurrentTurnTaker = turnTakers[currentTurnIndex];
 
-        if (CurrentTurnTaker != null)
-        {
-            // NPC ÅÏÀÌ¸é ÇÃ·¹ÀÌ¾î ¿òÁ÷ÀÓ ºñÈ°¼ºÈ­
-            if (!(CurrentTurnTaker is PlayerTurnManager))
+            if (!(CurrentTurnTaker is PlayerTurnManager) && !IsNpcInRangeOfPlayer(CurrentTurnTaker, maxDistanceFromPlayer))
             {
-                var player = FindObjectOfType<PlayerTurnManager>();
-                if (player != null)
-                {
-                    player.DisableMovement();
-                }
-            }
-            else
-            {
-                var player = FindObjectOfType<PlayerTurnManager>();
-                if (player != null)
-                {
-                    player.EnableMovement();
-                }
+                UnregisterTurnTaker(CurrentTurnTaker);
+                NextTurn();  // ë‹¤ìŒ í„´ìœ¼ë¡œ ë„˜ì–´ê°
+                return;
             }
 
-            CurrentTurnTaker.StartTurn();
-            Debug.Log($"{CurrentTurnTaker.Name}ÀÇ ÅÏ ½ÃÀÛ");
+            if (CurrentTurnTaker != null)
+            {
+                // NPCì¼ ê²½ìš° í”Œë ˆì´ì–´ ì´ë™ ë¹„í™œì„±í™”
+                if (!(CurrentTurnTaker is PlayerTurnManager))
+                {
+                    var player = FindObjectOfType<PlayerTurnManager>();
+                    if (player != null)
+                    {
+                        player.DisableMovement();
+                    }
+                }
+                else
+                {
+                    var player = FindObjectOfType<PlayerTurnManager>();
+                    if (player != null)
+                    {
+                        player.EnableMovement();
+                    }
+                }
 
-            // ÅÏÀÌ ½ÃÀÛµÉ ¶§ NPC°¡ ÀÖ´ÂÁö È®ÀÎ
-            CheckForRealTimeMode();
+                CurrentTurnTaker.StartTurn();
+                Debug.Log($"{CurrentTurnTaker.Name}ì˜ í„´ ì‹œì‘");
+
+                CheckForRealTimeMode();
+            }
         }
+
+        CheckForRealTimeMode();
+        CheckForRemainingTurnTakers();
     }
 
-    // NPC°¡ ¾ø´ÂÁö È®ÀÎ
-    CheckForRealTimeMode();
-
-    // ÅÏ Á¾·á ÈÄ ¸®½ºÆ® °Ë»ç
-    CheckForRemainingTurnTakers();
-}
-
+    // í„´ì œ ëª¨ë“œë¥¼ ì¢…ë£Œí•˜ëŠ” í•¨ìˆ˜
     public void EndTurnBasedMode()
     {
-        // ¸ğµç ÅÏÅ×ÀÌÄ¿ Á¦°Å
         turnTakers.Clear();
         currentTurnIndex = 0;
-
-        // ½Ç½Ã°£ ¸ğµå·Î ÀüÈ¯
         GameModeManager.Instance.SwitchToRealTimeMode();
         StopAllCoroutines();
-
         Debug.Log("Turn-based mode ended, switched to real-time mode.");
     }
+
+    // NPCê°€ ì—†ëŠ”ì§€ í™•ì¸í•˜ê³  í„´ì œ ëª¨ë“œ ì¢…ë£Œí•˜ëŠ” ì½”ë£¨í‹´
     private IEnumerator CheckForNearbyNPCsAndEndTurnIfNone()
     {
-        yield return new WaitForSeconds(3f); // 3ÃÊ ´ë±â
+        yield return new WaitForSeconds(3f); // 3ì´ˆ ëŒ€ê¸°
 
         bool hasNearbyNPCs = false;
 
@@ -324,13 +318,14 @@ public void NextTurn()
             }
         }
 
-        // ¸¸¾à 3ÃÊ ÈÄ¿¡µµ ±ÙÃ³¿¡ NPC°¡ ¾ø´Ù¸é ÅÏÁ¦ ¸ğµå Á¾·á
         if (!hasNearbyNPCs)
         {
             Debug.Log("No NPCs nearby after 3 seconds. Ending turn-based mode.");
             TurnManager.Instance.EndTurnBasedMode();
         }
     }
+
+    // ë‚¨ì€ NPCê°€ ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
     private void CheckForRemainingNPCs()
     {
         bool hasNPC = false;
@@ -344,7 +339,6 @@ public void NextTurn()
             }
         }
 
-        // ¸¸¾à NPC°¡ ÇÏ³ªµµ ¾øÀ¸¸é ½Ç½Ã°£ ¸ğµå·Î ÀüÈ¯
         if (!hasNPC)
         {
             Debug.Log("No NPCs remaining. Switching to real-time mode.");
@@ -352,6 +346,8 @@ public void NextTurn()
             StopAllCoroutines();
         }
     }
+
+    // ëœë¤ í„´ ì°¸ì—¬ìë¥¼ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     public ITurnTaker GetRandomTurnTaker()
     {
         if (turnTakers.Count == 0)
@@ -361,6 +357,7 @@ public void NextTurn()
         return turnTakers[randomIndex];
     }
 
+    // ì²« í„´ ì°¸ì—¬ìë¥¼ ì„¤ì •í•˜ëŠ” í•¨ìˆ˜
     public void SetFirstTurnTaker(ITurnTaker turnTaker)
     {
         currentTurnIndex = turnTakers.IndexOf(turnTaker);
