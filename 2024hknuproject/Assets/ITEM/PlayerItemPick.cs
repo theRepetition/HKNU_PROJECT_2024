@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class PlayerItemPick : MonoBehaviour
 {
-    public float pickupRange = 2f; // �������� �ֿ� �� �ִ� ����
+    public float pickupRange = 2f; // 아이템 줍기 범위
+    public NPCTriggerManager npcTriggerManager; // NPCTriggerManager 참조 (RemoveOtherRewards 호출)
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F))
         {
-            Debug.Log("fŰ �Է�");
+            Debug.Log("f 누름");
             PickUpItem();
         }
     }
@@ -27,7 +28,8 @@ public class PlayerItemPick : MonoBehaviour
                 ItemPickup itemPickup = item.GetComponent<ItemPickup>();
                 if (itemPickup != null)
                 {
-                    itemPickup.PickUp();
+                    itemPickup.PickUp(); // 아이템 줍기 로직 실행
+                    npcTriggerManager.RemoveOtherRewards(item); // 선택되지 않은 나머지 보상을 제거
                     break;
                 }
             }
@@ -40,7 +42,8 @@ public class PlayerItemPick : MonoBehaviour
                 AmmoPickup ammoPickup = bullet.GetComponent<AmmoPickup>();
                 if (ammoPickup != null)
                 {
-                    ammoPickup.PickUp();
+                    ammoPickup.PickUp(); // 탄약 줍기 로직 실행
+                    npcTriggerManager.RemoveOtherRewards(bullet); // 선택되지 않은 나머지 보상을 제거
                     break;
                 }
             }

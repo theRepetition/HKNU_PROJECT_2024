@@ -5,10 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class Item
 {
-    public string itemName; // ¾ÆÀÌÅÛ ÀÌ¸§
-    public string description; // ¾ÆÀÌÅÛ ¼³¸í
-    public Sprite icon; // ¾ÆÀÌÅÛ ¾ÆÀÌÄÜ
-    public ItemType itemType; // ¾ÆÀÌÅÛ Å¸ÀÔ
+    public string itemName; // ì•„ì´í…œ ì´ë¦„
+    public string description; // ì•„ì´í…œ ì„¤ëª…
+    public Sprite icon; // ì•„ì´í…œ ì•„ì´ì½˜
+    public ItemType itemType; // ì•„ì´í…œ íƒ€ì…
 
     public enum ItemType
     {
@@ -18,10 +18,10 @@ public class Item
         Misc
     }
 
-    // ¾ÆÀÌÅÛ »ç¿ë ¸Ş¼­µå
+    // ì•„ì´í…œ ì‚¬ìš© ë©”ì„œë“œ
     public virtual void Use()
     {
-        Debug.Log(itemName + " »ç¿ëµÊ");
+        Debug.Log(itemName + " ì‚¬ìš©");
     }
 }
 
@@ -33,8 +33,8 @@ public class Weapon : Item
 
     public override void Use()
     {
-        // ¹«±â »ç¿ë ·ÎÁ÷
-        Debug.Log(itemName + " ¹«±â »ç¿ëµÊ");
+        // ë¬´ê¸° ì‚¬ìš© ë¡œì§
+        Debug.Log(itemName + " ë¬´ê¸° ì‚¬ìš©");
     }
 }
 
@@ -43,7 +43,7 @@ public class Ammo : Item
 {
     public int damage;
     public string effect;
-    public int quantity; // ³²Àº ÅºÈ¯ ¼ö·®
+    public int quantity; // ë‚¨ì€ íƒ„í™˜ ìˆ˜
 
     public Ammo(string ammoName, int damage, string effect, Sprite icon, int quantity)
     {
@@ -52,7 +52,7 @@ public class Ammo : Item
         this.effect = effect;
         this.icon = icon;
         this.quantity = quantity;
-        this.itemType = ItemType.Ammo; // ¾ÆÀÌÅÛ Å¸ÀÔÀ» ÅºÈ¯À¸·Î ¼³Á¤
+        this.itemType = ItemType.Ammo; // ì•„ì´í…œ íƒ€ì…ì„ íƒ„í™˜ìœ¼ë¡œ ì„¤ì •
     }
 
     public override void Use()
@@ -60,11 +60,11 @@ public class Ammo : Item
         if (quantity > 0)
         {
             quantity--;
-            Debug.Log($"{itemName} ÅºÈ¯ »ç¿ëµÊ. ³²Àº ¼ö·®: {quantity}");
+            Debug.Log($"{itemName} íƒ„í™˜ ì‚¬ìš©. ë‚¨ì€ íƒ„í™˜: {quantity}");
         }
         else
         {
-            Debug.Log($"{itemName} ÅºÈ¯ÀÌ ¾ø½À´Ï´Ù.");
+            Debug.Log($"{itemName} íƒ„í™˜ì´ ì—†ìŠµë‹ˆë‹¤.");
         }
     }
 }
@@ -76,7 +76,7 @@ public class Consumable : Item
 
     public override void Use()
     {
-        // ¼Òºñ ¾ÆÀÌÅÛ »ç¿ë ·ÎÁ÷
-        Debug.Log(itemName + " ¼Òºñ ¾ÆÀÌÅÛ »ç¿ëµÊ");
+        // ì²´ë ¥ íšŒë³µ ë¡œì§
+        Debug.Log(itemName + " ì²´ë ¥ íšŒë³µ ì•„ì´í…œ ì‚¬ìš©");
     }
 }

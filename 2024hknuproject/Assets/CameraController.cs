@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
     private Vector3 offset; // 플레이어와 카메라 사이의 거리
     private bool isTransitioning = false; // 카메라가 이동 중인지 여부
     private bool shouldFollowPlayer = true; // 카메라가 플레이어를 따라가는지 여부
-
+    public CycleManager cycleManager; // CycleManager에 접근하기 위한 참조
     void Start()
     {
         // 플레이어 오브젝트가 설정되지 않았다면 자동으로 찾음
@@ -62,6 +62,7 @@ public class CameraController : MonoBehaviour
         // 3. 페이드 인 (화면을 다시 밝게 만듦)
         yield return StartCoroutine(FadeIn());
         playermovement.EnableMovement();// 이동활성화
+        cycleManager.SpawnNPCs();// CycleManager의 SpawnNPCs() 함수 호출하여 NPC 소환
 
 
     }
