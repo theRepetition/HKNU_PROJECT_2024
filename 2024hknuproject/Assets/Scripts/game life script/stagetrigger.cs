@@ -45,6 +45,7 @@ public class StageManager : MonoBehaviour
         Debug.Log("Current Stage: " + currentStage); // 콘솔에 현재 스테이지 출력
         isStageTriggered = false; // 다음 스테이지를 위해 트리거 리셋
         cycleManager.IncreaseNPCStats();
+        
 
     }
 

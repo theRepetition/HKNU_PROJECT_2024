@@ -37,6 +37,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
 
     void Update()
     {
+        HUDManager.Instance.UpdateBulletSlots(currentLoadedAmmo.Count);
         if (!CanCombat) // Combat이 불가능할 때는 아무 작업도 하지 않음
             return;
 
@@ -127,6 +128,8 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         projectilesOnField++; // 필드에 존재하는 발사체 수 증가
 
         currentLoadedAmmo.RemoveAt(0); // 첫 번째 탄약 사용 후 제거
+        HUDManager.Instance.UpdateBulletSlots(currentLoadedAmmo.Count);
+
 
         StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후 발사체 제거
     }
@@ -161,7 +164,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         }
         else
         {
-            Debug.LogError("탄약실이 가득 찼습니다! 더 이상 장전할 수 없습니다.");
+            Debug.LogError("약실이 가득 찼습니다! 더 이상 장전할 수 없습니다.");
         }
     }
 

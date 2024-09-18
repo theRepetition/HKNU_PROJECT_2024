@@ -3,23 +3,36 @@ using UnityEngine.UI;
 
 public class HUDManager : MonoBehaviour
 {
-    public Image revolverImage; // ¸®º¼¹ö ÀÌ¹ÌÁö
-    public Image[] bulletSlots; // ÃÑ¾Ë ½½·Ô ÀÌ¹ÌÁö ¹è¿­
-    public Sprite bulletSprite; // ÃÑ¾Ë ½ºÇÁ¶óÀÌÆ®
-    public Sprite emptySlotSprite; // ºó ½½·Ô ½ºÇÁ¶óÀÌÆ®
+    public static HUDManager Instance { get; private set; }
 
-    // ½½·Ô ¾÷µ¥ÀÌÆ® ÇÔ¼ö
+    public Image[] bulletSlots; // íƒ„ì•½ ìŠ¬ë¡¯ UI ë°°ì—´
+    public Sprite bulletSprite; // íƒ„ì•½ì´ ìˆì„ ë•Œì˜ ìŠ¤í”„ë¼ì´íŠ¸
+    public Sprite emptySlotSprite; // ë¹ˆ ìŠ¬ë¡¯ì˜ ìŠ¤í”„ë¼ì´íŠ¸
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject); // ì¤‘ë³µëœ ì¸ìŠ¤í„´ìŠ¤ê°€ ìˆìœ¼ë©´ íŒŒê´´
+        }
+        else
+        {
+            Instance = this; // ì‹±ê¸€í†¤ ì¸ìŠ¤í„´ìŠ¤ í• ë‹¹
+        }
+    }
+
+    // íƒ„ì•½ ìŠ¬ë¡¯ì„ ì—…ë°ì´íŠ¸í•˜ëŠ” í•¨ìˆ˜
     public void UpdateBulletSlots(int bulletsLeft)
     {
         for (int i = 0; i < bulletSlots.Length; i++)
         {
             if (i < bulletsLeft)
             {
-                bulletSlots[i].sprite = bulletSprite; // ÃÑ¾ËÀÌ ³²¾Æ ÀÖÀ¸¸é ÃÑ¾Ë ½ºÇÁ¶óÀÌÆ® ¼³Á¤
+                bulletSlots[i].sprite = bulletSprite; // íƒ„ì•½ì´ ë‚¨ì•„ìˆìœ¼ë©´ íƒ„ì•½ ìŠ¤í”„ë¼ì´íŠ¸ë¡œ ì„¤ì •
             }
             else
             {
-                bulletSlots[i].sprite = emptySlotSprite; // ÃÑ¾ËÀÌ ¾øÀ¸¸é ºó ½½·Ô ½ºÇÁ¶óÀÌÆ® ¼³Á¤
+                bulletSlots[i].sprite = emptySlotSprite; // íƒ„ì•½ì´ ì—†ìœ¼ë©´ ë¹ˆ ìŠ¬ë¡¯ ìŠ¤í”„ë¼ì´íŠ¸ë¡œ ì„¤ì •
             }
         }
     }

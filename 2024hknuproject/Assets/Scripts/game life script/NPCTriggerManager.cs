@@ -18,15 +18,17 @@ public class NPCTriggerManager : MonoBehaviour
 
     void Start()
     {
+        
         // 하드코딩된 보상 목록 설정
         rewardPool = new Item[]
-        {
+        {   
+
             new Ammo("Explosive Ammo", 50, "Explodes on impact", explosiveAmmoIcon, 5), // 폭발 탄환
             new Consumable { itemName = "Health Potion", healthRestore = 15, icon = healthPotionIcon }, // 체력 물약
             new Item { itemName = "Defense Pack", description = "Reduces incoming damage by 3", icon = defensePackIcon } // 방탄팩
         };
 
-        CheckNPCCount(); // 시작 시 한 번 NPC를 체크하여 트리거 상태 결정
+        
     }
 
     void Update()
@@ -49,7 +51,7 @@ public class NPCTriggerManager : MonoBehaviour
             if (!rewardsDropped)
             {
                 DropRewards(); // NPC가 없을 경우 보상 드랍
-                rewardsDropped = true; // 보상은 한 번만 드랍
+                disableReward(); // 보상은 한 번만 드랍
             }
             EnableTriggers(); // NPC가 없을 경우 트리거 활성화
         }
@@ -69,6 +71,16 @@ public class NPCTriggerManager : MonoBehaviour
         leftTrigger.enabled = true;
         rightTrigger.enabled = true;
         Debug.Log("Triggers enabled, all NPCs are gone.");
+    }
+    public void enableReward() 
+    { 
+        rewardsDropped = false;
+        Debug.Log("보상 활성화");
+    }
+    public void disableReward() 
+    { 
+        rewardsDropped = true;
+        Debug.Log("보상 비활성화");
     }
 
     // 보상을 드랍하는 함수
@@ -117,6 +129,7 @@ public class NPCTriggerManager : MonoBehaviour
         }
     }
 
+    
     // 플레이어가 선택한 아이템 이외의 나머지 아이템을 제거하는 함수
     public void RemoveOtherRewards(GameObject selectedReward)
     {

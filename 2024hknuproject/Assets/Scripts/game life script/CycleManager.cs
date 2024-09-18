@@ -8,11 +8,13 @@ public class CycleManager : MonoBehaviour
     public int npcCount = 5; // 생성할 NPC의 수
     public Vector2 spawnAreaMin; // 스폰 범위의 최소 좌표
     public Vector2 spawnAreaMax; // 스폰 범위의 최대 좌표
+    public NPCTriggerManager NTM; //보상 검사를 위함
     public float spawnRadius = 1f; // 충돌 검사를 위한 범위(반지름)
 
     void Start()
     {
         SpawnNPCs(); // 스테이지 시작 시 NPC를 랜덤 위치에 스폰
+        
     }
 
     // NPC를 랜덤한 위치에 생성하는 함수
@@ -49,6 +51,7 @@ public class CycleManager : MonoBehaviour
             // 선택된 NPC 프리팹을 스폰 위치에 인스턴스화
             Instantiate(npcPrefab, spawnPosition, Quaternion.identity);
         }
+        NTM.enableReward(); // 스폰 뒤에 npc가 사라지면 보상 받을수 있게끔 초기화
     }
 
     // 스폰 범위 시각적으로 확인하기 위한 Gizmos
