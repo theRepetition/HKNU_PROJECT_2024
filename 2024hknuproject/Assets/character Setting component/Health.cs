@@ -6,9 +6,9 @@ using UnityEngine;
 public class Health : MonoBehaviour
 {
     public int maxHealth = 100;
-    private int currentHealth;
+    public int currentHealth;
 
-    void Start()
+    public void Start()
     {
         currentHealth = maxHealth;
     }
@@ -36,8 +36,8 @@ public class Health : MonoBehaviour
 
     protected virtual void Die()
     {
-        Debug.Log(gameObject.name + " died.");
-        // ∞¯≈Î µø¿€ √ﬂ∞° (« ø‰«— ∞ÊøÏ)
+        Debug.Log(gameObject.name + " ÏÇ¨Îßù.");
+        
     }
 
     public int GetCurrentHealth()

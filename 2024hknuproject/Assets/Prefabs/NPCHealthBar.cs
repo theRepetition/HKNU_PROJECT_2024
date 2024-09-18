@@ -5,19 +5,24 @@ using UnityEngine.UI;
 
 public class NPCHealthBar : MonoBehaviour
 {
-    public GameObject healthBarPrefab; // HealthBar ÇÁ¸®ÆÕ
-    public Transform healthBarParent; // HealthBar¸¦ Æ÷ÇÔÇÒ Canvas
-    private Slider npcHealthBar; // »ı¼ºµÈ HealthBarÀÇ Slider ÄÄÆ÷³ÍÆ®
-    private Health NPCHealth; // NPCÀÇ Health ÄÄÆ÷³ÍÆ®
-    private Camera mainCamera; // ¸ŞÀÎ Ä«¸Ş¶ó
+    public GameObject healthBarPrefab; // HealthBar í”„ë¦¬íŒ¹
+    public RectTransform healthBarParent; // HealthBarê°€ ìƒì„±ë  Canvas
+    private Slider npcHealthBar; // ìƒì„±ëœ HealthBarì˜ Slider ì»´í¬ë„ŒíŠ¸
+    private Health NPCHealth; // NPCì˜ Health ì»´í¬ë„ŒíŠ¸
+    private Camera mainCamera; // ë©”ì¸ ì¹´ë©”ë¼
 
     void Start()
     {
+        // NPCì˜ Health ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ì˜´
         NPCHealth = GetComponent<NPCHealth>();
+
+        // ë©”ì¸ ì¹´ë©”ë¼ë¥¼ ì°¸ì¡°
         mainCamera = Camera.main;
 
-        // HealthBar »ı¼º ¹× ¼³Á¤
+        // HealthBarë¥¼ Canvasì— ìƒì„±
         GameObject healthBarInstance = Instantiate(healthBarPrefab, healthBarParent);
+
+        // ìƒì„±ëœ HealthBarì—ì„œ Slider ì»´í¬ë„ŒíŠ¸ë¥¼ ê°€ì ¸ì˜´
         npcHealthBar = healthBarInstance.GetComponent<Slider>();
     }
 
@@ -25,21 +30,22 @@ public class NPCHealthBar : MonoBehaviour
     {
         if (npcHealthBar != null)
         {
-            // HealthBar À§Ä¡ ¾÷µ¥ÀÌÆ®
-            Vector3 worldPosition = transform.position + Vector3.up * 2.0f; // NPC ¸Ó¸® À§·Î ¾à°£ ¿Ã¸²
-            Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition);
-            npcHealthBar.transform.position = screenPosition;
+            // HealthBarì˜ ìœ„ì¹˜ë¥¼ NPC ë¨¸ë¦¬ ìœ„ì— ê³ ì •ë˜ë„ë¡ ì„¤ì •
+            Vector3 worldPosition = transform.position + Vector3.up * 2.0f; // NPCì˜ ìœ„ì— HealthBar ìœ„ì¹˜
+            Vector3 screenPosition = mainCamera.WorldToScreenPoint(worldPosition); // í™”ë©´ìƒì˜ ìœ„ì¹˜ë¡œ ë³€í™˜
+            npcHealthBar.transform.position = screenPosition; // HealthBarì˜ ìœ„ì¹˜ ì„¤ì •
 
-            // HealthBar °ª ¾÷µ¥ÀÌÆ®
+            // HealthBarì˜ í˜„ì¬ ìƒíƒœë¥¼ NPCì˜ ì²´ë ¥ì— ë§ê²Œ ì—…ë°ì´íŠ¸
             npcHealthBar.value = (float)NPCHealth.GetCurrentHealth() / NPCHealth.maxHealth;
         }
     }
 
+    // NPCê°€ íŒŒê´´ë  ë•Œ HealthBarë„ ì œê±°
     void OnDestroy()
     {
         if (npcHealthBar != null)
         {
-            Destroy(npcHealthBar.gameObject);
+            Destroy(npcHealthBar.gameObject); // HealthBarë¥¼ ì‚­ì œ
         }
     }
 }

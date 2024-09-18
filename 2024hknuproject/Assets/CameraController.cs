@@ -63,6 +63,7 @@ public class CameraController : MonoBehaviour
         yield return StartCoroutine(FadeIn());
         playermovement.EnableMovement();// 이동활성화
         cycleManager.SpawnNPCs();// CycleManager의 SpawnNPCs() 함수 호출하여 NPC 소환
+        cycleManager.IncreaseNPCStats();
 
 
     }

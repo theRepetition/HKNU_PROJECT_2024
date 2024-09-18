@@ -61,18 +61,28 @@ public class CycleManager : MonoBehaviour
         Gizmos.DrawWireCube((spawnAreaMin + spawnAreaMax) / 2, spawnAreaMax - spawnAreaMin);
     }
     public int npcDamageIncreasePerStage = 5; // 스테이지당 공격력 증가량
-
+    public int npcHealthIncreasePerStage = 20;
     // 스테이지 증가 시 호출되는 함수
     public void IncreaseNPCStats()
     {
         // 씬 내 모든 NPC의 `NPCCombatAI` 컴포넌트를 가져옵니다.
         NPCCombatAI[] allNPCs = FindObjectsOfType<NPCCombatAI>();
-
+        Debug.Log($"찾은 NPC 수: {allNPCs.Length}");
         foreach (var npc in allNPCs)
         {
-            // 현재 스테이지에 따라 공격력을 증가시킵니다.
+            // 공격력 증가
             npc.projectileDamage += npcDamageIncreasePerStage;
             Debug.Log($"NPC의 공격력이 증가했습니다: {npc.projectileDamage}");
+
+            // 체력 증가 (기본 체력과 최대 체력 증가)
+            NPCHealth npcHealth = npc.GetComponent<NPCHealth>();
+            if (npcHealth != null)
+            {
+                npcHealth.currentHealth += npcHealthIncreasePerStage; // 현재 체력 증가
+                npcHealth.maxHealth += npcHealthIncreasePerStage; // 최대 체력 증가
+                Debug.Log($"NPC의 체력이 증가했습니다: 현재 체력 = {npcHealth.currentHealth}, 최대 체력 = {npcHealth.maxHealth}");
+            }
         }
+
     }
 }
