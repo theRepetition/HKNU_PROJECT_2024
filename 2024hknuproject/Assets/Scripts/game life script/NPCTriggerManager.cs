@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class NPCTriggerManager : MonoBehaviour
 {
-    public Collider2D leftTrigger;  // 왼쪽 경계 트리거
     public Collider2D rightTrigger; // 오른쪽 경계 트리거
     public GameObject rewardPrefab; // 보상 아이템의 프리팹 (SpriteRenderer가 포함된 오브젝트)
     public Transform rewardDropLocation; // 보상 아이템이 드랍될 위치의 기준점
@@ -60,7 +59,6 @@ public class NPCTriggerManager : MonoBehaviour
     // 트리거를 비활성화하는 함수
     void DisableTriggers()
     {
-        leftTrigger.enabled = false;
         rightTrigger.enabled = false;
         Debug.Log("Triggers disabled, NPCs are present.");
     }
@@ -68,7 +66,6 @@ public class NPCTriggerManager : MonoBehaviour
     // 트리거를 활성화하는 함수
     void EnableTriggers()
     {
-        leftTrigger.enabled = true;
         rightTrigger.enabled = true;
         Debug.Log("Triggers enabled, all NPCs are gone.");
     }
