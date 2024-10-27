@@ -41,7 +41,7 @@ public class StageManager : MonoBehaviour
         GameObject selectedBoundary = boundaryObjects[randomIndex];
         
         // 플레이어를 선택된 경계로 순간이동
-        player.transform.position = new Vector2(selectedBoundary.transform.position.x + 1f, selectedBoundary.transform.position.y);
+        player.transform.position = new Vector3(selectedBoundary.transform.position.x + 1f, selectedBoundary.transform.position.y, -2);
         Debug.Log($"Player teleported to {selectedBoundary.name}");
         cameraController.TriggerRoomTransition();
 

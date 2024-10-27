@@ -3,7 +3,7 @@ using UnityEngine;
 public interface ICombatant
 {
     void Attack(Vector2 direction);
-    void NotifyProjectileDestroyed(); // ÀÌ ÁÙÀ» Ãß°¡ÇÕ´Ï´Ù.
+    void NotifyProjectileDestroyed(); // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½Õ´Ï´ï¿½.
     void ResetProjectilesFired();
     void StartTurn();
     void EndTurn();
