@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using Pathfinding;
 
 public class NPCCombatAI : MonoBehaviour, ICombatant
 {
@@ -7,287 +8,180 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     public float projectileSpeed = 5f;
     public int projectileDamage = 10;
     public int maxProjectilesPerTurn = 3;
-    private int projectilesFiredThisTurn = 0;
-    private int projectilesOnField = 0;
-    public int maxActionPoints = 5;
-    private int currentActionPoints;
-    private bool isTurnComplete;
-    private Rigidbody2D rb;
-    public LayerMask coverLayer; // 엄폐물 레이어
-    public float weaponRange = 10f; // 무기 사거리
+    public float weaponRange = 5f;
     public float moveSpeed = 2f;
+    public LayerMask coverLayer;
 
-    private Vector2 targetPosition;
+    private bool isTurnComplete = true;
     private bool isMoving;
-    private float timeAtSamePosition;
-    private Vector2 lastPosition;
-    private Collider2D currentCover; // NPC가 숨을 엄폐물
-    private Vector2 coverPosition; // 엄폐물 위치 저장
     private GameObject player;
-
+    private AIPath aiPath;
+    private Seeker seeker;
+    private Rigidbody2D rb;
+    public float slideFriction = 0.8f;  // 벽에 부딪혔을 때 속도 감쇠
+    public float minSlideSpeed = 0.5f;  // 너무 느린 미끄러짐을 방지하는 최소 속도
+    private Animator animator;
+    private int projectilesOnField = 0;
+    private int projectilesFiredThisTurn = 0;
+    private float chaseStartTime;
+    private bool isAttacking = false;
+    public float chaseDuration = 3f; // 추적 시간
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        aiPath = GetComponent<AIPath>();
+        seeker = GetComponent<Seeker>();
         player = GameObject.FindGameObjectWithTag("Player");
+        animator = GetComponent<Animator>();
     }
-
     private void FixedUpdate()
     {
-        if (isMoving && !isTurnComplete)
+        // AIPath의 기본 움직임 적용
+        Vector2 movement = aiPath.desiredVelocity;
+
+        // NPC가 벽에 부딪혔을 때 미끄러지기
+        if (rb.velocity.magnitude > minSlideSpeed)
         {
-            Vector2 newPosition = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
-            rb.MovePosition(newPosition);
-
-            if (Vector2.Distance(rb.position, targetPosition) < 0.1f)
-            {
-                isMoving = false;
-            }
-
-            if (rb.position == lastPosition)
-            {
-                timeAtSamePosition += Time.fixedDeltaTime;
-                if (timeAtSamePosition >= 3.0f)
-                {
-                    isMoving = false;
-                    if (!isTurnComplete)
-                    {
-                        EndTurn();
-                    }
-                }
-            }
-            else
-            {
-                lastPosition = rb.position;
-                timeAtSamePosition = 0f;
-            }
+            rb.velocity = Vector2.Lerp(rb.velocity, movement, slideFriction * Time.fixedDeltaTime);
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;  // 속도가 너무 낮으면 멈추기
         }
     }
 
-    public IEnumerator ExecuteCombatAI(int actionPoints)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (isTurnComplete) yield break;
-
-        player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        // 벽에 부딪혔을 때 미끄러지기 시작
+        if (collision.collider.CompareTag("Wall"))
         {
-            Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
-            float distanceToPlayer = Vector2.Distance(rb.position, player.transform.position);
-
-            // NPC와 플레이어 사이에 장애물이 있는지 확인
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, coverLayer);
-            if (hit.collider != null)
-            {
-                Debug.Log("NPC와 플레이어 사이에 장애물이 있음. 벽을 따라 수직 이동합니다.");
-
-                // 벽을 따라 수직으로 이동
-                yield return StartCoroutine(MoveVerticallyAlongWall(directionToPlayer, distanceToPlayer));
-                Attack(directionToPlayer); // 플레이어 공격
-            }
-            else
-            {
-                // 장애물이 없을 경우 플레이어를 공격
-                yield return new WaitForSeconds(1.0f); // 약간의 대기 시간
-                Attack(directionToPlayer); // 플레이어 공격
-                yield return new WaitForSeconds(1.0f); // 공격 후 대기 시간
-            }
+            Vector2 normal = collision.contacts[0].normal;  // 벽의 법선 벡터
+            Vector2 slideDirection = Vector2.Perpendicular(normal);  // 벽에 수직인 방향으로 미끄러짐
+            rb.velocity = slideDirection * rb.velocity.magnitude * slideFriction;
         }
-
-        // 엄폐물을 찾고 이동하는 로직 실행
-        FindBestCoverAndMove();
-
-        yield return new WaitForSeconds(3.0f); // NPC는 3초 동안 대기
-
-        if (!isTurnComplete)
+    }
+    public void StartTurn()
+    {
+        isTurnComplete = false;
+        animator.SetBool("IsWalking", false);
+        Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
+        if (directionToPlayer.x < 0)
         {
-            EndTurn(); // 턴 종료
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
+        else if (directionToPlayer.x > 0)
+        {
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
+        MoveTowardsPlayer(directionToPlayer);
+        chaseStartTime = Time.time; // 추적 시작 시간 기록 // 5초 후 턴 종료
     }
 
 
 
-
-    // NPC가 이동할 때 장애물 탐색 및 회피 로직
-    // 벽을 따라 수직으로 이동하는 함수
-    private IEnumerator MoveVerticallyAlongWall(Vector2 directionToPlayer, float distanceToPlayer)
+    private void MoveTowardsPlayer(Vector2 x)
     {
-        Vector2 initialPosition = rb.position;
-        float movementStep = 0.2f; // 한 번에 이동할 거리
-        float maxDistance = 5.0f; // 최대 이동 거리
-        float distanceMoved = 0.0f;
+        Vector2 directionToPlayer = x;
+        float distanceToPlayer = Vector2.Distance(transform.position, player.transform.position);
 
-        // 벽을 따라 수직 이동
-        Vector2 wallVerticalDirection = Vector2.Perpendicular(directionToPlayer); // 플레이어 방향의 수직 벡터
-
-        bool moveUp = true; // 벽을 따라 위로 이동할지 아래로 이동할지 결정하는 플래그
-        int attempts = 0; // 회피 시도 횟수 제한
-
-        // 벽을 따라 수직으로 이동하며 목표 위치에 장애물이 없는지 확인
-        while (distanceMoved < maxDistance)
-        {
-            // 위쪽 또는 아래쪽으로 이동 시도
-            Vector2 nextPosition = moveUp
-                ? initialPosition + wallVerticalDirection * movementStep
-                : initialPosition - wallVerticalDirection * movementStep;
-
-            // 이동을 시도
-            targetPosition = nextPosition;
-            isMoving = true;
-
-            // 이동이 끝날 때까지 대기
-            yield return new WaitUntil(() => !isMoving);
-
-            // 이동 후 NPC와 플레이어 사이에 장애물이 없는지 다시 확인
-            RaycastHit2D hit = Physics2D.Raycast(rb.position, directionToPlayer, distanceToPlayer, coverLayer);
-            if (hit.collider == null)
-            {
-                Debug.Log("장애물이 없어졌습니다. 목표 위치로 이동합니다.");
-                MoveToPosition(targetPosition); // 장애물이 없으면 목표 위치로 이동
-                yield break; // 이동 후 종료
-            }
-
-            // 이동하려는 방향에 또 다른 장애물이 있으면 방향 전환
-            RaycastHit2D hitInMoveDirection = Physics2D.Raycast(rb.position, wallVerticalDirection, movementStep, coverLayer);
-            if (hitInMoveDirection.collider != null)
-            {
-                // 방향을 반대로
-                Debug.Log("이동 방향에 또 다른 장애물이 있습니다. 방향 전환합니다.");
-                moveUp = !moveUp;
-                attempts++;
-                if (attempts > 4)
-                {
-                    Debug.Log("회피 시도 초과. 더 이상 이동하지 않음.");
-                    yield break; // 너무 많은 시도는 중지
-                }
-            }
-
-            // 계속 수직으로 이동
-            distanceMoved += movementStep;
-            initialPosition = rb.position;
-        }
-
-        Debug.Log("최대 이동 거리까지 이동했지만 장애물이 남아 있습니다.");
-    }
-
-
-
-
-
-
-    // 가장 적합한 엄폐물을 찾아 이동하는 함수
-    private void FindBestCoverAndMove()
-    {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
-
-        Collider2D[] coverObjects = Physics2D.OverlapCircleAll(rb.position, 5.0f, coverLayer);
-        Collider2D bestCover = null;
-        float bestCoverScore = float.MinValue;
-
-        foreach (var cover in coverObjects)
-        {
-            Vector2 coverPosition = (Vector2)cover.transform.position;
-            Vector2 directionToCover = (coverPosition - rb.position).normalized;
-            Vector2 directionToPlayerFromCover = ((Vector2)player.transform.position - coverPosition).normalized;
-
-            // 엄폐물이 플레이어와 NPC 사이에 있는지 확인
-            float dotProduct = Vector2.Dot(directionToCover, directionToPlayerFromCover);
-            float distanceToNpc = Vector2.Distance(rb.position, coverPosition);
-            float coverScore = dotProduct - distanceToNpc;
-
-            if (coverScore > bestCoverScore)
-            {
-                bestCover = cover;
-                bestCoverScore = coverScore;
-            }
-        }
-
-        if (bestCover != null)
-        {
-            // bestCover의 Collider2D를 인자로 전달
-            Vector2 optimalPosition = CalculateOptimalPosition(bestCover.transform.position, player.transform.position, bestCover);
-            MoveToPosition(optimalPosition);
-        }
-    }
-
-
-    // 최적의 엄폐물 위치를 계산하는 함수
-    private Vector2 CalculateOptimalPosition(Vector2 coverPosition, Vector2 playerPosition, Collider2D coverCollider)
-    {
-        Vector2 directionToPlayer = (playerPosition - coverPosition).normalized;
-
-        // 엄폐물의 크기(반경)를 고려하여 경계까지의 거리 계산
-        float coverRadius = coverCollider.bounds.extents.magnitude;
-
-        // 엄폐물에서 일정 거리 유지 (safeDistance 만큼 떨어진 위치로 이동)
-        float safeDistance = 2.0f; // 엄폐물과의 거리
-        Vector2 optimalPosition = coverPosition - directionToPlayer * (coverRadius + safeDistance);
-
-        return optimalPosition;
-    }
-
-
-
-    // NPC를 목표 위치로 이동시키는 함수 (회피 탐색 추가)
-    private void MoveToPosition(Vector2 position)
-    {
-        // NPC와 목표 위치 사이에 장애물이 있는지 확인
-        RaycastHit2D hit = Physics2D.Raycast(rb.position, (position - rb.position).normalized, Vector2.Distance(rb.position, position), coverLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, directionToPlayer, distanceToPlayer, coverLayer);
 
         if (hit.collider != null)
         {
-            // 장애물이 있을 경우 회피 탐색 로직 시작
-            Debug.Log("경로에 장애물이 있습니다: " + hit.collider.name);
-
-            // 벽을 따라 수직으로 이동하는 로직 실행
-            StartCoroutine(MoveVerticallyAlongWall((position - rb.position).normalized, Vector2.Distance(rb.position, position)));
-            return;
+            Vector2 avoidancePosition = hit.point - directionToPlayer * 0.5f;
+            MoveToPosition(avoidancePosition);
         }
+        else
+        {
+            MoveToPosition(player.transform.position);
+        }
+    }
 
-        // 장애물이 없을 때 이동
-        targetPosition = position;
+    private void MoveToPosition(Vector2 position)
+    {
+        aiPath.destination = position;
+        aiPath.canMove = true;
         isMoving = true;
     }
 
+    private void Update()
+    {
+
+        if (!isTurnComplete)
+        {
+            // 플레이어를 추적
+            aiPath.destination = player.transform.position;
+            bool isMoving = aiPath.remainingDistance > aiPath.endReachedDistance;
+            animator.SetBool("IsWalking", isMoving);
+
+            // 3초가 지나면 멈추고 공격
+            if (!isAttacking && Time.time - chaseStartTime >= chaseDuration)
+            {
+                StartCoroutine(AttackAndEndTurn()); // 코루틴으로 실행
+                isAttacking = true; // 공격 중 상태로 설정
+
+            }
+            
+
+        }
+        // NPC의 x축 움직임에 따라 좌우 반전 설정
+        if (aiPath.desiredVelocity.x < -0.1f)
+        {
+            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
+        else if (aiPath.desiredVelocity.x > 0.1f)
+        {
+            transform.localScale = new Vector3(-Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
+    }
 
 
-    // NPC 공격 함수
+
+    public void EndTurn()
+    {
+        isTurnComplete = true;
+        aiPath.destination = transform.position; // 멈추기 위해 현재 위치를 목적지로 설정
+        animator.SetBool("IsWalking", false);
+        TurnManager.Instance.NextTurn();
+    }
+    private IEnumerator AttackAndEndTurn()
+    {
+        // 공격 애니메이션 실행 및 공격 로직
+        Vector2 directionToPlayer = (player.transform.position - transform.position).normalized;
+
+        Attack(directionToPlayer);
+        Debug.Log("공격");
+
+        // 공격 후 대기 시간 추가
+        yield return new WaitForSeconds(2.0f); // 공격 후 2초 대기
+
+        Debug.Log("턴넘기기");
+
+        EndTurn();
+        isAttacking = false;
+    }
+
+
     public void Attack(Vector2 direction)
     {
-        if (projectilesFiredThisTurn >= maxProjectilesPerTurn)
-            return;
+        animator.SetTrigger("Attack");
 
-        GameObject projectile = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
-        Rigidbody2D projectileRb = projectile.GetComponent<Rigidbody2D>();
-        if (projectileRb == null)
+        // 발사체 생성 위치를 NPC 위치보다 약간 아래로 설정
+        Vector3 projectileSpawnPosition = transform.position + Vector3.left * 0.1f + Vector3.down * 0.3f; //  (값 조정 가능)
+        GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPosition, Quaternion.identity);
+
+        Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
+        rb.velocity = direction * projectileSpeed;
+
+        // 자신의 콜라이더와 발사체의 충돌을 무시
+        Collider2D npcCollider = GetComponent<Collider2D>();
+        Collider2D projectileCollider = projectile.GetComponent<Collider2D>();
+        if (projectileCollider != null && npcCollider != null)
         {
-            projectileRb = projectile.AddComponent<Rigidbody2D>();
-        }
-        projectileRb.isKinematic = true; // 발사체를 Kinematic으로 설정
-        projectileRb.velocity = direction * projectileSpeed; // 발사체 속도 설정
-
-        // NPC와 발사체의 충돌 무시
-        Physics2D.IgnoreCollision(projectile.GetComponent<Collider2D>(), GetComponent<Collider2D>());
-
-        // 발사체 충돌 핸들러 추가 및 피해량 설정
-        ProjectileCollisionHandler collisionHandler = projectile.AddComponent<ProjectileCollisionHandler>();
-        collisionHandler.damage = projectileDamage;
-        collisionHandler.projectileOwner = this;
-
-        projectilesFiredThisTurn++;
-        projectilesOnField++;
-        StartCoroutine(DestroyProjectileAfterTime(projectile, 5f)); // 5초 후 발사체 파괴
-    }
-
-    // 발사체를 일정 시간이 지난 후 파괴하는 코루틴
-    IEnumerator DestroyProjectileAfterTime(GameObject projectile, float time)
-    {
-        yield return new WaitForSeconds(time);
-        if (projectile != null)
-        {
-            Destroy(projectile);
-            projectilesOnField--; // 필드에서 발사체 제거
+            Physics2D.IgnoreCollision(projectileCollider, npcCollider);
         }
     }
+
 
     public void NotifyProjectileDestroyed()
     {
@@ -299,35 +193,17 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         projectilesFiredThisTurn = 0;
     }
 
-    // NPC의 턴 시작
-    public void StartTurn()
-    {
-        currentActionPoints = maxActionPoints;
-        isTurnComplete = false;
-        ResetProjectilesFired();
-        timeAtSamePosition = 0f;
-        lastPosition = rb.position;
-        StartCoroutine(ExecuteCombatAI(currentActionPoints)); // 전투 AI 실행
-    }
-
-    // NPC의 턴 종료
-    public void EndTurn()
-    {
-        if (isTurnComplete) return;
-
-        isTurnComplete = true;
-        TurnManager.Instance.NextTurn();
-    }
-
     // ICombatant 인터페이스 구현
-    public int MaxActionPoints => maxActionPoints;
+    public int MaxActionPoints => 0; // 더 이상 사용하지 않음
+
     public int CurrentActionPoints
     {
-        get => currentActionPoints;
-        set => currentActionPoints = value;
+        get => 0; // 더 이상 사용하지 않음
+        set { }
     }
 
     public int MaxProjectilesPerTurn => maxProjectilesPerTurn;
+
     public int ProjectilesFiredThisTurn
     {
         get => projectilesFiredThisTurn;
@@ -335,7 +211,9 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     }
 
     public GameObject ProjectilePrefab => projectilePrefab;
+
     public float ProjectileSpeed => projectileSpeed;
+
     public int ProjectileDamage => projectileDamage;
 
     public int ProjectilesOnField

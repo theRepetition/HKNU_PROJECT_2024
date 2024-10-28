@@ -9,7 +9,7 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
     private bool isTurnComplete;
     private Rigidbody2D rb;
     private Health health;
-    public LayerMask playerLayer; // ÇÃ·¹ÀÌ¾î ·¹ÀÌ¾î
+    public LayerMask playerLayer; // ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½
     public NPCCombatAI npcCombatAI;
 
     private void Start()
@@ -40,10 +40,7 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
             isTurnComplete = false;
             npcCombatAI.StartTurn();
         }
-        else
-        {
-            EndTurn();
-        }
+        
     }
 
     public void EndTurn()
@@ -69,25 +66,25 @@ public class NPCMovement : MonoBehaviour, ITurnTaker
     {
         TurnManager.Instance.UnregisterTurnTaker(this);
 
-        // NPC°¡ Á×Àº ÈÄ Ã³¸®
+        // NPCï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ã³ï¿½ï¿½
         StartCoroutine(HandleDeath());
     }
 
     private IEnumerator HandleDeath()
     {
-        yield return new WaitForSeconds(0.1f); // ¾à°£ÀÇ Áö¿¬
+        yield return new WaitForSeconds(0.1f); // ï¿½à°£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
-        // ÇöÀç ÅÏ Å×ÀÌÄ¿°¡ ÀÌ NPCÀÎ °æ¿ì ÅÏÀ» ³Ñ±è
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ ï¿½ï¿½ NPCï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ±ï¿½
         if (TurnManager.Instance.CurrentTurnTaker == this)
         {
             TurnManager.Instance.NextTurn();
         }
         else
         {
-            // NPC°¡ Á×¾úÀ» ¶§ ÇÃ·¹ÀÌ¾îÀÇ ÅÏÀÌ¸é ÇÃ·¹ÀÌ¾î ÅÏ À¯Áö
+            // NPCï¿½ï¿½ ï¿½×¾ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             TurnManager.Instance.CheckForRealTimeMode();
         }
 
-        Destroy(gameObject); // °Ë»ç°¡ ³¡³­ ÈÄ ¿ÀºêÁ§Æ®¸¦ Á¦°Å
+        Destroy(gameObject); // ï¿½Ë»ç°¡ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 }

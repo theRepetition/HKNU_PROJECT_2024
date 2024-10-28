@@ -6,10 +6,12 @@ using UnityEngine.UI;
 
 public class DragDropHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    private RectTransform rectTransform; // RectTransform ÄÄÆ÷³ÍÆ® ÂüÁ¶
-    private CanvasGroup canvasGroup; // CanvasGroup ÄÄÆ÷³ÍÆ® ÂüÁ¶
-    private Transform originalParent; // µå·¡±× ½ÃÀÛ ½Ã ¿ÀºêÁ§Æ®ÀÇ ºÎ¸ğ ÀúÀå
-    private GameObject dragIcon; // µå·¡±× ÁßÀÎ ¾ÆÀÌÅÛÀÇ ÇÁ·Ï½Ã ¿ÀºêÁ§Æ®
+    private RectTransform rectTransform;
+    private CanvasGroup canvasGroup;
+    private Transform originalParent;
+    private GameObject dragIcon;
+
+    public Sprite dragIconSprite; // ë“œë˜ê·¸í•  ë•Œ ì‚¬ìš©í•  ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì„¤ì •í•˜ê¸° ìœ„í•œ ë³€ìˆ˜
 
     private void Awake()
     {
@@ -19,35 +21,42 @@ public class DragDropHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        originalParent = transform.parent; // µå·¡±× ½ÃÀÛ ½Ã ºÎ¸ğ ÀúÀå
+        originalParent = transform.parent;
 
-        // µå·¡±× ¾ÆÀÌÄÜ »ı¼º
+        // DragIcon ìƒì„±
         dragIcon = new GameObject("DragIcon");
         dragIcon.transform.SetParent(transform.root, false);
         dragIcon.transform.SetAsLastSibling();
 
         var dragImage = dragIcon.AddComponent<Image>();
-        dragImage.sprite = GetComponent<Image>().sprite;
+
+        // ë“œë˜ê·¸í•  ë•Œ ì‚¬ìš©í•  ì•„ì´ì½˜ ìŠ¤í”„ë¼ì´íŠ¸ë¥¼ ì„¤ì •
+        if (dragIconSprite != null)
+        {
+            dragImage.sprite = dragIconSprite;
+        }
+        else
+        {
+            dragImage.sprite = GetComponent<Image>().sprite; // dragIconSpriteê°€ ì—†ì„ ê²½ìš° ì›ë˜ ìŠ¤í”„ë¼ì´íŠ¸ ì‚¬ìš©
+        }
+
         dragImage.SetNativeSize();
 
         var dragIconCanvasGroup = dragIcon.AddComponent<CanvasGroup>();
         dragIconCanvasGroup.blocksRaycasts = false;
 
-        canvasGroup.alpha = 0.6f; // ¿ø·¡ ½½·ÔÀÇ Åõ¸íµµ Á¶Á¤
+        canvasGroup.alpha = 0.6f;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        // µå·¡±× ¾ÆÀÌÄÜÀÇ À§Ä¡ ¾÷µ¥ÀÌÆ®
         dragIcon.transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        Destroy(dragIcon); // µå·¡±× ¾ÆÀÌÄÜ »èÁ¦
-        canvasGroup.alpha = 1.0f; // ¿ø·¡ ½½·ÔÀÇ Åõ¸íµµ º¹¿ø
-
-        // ½½·ÔÀ¸·Î µ¹¾Æ°¥ ¶§ ¿ø·¡ ºÎ¸ğ·Î µÇµ¹¸®±â
+        Destroy(dragIcon);
+        canvasGroup.alpha = 1.0f;
         transform.SetParent(originalParent);
     }
 }

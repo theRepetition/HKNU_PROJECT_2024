@@ -16,7 +16,9 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private bool isTurnComplete = false;
     private List<Ammo> currentLoadedAmmo = new List<Ammo>(); // 현재 장전된 탄약 리스트
     private PlayerTurnManager playerTurnManager;
+    private PlayerMovement playerMovement;
     private bool CanCombat = true;
+    public Animator animator;
 
     private Ammo currentAmmo; // 현재 사용 중인 탄약
 
@@ -26,13 +28,21 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     void Start()
     {
         playerTurnManager = FindObjectOfType<PlayerTurnManager>();
+        playerMovement = GetComponent<PlayerMovement>();
         lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.startWidth = 0.1f;
-        lineRenderer.endWidth = 0.1f;
+        lineRenderer.startWidth = 0.02f;
+        lineRenderer.endWidth = 0.02f;
         lineRenderer.positionCount = 0; // 초기에는 라인을 그리지 않음
+                                        // 선의 색상 설정
+        lineRenderer.startColor = Color.red; // 시작 색상
+        lineRenderer.endColor = Color.red;   // 끝 색상
 
-        // LineRenderer의 Z축을 통해 2D에서 앞뒤를 조정
-        lineRenderer.sortingOrder = 1;
+        // 선을 그릴 때 사용하는 Material이 필요
+        lineRenderer.material = new Material(Shader.Find("Sprites/Default")); // 단순한 색상 적용
+
+        // LineRenderer의 Z축을 통해 2D에서 앞뒤 조정
+        lineRenderer.sortingOrder = 2; // 캐릭터보다 위에 그리기 위해 설정
+
     }
 
     void Update()
@@ -45,7 +55,10 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         {
             if (Input.GetMouseButton(0)) // 마우스 왼쪽 버튼을 클릭했을 때
             {
+                playerMovement.DisableMovement();
                 ShowAim(); // 조준선 표시
+                animator.SetBool("IsAim", true);
+                UpdateCharacterDirection(); // 조준 방향에 따른 좌우 반전
             }
 
             if (Input.GetMouseButtonUp(0)) // 마우스 버튼을 놓았을 때
@@ -53,6 +66,9 @@ public class PlayerCombat : MonoBehaviour, ICombatant
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
+
+                animator.SetBool("IsAim", false);
+                playerMovement.EnableMovement();
                 lineRenderer.positionCount = 0; // 라인 초기화
             }
         }
@@ -60,7 +76,10 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         {
             if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 왼쪽 버튼을 클릭했을 때
             {
+                playerMovement.DisableMovement();
                 ShowAim(); // 조준선 표시
+                animator.SetBool("IsAim", true);
+                UpdateCharacterDirection(); // 조준 방향에 따른 좌우 반전
             }
 
             if (Input.GetMouseButtonUp(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 버튼을 놓았을 때
@@ -68,23 +87,45 @@ public class PlayerCombat : MonoBehaviour, ICombatant
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Vector2 direction = (mousePosition - transform.position).normalized;
                 Attack(direction);
+
+                animator.SetBool("IsAim", false);
+                playerMovement.EnableMovement();
                 lineRenderer.positionCount = 0; // 라인 초기화
             }
         }
     }
 
+    // 캐릭터 방향 업데이트 함수
+    void UpdateCharacterDirection()
+    {
+        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+        // 마우스 위치가 캐릭터의 오른쪽에 있으면 오른쪽을, 왼쪽에 있으면 왼쪽을 바라봄
+        if (mousePosition.x < transform.position.x)
+        {
+            transform.localScale = new Vector3(2.3f, 2.3f, 1); // 오른쪽을 바라봄
+        }
+        else
+        {
+            transform.localScale = new Vector3(-2.3f, 2.3f, 1); // 왼쪽을 바라봄
+        }
+    }
+
+
     void ShowAim()
     {
         // 항상 플레이어의 위치에서 마우스 위치로 조준
+        
         Vector3 playerPosition = transform.position;
         Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         aimDirection = (mousePosition - playerPosition).normalized;
 
         // 조준선을 그린다
         lineRenderer.positionCount = 2;
-        lineRenderer.SetPosition(0, playerPosition);
-        lineRenderer.SetPosition(1, playerPosition + (Vector3)(aimDirection * 10f)); // 조준선의 길이 설정
 
+
+        lineRenderer.SetPosition(0, new Vector3(playerPosition.x, playerPosition.y - 0.05f, -1)); // 캐릭터보다 약간 아래로 설정
+        lineRenderer.SetPosition(1, new Vector3(playerPosition.x + aimDirection.x * 10f, playerPosition.y + aimDirection.y * 10f - 0.02f, -1));
         // Z축을 통해 2D 화면에서의 라인 깊이 설정
         lineRenderer.SetPosition(0, new Vector3(lineRenderer.GetPosition(0).x, lineRenderer.GetPosition(0).y, -1));
         lineRenderer.SetPosition(1, new Vector3(lineRenderer.GetPosition(1).x, lineRenderer.GetPosition(1).y, -1));

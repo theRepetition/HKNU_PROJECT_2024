@@ -13,6 +13,7 @@ public class AmmoChamberUI : MonoBehaviour
     private List<Ammo> loadedAmmo = new List<Ammo>(); // 장전된 탄약 리스트
     private PlayerCombat playerCombat; // 플레이어 전투 관리
     private InventoryUIManager inventoryUIManager; // 인벤토리 UI 관리자
+    public Sprite customimage;
 
     void Start()
     {
@@ -104,7 +105,7 @@ public class AmmoChamberUI : MonoBehaviour
         // 재장전 후 슬롯의 이미지 초기화
         foreach (var slot in chamberSlots)
         {
-            slot.GetComponent<Image>().sprite = null; // 슬롯 이미지 비우기
+            slot.GetComponent<Image>().sprite = customimage; // 슬롯 이미지 비우기
         }
         InventoryUIManager.Instance.CloseInventory(); // 인벤토리 닫기
     }
@@ -133,7 +134,7 @@ public class AmmoChamberUI : MonoBehaviour
         // 모든 슬롯 이미지 초기화
         foreach (var slot in chamberSlots)
         {
-            slot.GetComponent<Image>().sprite = null;
+            slot.GetComponent<Image>().sprite = customimage;
         }
     }
 }

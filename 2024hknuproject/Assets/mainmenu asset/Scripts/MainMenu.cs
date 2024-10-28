@@ -12,11 +12,12 @@ public class MainMenu : MonoBehaviour
 
     public void OpenOptions()
     {
-        // ¿É¼Ç ¸Þ´º¸¦ ¿©´Â ·ÎÁ÷
+        // ï¿½É¼ï¿½ ï¿½Þ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     }
 
     public void QuitGame()
     {
         Application.Quit();
+        UnityEditor.EditorApplication.isPlaying = false;
     }
 }
