@@ -20,6 +20,25 @@ public class PlayerHealth : Health
         // 최종 스테이지 표시 설정
         ShowDeathScreen();
     }
+    public void Heal(int amount) //체력 회복
+    {
+        currentHealth = Mathf.Min(currentHealth + amount, maxHealth);
+        Debug.Log($"Player healed by {amount}. Current Health: {currentHealth}");
+    }
+    // 최대 체력 증가 메서드
+    public void IncreaseMaxHealth(int amount)
+    {
+        // 최대 체력 증가 전의 현재 체력 비율 계산
+        float healthPercentage = (float)currentHealth / maxHealth;
+
+        // 최대 체력 증가
+        maxHealth += amount;
+
+        // 현재 체력을 새로운 최대 체력의 동일 비율로 회복
+        currentHealth = Mathf.FloorToInt(maxHealth * healthPercentage);
+
+        Debug.Log($"Max Health increased by {amount}. New Max Health: {maxHealth}. Current Health: {currentHealth}");
+    }
 
     private void ShowDeathScreen()
     {

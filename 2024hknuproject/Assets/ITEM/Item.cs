@@ -12,10 +12,10 @@ public class Item
 
     public enum ItemType
     {
-        Weapon,
         Ammo,
-        Consumable,
-        Misc
+        HealthRecovery,  // 즉시 체력 회복 아이템
+        HealthBoost,     // 최대 체력 증가 아이템
+        ActionPointBoost // 최대 행동력 증가 아이템 
     }
 
     // 아이템 사용 메서드
@@ -68,15 +68,73 @@ public class Ammo : Item
         }
     }
 }
-
 [System.Serializable]
-public class Consumable : Item
+public class HealthRecovery : Item
 {
     public int healthRestore;
 
+    public HealthRecovery(string name, int restoreAmount, Sprite icon)
+    {
+        itemName = name;
+        healthRestore = restoreAmount;
+        this.icon = icon;
+        itemType = ItemType.HealthRecovery;
+    }
+
     public override void Use()
     {
-        // 체력 회복 로직
-        Debug.Log(itemName + " 체력 회복 아이템 사용");
+        PlayerHealth playerHealth = GameObject.FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.Heal(healthRestore);
+            Debug.Log($"{itemName} 사용: 체력 {healthRestore} 회복");
+        }
     }
 }
+[System.Serializable]
+public class HealthBoost : Item
+{
+    public int maxHealthIncrease;
+
+    public HealthBoost(string name, int maxIncrease, Sprite icon)
+    {
+        itemName = name;
+        maxHealthIncrease = maxIncrease;
+        this.icon = icon;
+        itemType = ItemType.HealthBoost;
+    }
+
+    public override void Use()
+    {
+        PlayerHealth playerHealth = GameObject.FindObjectOfType<PlayerHealth>();
+        if (playerHealth != null)
+        {
+            playerHealth.IncreaseMaxHealth(maxHealthIncrease);
+            Debug.Log($"{itemName} 사용: 최대 체력 {maxHealthIncrease} 증가");
+        }
+    }
+}
+[System.Serializable]
+public class ActionPointBoost : Item
+{
+    public int maxActionPointIncrease;
+
+    public ActionPointBoost(string name, int maxIncrease, Sprite icon)
+    {
+        itemName = name;
+        maxActionPointIncrease = maxIncrease;
+        this.icon = icon;
+        itemType = ItemType.ActionPointBoost;
+    }
+
+    public override void Use()
+    {
+        PlayerCombat playerCombat = GameObject.FindObjectOfType<PlayerCombat>();
+        if (playerCombat != null)
+        {
+            playerCombat.IncreaseMaxActionPoints(maxActionPointIncrease);
+            Debug.Log($"{itemName} 사용: 최대 행동력 {maxActionPointIncrease} 증가");
+        }
+    }
+}
+

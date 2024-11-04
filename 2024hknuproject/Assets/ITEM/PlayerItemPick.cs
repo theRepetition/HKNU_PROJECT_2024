@@ -9,32 +9,55 @@ public class PlayerItemPick : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            Debug.Log("f 누름");
-            PickUpItem();
-        }
+        AutoPickUpItems();
     }
 
-    void PickUpItem()
+    void AutoPickUpItems()
     {
+        // "Item" 태그가 있는 아이템 탐색
         GameObject[] items = GameObject.FindGameObjectsWithTag("Item");
-        GameObject[] bullets = GameObject.FindGameObjectsWithTag("Bullet");
-
         foreach (var item in items)
         {
             if (Vector2.Distance(transform.position, item.transform.position) <= pickupRange)
             {
-                ItemPickup itemPickup = item.GetComponent<ItemPickup>();
-                if (itemPickup != null)
+                // 아이템이 각각의 픽업 스크립트를 가지고 있는지 확인하고, 있으면 PickUp 호출
+                var ammoPickup = item.GetComponent<AmmoPickup>();
+                if (ammoPickup != null)
                 {
-                    itemPickup.PickUp(); // 아이템 줍기 로직 실행
-                    npcTriggerManager.RemoveOtherRewards(item); // 선택되지 않은 나머지 보상을 제거
-                    break;
+                    ammoPickup.PickUp();
+                    npcTriggerManager.RemoveOtherRewards(item);
+                    return; // 하나 줍고 종료
+                }
+
+                var healthRecoveryPickup = item.GetComponent<HealthRecoveryPickup>();
+                if (healthRecoveryPickup != null)
+                {
+                    healthRecoveryPickup.PickUp();
+                    npcTriggerManager.RemoveOtherRewards(item);
+                    return; // 하나 줍고 종료
+                }
+
+                var healthBoostPickup = item.GetComponent<HealthBoostPickup>();
+                if (healthBoostPickup != null)
+                {
+                    healthBoostPickup.PickUp();
+                    npcTriggerManager.RemoveOtherRewards(item);
+                    return; // 하나 줍고 종료
+                }
+
+                var actionPointBoostPickup = item.GetComponent<ActionPointBoostPickup>();
+                if (actionPointBoostPickup != null)
+                {
+                    actionPointBoostPickup.PickUp();
+                    npcTriggerManager.RemoveOtherRewards(item);
+                    return; // 하나 줍고 종료
                 }
             }
         }
+    
 
+        // "Bullet" 태그가 있는 탄약 탐색
+        GameObject[] bullets = GameObject.FindGameObjectsWithTag("Bullet");
         foreach (var bullet in bullets)
         {
             if (Vector2.Distance(transform.position, bullet.transform.position) <= pickupRange)
@@ -43,8 +66,8 @@ public class PlayerItemPick : MonoBehaviour
                 if (ammoPickup != null)
                 {
                     ammoPickup.PickUp(); // 탄약 줍기 로직 실행
-                    npcTriggerManager.RemoveOtherRewards(bullet); // 선택되지 않은 나머지 보상을 제거
-                    break;
+                    npcTriggerManager.RemoveOtherRewards(bullet); // 선택되지 않은 나머지 보상 제거
+                    return; // 하나 줍고 종료
                 }
             }
         }
