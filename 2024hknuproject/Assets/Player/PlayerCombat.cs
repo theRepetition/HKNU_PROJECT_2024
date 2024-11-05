@@ -270,8 +270,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     }
     public void IncreaseMaxActionPoints(int amount)
     {
-        maxActionPoints += amount;
-        currentActionPoints = Mathf.Min(currentActionPoints, maxActionPoints); // 최대 행동력 증가 후 현재 행동력 유지
-        Debug.Log($"Max Action Points increased by {amount}. New Max Action Points: {maxActionPoints}");
+        playerTurnManager.IncreaseMaxActionPoints(amount);
+
     }
 }
