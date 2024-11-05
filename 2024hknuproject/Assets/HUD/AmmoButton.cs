@@ -7,7 +7,13 @@ public class AmmoButton : MonoBehaviour
     public TextMeshProUGUI ammoNameText;
     public TextMeshProUGUI ammoQuantityText;
     private Ammo ammo;
+    private AmmoChamberUI ACU;
 
+    void Start()
+    {
+        ACU = FindObjectOfType<AmmoChamberUI>(); // PlayerTurnManagerë¥¼ ì°¾ì•„ì„œ í• ë‹¹
+        
+    }
     public void SetAmmo(Ammo newAmmo)
     {
         ammo = newAmmo;
@@ -27,23 +33,23 @@ public class AmmoButton : MonoBehaviour
     {
         Debug.Log("Ammo button clicked!");
 
-        if (ammo != null && ammo.quantity > 0)
+        if (ammo != null && ammo.quantity > 0 && ACU.Ammoisfull()<6)
         {
             AmmoChamberUI ammoChamberUI = FindObjectOfType<AmmoChamberUI>();
             if (ammoChamberUI != null)
             {
-                ammoChamberUI.LoadAmmo(ammo); // AmmoChamberUI¿¡ Åº¾àÀ» ·Îµå
-                ammo.quantity--; // Åº¾à ¼ö·® °¨¼Ò
-                UpdateUI(); // UI ¾÷µ¥ÀÌÆ®
+                ammoChamberUI.LoadAmmo(ammo); // 
+                ammo.quantity--; // 
+                UpdateUI(); //
             }
             else
             {
-                Debug.LogError("AmmoChamberUI¸¦ Ã£À» ¼ö ¾ø½À´Ï´Ù.");
+                
             }
         }
         else
         {
-            Debug.LogWarning("Åº¾àÀÌ ¾ø°Å³ª Åº¾à ¼ö·®ÀÌ ºÎÁ·ÇÕ´Ï´Ù.");
+           
         }
     }
 

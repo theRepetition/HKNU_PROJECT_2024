@@ -80,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
     // 플레이어 이동을 활성화하는 함수
     public void EnableMovement()
     {
+        Debug.Log($"{gameObject.name}가 EnableMovement를 호출했습니다."); // 호출한 객체의 이름 출력
         canMove = true; // 이동 가능 상태로 설정
     }
 

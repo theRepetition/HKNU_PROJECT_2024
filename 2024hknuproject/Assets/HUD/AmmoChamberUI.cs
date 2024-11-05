@@ -14,7 +14,7 @@ public class AmmoChamberUI : MonoBehaviour
     private PlayerCombat playerCombat; // 플레이어 전투 관리
     private InventoryUIManager inventoryUIManager; // 인벤토리 UI 관리자
     public Sprite customimage;
-
+    public bool ammoisfull;
     void Start()
     {
         playerTurnManager = FindObjectOfType<PlayerTurnManager>(); // PlayerTurnManager를 찾아서 할당
@@ -70,16 +70,16 @@ public class AmmoChamberUI : MonoBehaviour
                     slotImage.sprite = ammo.icon; // 슬롯 이미지에 탄약 아이콘 설정
                     Debug.Log($"Slot {slotIndex} updated with {ammo.itemName} icon.");
                 }
-                else
-                {
-                    Debug.LogError($"Ammo {ammo.itemName} does not have an icon assigned.");
-                }
+                
             }
-            else
-            {
-                Debug.LogError($"Slot {slotIndex} does not have an Image component.");
-            }
+            
         }
+       
+     }
+    public int Ammoisfull()
+    {
+
+        return loadedAmmo.Count;
     }
 
     // 재장전 처리 함수
@@ -91,6 +91,7 @@ public class AmmoChamberUI : MonoBehaviour
             // 턴제 모드에서 플레이어의 턴일 때만 재장전 가능
             if (TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
             {
+                
                 playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 리스트 전달
                 playerTurnManager.EndTurn(); // 턴 종료
                 loadedAmmo.Clear(); // 장전된 탄약 리스트 초기화
@@ -100,6 +101,7 @@ public class AmmoChamberUI : MonoBehaviour
         {
             // 실시간 모드에서 재장전 처리
             playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 리스트 전달
+            
         }
 
         // 재장전 후 슬롯의 이미지 초기화
@@ -113,8 +115,9 @@ public class AmmoChamberUI : MonoBehaviour
     // 탄약 슬롯 초기화 함수
     public void ResetChamber()
     {
+        
         foreach (var ammo in loadedAmmo)
-        {
+        {   
             // 탄약 매니저에서 동일한 이름의 탄약을 찾아 인벤토리에 추가
             Ammo existingAmmo = AmmoManager.Instance.ammoTypes.Find(a => a.itemName == ammo.itemName);
             if (existingAmmo != null)

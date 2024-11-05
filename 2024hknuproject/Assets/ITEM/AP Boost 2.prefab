@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2886794801291509193}
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
-  - component: {fileID: 6803286568205677589}
   - component: {fileID: -5522717007740229357}
+  - component: {fileID: 8755845257344304794}
   m_Layer: 0
   m_Name: AP Boost 2
   m_TagString: Item
@@ -110,24 +110,6 @@ CapsuleCollider:
   m_Height: 0.16
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6803286568205677589
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1399123068238988583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ef644a862500c143bc44e95c779e0db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthBoostItem:
-    itemName: "AP \uC99D\uAC00 15"
-    description: 
-    icon: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
-    itemType: 3
-    maxHealthIncrease: 15
 --- !u!114 &-5522717007740229357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,3 +128,21 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
     itemType: 0
   itemPickup: {fileID: 0}
+--- !u!114 &8755845257344304794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399123068238988583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dceae911f0d91e14e91c39108e8f1490, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionPointBoostItem:
+    itemName: 
+    description: 
+    icon: {fileID: 0}
+    itemType: 3
+    maxActionPointIncrease: 75

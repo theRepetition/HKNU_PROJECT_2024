@@ -123,8 +123,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammo:
-    itemName: Normal
-    description: 
+    itemName: "\uC77C\uBC18 \uD0C4"
+    description: "\uC77C\uBC18\uC801\uC778 \uD0C4\uD658\uC785\uB2C8\uB2E4"
     icon: {fileID: 21300000, guid: 8803f49edbb0ac446b16a7160c6a91db, type: 3}
     itemType: 0
     damage: 15

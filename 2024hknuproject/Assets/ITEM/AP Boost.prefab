@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 2886794801291509193}
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
-  - component: {fileID: 6803286568205677589}
-  - component: {fileID: 8895659849822501128}
+  - component: {fileID: 1007520557972480697}
+  - component: {fileID: 6039076441868372096}
   m_Layer: 0
   m_Name: AP Boost
   m_TagString: Item
@@ -110,7 +110,7 @@ CapsuleCollider:
   m_Height: 0.16
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6803286568205677589
+--- !u!114 &1007520557972480697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,16 +119,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1399123068238988583}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1ef644a862500c143bc44e95c779e0db, type: 3}
+  m_Script: {fileID: 11500000, guid: dceae911f0d91e14e91c39108e8f1490, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  healthBoostItem:
-    itemName: "AP \uC99D\uAC00 5"
+  actionPointBoostItem:
+    itemName: 
     description: 
     icon: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
     itemType: 3
-    maxHealthIncrease: 5
---- !u!114 &8895659849822501128
+    maxActionPointIncrease: 20
+--- !u!114 &6039076441868372096
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

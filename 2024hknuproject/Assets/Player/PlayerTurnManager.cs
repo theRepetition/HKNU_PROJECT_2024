@@ -3,7 +3,7 @@ using UnityEngine;
 public class PlayerTurnManager : MonoBehaviour, ITurnTaker
 {
     public int maxActionPoints = 10; // 최대 행동 포인트
-    private int currentActionPoints; // 현재 행동 포인트
+    public int currentActionPoints; // 현재 행동 포인트
     private bool isTurnComplete = false; // 턴 완료 여부
     public PlayerMovement playerMovement; // 플레이어의 이동 스크립트
     private PlayerCombat playerCombat; // 플레이어의 전투 스크립트

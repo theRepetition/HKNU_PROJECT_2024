@@ -19,7 +19,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     private PlayerMovement playerMovement;
     private bool CanCombat = true;
     public Animator animator;
-
+    public InventoryUIManager IUM;
     private Ammo currentAmmo; // 현재 사용 중인 탄약
 
     public int ProjectileDamage => currentLoadedAmmo.Count > 0 ? currentLoadedAmmo[0].damage : 0;
@@ -29,6 +29,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     {
         playerTurnManager = FindObjectOfType<PlayerTurnManager>();
         playerMovement = GetComponent<PlayerMovement>();
+        IUM = GetComponent<InventoryUIManager>();
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.startWidth = 0.02f;
         lineRenderer.endWidth = 0.02f;
@@ -51,7 +52,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         if (!CanCombat) // Combat이 불가능할 때는 아무 작업도 하지 않음
             return;
 
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>())
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>() )
         {
             if (Input.GetMouseButton(0)) // 마우스 왼쪽 버튼을 클릭했을 때
             {
@@ -72,7 +73,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
                 lineRenderer.positionCount = 0; // 라인 초기화
             }
         }
-        else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
+        else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime )
         {
             if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 왼쪽 버튼을 클릭했을 때
             {

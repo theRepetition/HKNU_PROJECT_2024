@@ -1,25 +1,35 @@
 using UnityEngine;
+using UnityEngine.UI;  // Imageë¥¼ ì‚¬ìš©í•˜ê¸° ìœ„í•œ ë„¤ì„ìŠ¤í˜ì´ìŠ¤
 using TMPro;
 
 public class TurnUI : MonoBehaviour
 {
     public TextMeshProUGUI turnText;
+    public Image turnImage;
 
     void Update()
     {
-        // GameModeManager.Instance ¶Ç´Â TurnManager.Instance°¡ nullÀÎÁö È®ÀÎ
         if (GameModeManager.Instance == null || TurnManager.Instance == null)
         {
             return;
         }
 
-        // currentMode¿Í CurrentTurnTaker°¡ nullÀÎÁö È®ÀÎ
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
+            turnImage.gameObject.SetActive(true); // í„´ì œ ëª¨ë“œì¼ ë•Œ turnImage í™œì„±í™”
+
             var currentTurnTaker = TurnManager.Instance.CurrentTurnTaker;
-            if (currentTurnTaker != null && currentTurnTaker is Object && currentTurnTaker as MonoBehaviour != null)
+            if (currentTurnTaker != null && currentTurnTaker is MonoBehaviour)
             {
-                turnText.text = $"{currentTurnTaker.Name}'s Turn";
+                string turnTakerTag = ((MonoBehaviour)currentTurnTaker).tag;
+                if (turnTakerTag == "Player")
+                {
+                    turnText.text = "í”Œë ˆì´ì–´ì˜ í„´";
+                }
+                else
+                {
+                    turnText.text = "NPCì˜ í„´";
+                }
             }
             else
             {
@@ -28,13 +38,13 @@ public class TurnUI : MonoBehaviour
         }
         else
         {
+            turnImage.gameObject.SetActive(false); // í„´ì œê°€ ì•„ë‹ ë•Œ turnImage ë¹„í™œì„±í™”
             turnText.text = "";
         }
     }
 
     public void ClearTurnText()
     {
-        // ÅÏ ÅØ½ºÆ®¸¦ ºñ¿ò
         if (turnText != null)
         {
             turnText.text = "";

@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 1363548871286189440}
   - component: {fileID: 1058641629889524325}
   m_Layer: 9
-  m_Name: npc Prefab 4 1 (1)
+  m_Name: "\uC801\uAD70"
   m_TagString: NPC
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

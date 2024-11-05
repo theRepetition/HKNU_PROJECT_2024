@@ -16,7 +16,7 @@ public class InventoryUIManager : MonoBehaviour
     private PlayerCombat playerCombat; // 플레이어의 전투 제어
     private InventorySlot[] slots; // 인벤토리 슬롯 배열
     private Inventory inventory; // 인벤토리 인스턴스
-
+    public bool isActive = false;
     private List<AmmoButton> ammoButtons = new List<AmmoButton>(); // 생성된 탄약 버튼 리스트
 
     private void Awake()
@@ -48,23 +48,26 @@ public class InventoryUIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R)) // I 또는 R 키 입력 시
         {
+            playerMovement.DisableMovement();
+            playerCombat.DisableCombat();
             ToggleInventory(); // 인벤토리 토글
         }
     }
 
-    public void ToggleInventory()
+    public  void ToggleInventory()
     {
         // 인벤토리 활성화 상태 반전
-        bool isActive = !inventoryPanel.activeSelf;
+        isActive = !inventoryPanel.activeSelf;
         inventoryPanel.SetActive(isActive); // 인벤토리 패널 활성화/비활성화
         ammoInventoryPanel.SetActive(isActive); // 탄약 패널 활성화/비활성화
 
         if (isActive) // 인벤토리가 활성화되면
         {
+            UpdateAmmoButtons();
             if (playerMovement != null) playerMovement.DisableMovement(); // 플레이어 이동 비활성화
             if (playerCombat != null) playerCombat.DisableCombat(); // 플레이어 전투 비활성화
 
-            UpdateAmmoButtons(); // 탄약 버튼 업데이트
+             // 탄약 버튼 업데이트
         }
         else
         {
