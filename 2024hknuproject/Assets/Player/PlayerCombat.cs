@@ -21,12 +21,12 @@ public class PlayerCombat : MonoBehaviour, ICombatant
     public Animator animator;
     public InventoryUIManager IUM;
     private Ammo currentAmmo; // 현재 사용 중인 탄약
-
+    public GameObject inventoryPanel; // 인벤토리 패널
     public int ProjectileDamage => currentLoadedAmmo.Count > 0 ? currentLoadedAmmo[0].damage : 0;
     // 탄약이 있을 때 첫 번째 탄약의 데미지를 반환
 
     void Start()
-    {
+    {   
         playerTurnManager = FindObjectOfType<PlayerTurnManager>();
         playerMovement = GetComponent<PlayerMovement>();
         IUM = GetComponent<InventoryUIManager>();
@@ -52,7 +52,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         if (!CanCombat) // Combat이 불가능할 때는 아무 작업도 하지 않음
             return;
 
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>() )
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>()&& inventoryPanel.activeSelf)
         {
             if (Input.GetMouseButton(0)) // 마우스 왼쪽 버튼을 클릭했을 때
             {
@@ -73,7 +73,7 @@ public class PlayerCombat : MonoBehaviour, ICombatant
                 lineRenderer.positionCount = 0; // 라인 초기화
             }
         }
-        else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime )
+        else if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime && inventoryPanel.activeSelf)
         {
             if (Input.GetMouseButton(0) && projectilesFiredThisTurn < maxProjectilesPerTurn) // 마우스 왼쪽 버튼을 클릭했을 때
             {

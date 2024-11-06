@@ -91,16 +91,16 @@ public class InventoryUIManager : MonoBehaviour
             var playerTurnManager = playerCombat.GetComponent<PlayerTurnManager>();
             if (playerTurnManager != null && TurnManager.Instance.CurrentTurnTaker == playerTurnManager)
             {
-                if (playerMovement != null) playerMovement.EnableMovement(); // 턴제에서 플레이어의 이동 활성화
-                if (playerCombat != null) playerCombat.EnableCombat(); // 턴제에서 플레이어 전투 활성화
+                if (playerMovement != null && !inventoryPanel.activeSelf) playerMovement.EnableMovement(); // 턴제에서 플레이어의 이동 활성화
+                if (playerCombat != null && !inventoryPanel.activeSelf) playerCombat.EnableCombat(); // 턴제에서 플레이어 전투 활성화
             }
         }
         else
-        {
-            // 실시간 모드에서는 바로 이동 및 전투 활성화
-            if (playerMovement != null) playerMovement.EnableMovement();
-            if (playerCombat != null) playerCombat.EnableCombat();
-        }
+         {
+             // 실시간 모드에서는 바로 이동 및 전투 활성화
+             if (playerMovement != null&&!inventoryPanel.activeSelf) playerMovement.EnableMovement();
+              if (playerCombat != null&&!inventoryPanel.activeSelf) playerCombat.EnableCombat();
+          }
     }
 
     // 인벤토리 UI를 업데이트하는 함수
