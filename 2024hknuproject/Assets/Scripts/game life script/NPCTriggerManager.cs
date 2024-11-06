@@ -7,7 +7,8 @@ public class NPCTriggerManager : MonoBehaviour
     public GameObject rewardUIPanel;
     private bool rewardsDropped = false;
     private GameObject[] spawnedRewards = new GameObject[3];
-
+    private StageManager stageManager;
+    private EndGameManager gameoverManager;
     private PlayerMovement playerMovement;
     private PlayerCombat playerCombat;
 
@@ -17,6 +18,8 @@ public class NPCTriggerManager : MonoBehaviour
     {
         playerCombat = FindObjectOfType<PlayerCombat>();
         playerMovement = FindObjectOfType<PlayerMovement>();
+        stageManager = FindObjectOfType<StageManager>();
+        gameoverManager = FindObjectOfType<EndGameManager>();
     }
 
     void Update()
@@ -26,13 +29,21 @@ public class NPCTriggerManager : MonoBehaviour
 
     void CheckNPCCount()
     {
+        // 현재 스테이지가 5이고, 모든 NPC가 처치되었을 때만 게임 종료
         if (GameObject.FindGameObjectsWithTag("NPC").Length == 0 && !rewardsDropped)
         {
-            PauseGameAndShowRewards();
+            if (stageManager.CurrentStage == 5)
+            {
+                gameoverManager.ShowGameOverPanel(""); // 게임 클리어 패널 표시
+            }
+            else
+            {
+                PauseGameAndShowRewards();
+            }
             rewardsDropped = true;
         }
     }
-
+    
     void PauseGameAndShowRewards()
 {
     GameStateManager.Instance.SetRewardUIOpen(true);
