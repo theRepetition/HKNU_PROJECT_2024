@@ -12,8 +12,6 @@ public class InventoryUIManager : MonoBehaviour
     public GameObject ammoInventoryPanel; // 탄약 인벤토리 패널
     public GameObject ammoButtonPrefab; // 탄약 버튼 프리팹
 
-    private PlayerMovement playerMovement; // 플레이어의 이동 제어
-    private PlayerCombat playerCombat; // 플레이어의 전투 제어
     private InventorySlot[] slots; // 인벤토리 슬롯 배열
     private Inventory inventory; // 인벤토리 인스턴스
     public bool isActive = false;
@@ -39,68 +37,41 @@ public class InventoryUIManager : MonoBehaviour
 
         inventoryPanel.SetActive(false); // 게임 시작 시 인벤토리 패널 비활성화
         ammoInventoryPanel.SetActive(false); // 게임 시작 시 탄약 인벤토리 패널 비활성화
-
-        playerMovement = FindObjectOfType<PlayerMovement>(); // PlayerMovement 컴포넌트 찾기
-        playerCombat = FindObjectOfType<PlayerCombat>(); // PlayerCombat 컴포넌트 찾기
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R)) // I 또는 R 키 입력 시
+        if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R)) && !GameStateManager.Instance.IsPauseMenuOpen()) // I 또는 R 키 입력 시
         {
-            playerMovement.DisableMovement();
-            playerCombat.DisableCombat();
             ToggleInventory(); // 인벤토리 토글
         }
     }
 
-    public  void ToggleInventory()
+    public void ToggleInventory()
     {
-        // 인벤토리 활성화 상태 반전
-        isActive = !inventoryPanel.activeSelf;
-        inventoryPanel.SetActive(isActive); // 인벤토리 패널 활성화/비활성화
-        ammoInventoryPanel.SetActive(isActive); // 탄약 패널 활성화/비활성화
+        bool isOpen = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(isOpen);
+        ammoInventoryPanel.SetActive(isOpen);
 
-        if (isActive) // 인벤토리가 활성화되면
+        GameStateManager.Instance.SetInventoryOpen(isOpen);
+
+        if (isOpen)
         {
             UpdateAmmoButtons();
-            if (playerMovement != null) playerMovement.DisableMovement(); // 플레이어 이동 비활성화
-            if (playerCombat != null) playerCombat.DisableCombat(); // 플레이어 전투 비활성화
-
-             // 탄약 버튼 업데이트
-        }
-        else
-        {
-            if (playerMovement != null) playerMovement.EnableMovement(); // 플레이어 이동 활성화
-            if (playerCombat != null) playerCombat.EnableCombat(); // 플레이어 전투 활성화
         }
     }
 
     public void CloseInventory()
     {
-        inventoryPanel.SetActive(false); // 인벤토리 패널 비활성화
-        ammoInventoryPanel.SetActive(false); // 탄약 패널 비활성화
-        StartCoroutine(EnableMovementAndCombatWithDelay(0.5f));
+        inventoryPanel.SetActive(false);
+        ammoInventoryPanel.SetActive(false);
+        GameStateManager.Instance.SetInventoryOpen(false);
     }
-    private IEnumerator EnableMovementAndCombatWithDelay(float delay)
+
+    private IEnumerator ResumeGameWithDelay(float delay)
     {
         yield return new WaitForSeconds(delay); // 0.5초 대기
-
-        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
-        {
-            var playerTurnManager = playerCombat.GetComponent<PlayerTurnManager>();
-            if (playerTurnManager != null && TurnManager.Instance.CurrentTurnTaker == playerTurnManager)
-            {
-                if (playerMovement != null && !inventoryPanel.activeSelf) playerMovement.EnableMovement(); // 턴제에서 플레이어의 이동 활성화
-                if (playerCombat != null && !inventoryPanel.activeSelf) playerCombat.EnableCombat(); // 턴제에서 플레이어 전투 활성화
-            }
-        }
-        else
-         {
-             // 실시간 모드에서는 바로 이동 및 전투 활성화
-             if (playerMovement != null&&!inventoryPanel.activeSelf) playerMovement.EnableMovement();
-              if (playerCombat != null&&!inventoryPanel.activeSelf) playerCombat.EnableCombat();
-          }
+        GameStateManager.Instance.ResumeGame(); // 게임 재개
     }
 
     // 인벤토리 UI를 업데이트하는 함수

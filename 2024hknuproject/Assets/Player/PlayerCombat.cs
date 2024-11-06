@@ -51,7 +51,10 @@ public class PlayerCombat : MonoBehaviour, ICombatant
         HUDManager.Instance.UpdateBulletSlots(currentLoadedAmmo.Count);
         if (!CanCombat) // Combat이 불가능할 때는 아무 작업도 하지 않음
             return;
-
+        if (!CanCombat || GameStateManager.Instance.IsAnyUIOpen() || GameStateManager.Instance.IsInputBlocked())
+        {
+            return;
+        }
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker == GetComponent<PlayerTurnManager>()&& inventoryPanel.activeSelf)
         {
             if (Input.GetMouseButton(0)) // 마우스 왼쪽 버튼을 클릭했을 때

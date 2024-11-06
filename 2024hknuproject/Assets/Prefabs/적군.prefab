@@ -200,6 +200,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 1
   currentHealth: 0
+  spriteRenderer: {fileID: 4278691623933595704}
+  blinkDuration: 0.1
+  blinkCount: 3
 --- !u!114 &3060110737683964366
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,8 +10,8 @@ public class RewardManager : MonoBehaviour
 
     public void DisplayRewardsUI(GameObject[] rewards, NPCTriggerManager manager)
     {
-        npcTriggerManager = manager;
         rewardUIPanel.SetActive(true);
+        GameStateManager.Instance.SetRewardUIOpen(true);
 
         foreach (Transform child in rewardButtonContainer)
         {
@@ -32,13 +32,13 @@ public class RewardManager : MonoBehaviour
 
     public void SelectReward(GameObject selectedReward)
     {
-        // 플레이어 위치에 선택된 보상 아이템 스폰
         Transform playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         selectedReward.transform.position = playerTransform.position;
 
-        
-
         rewardUIPanel.SetActive(false);
+        GameStateManager.Instance.SetRewardUIOpen(false); // 보상 UI 닫힘
+
         npcTriggerManager.RemoveOtherRewards(selectedReward);
     }
+
 }

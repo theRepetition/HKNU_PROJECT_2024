@@ -34,12 +34,10 @@ public class NPCTriggerManager : MonoBehaviour
     }
 
     void PauseGameAndShowRewards()
-    {
-        playerMovement?.DisableMovement();
-        playerCombat?.DisableCombat();
-
-        ShowRewardsUI();
-    }
+{
+    GameStateManager.Instance.SetRewardUIOpen(true);
+    ShowRewardsUI();
+}
 
     void ShowRewardsUI()
     {
@@ -83,13 +81,12 @@ public class NPCTriggerManager : MonoBehaviour
                 Destroy(reward);
             }
         }
-        ResumeGameAfterRewardSelection();
+        GameStateManager.Instance.SetRewardUIOpen(false);
     }
 
     public void ResumeGameAfterRewardSelection()
     {
-        playerMovement?.EnableMovement();
-        playerCombat?.EnableCombat();
+        GameStateManager.Instance.ResumeGame();
     }
 
     public void enableReward()
