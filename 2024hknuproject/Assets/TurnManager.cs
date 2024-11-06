@@ -180,68 +180,36 @@ public class TurnManager : MonoBehaviour
 
     // 턴 참여자가 턴을 차례대로 수행하는 함수
     private IEnumerator TakeTurns()
+{
+    while (true)
     {
-        while (true)
+        if (turnTakers.Count == 0)
         {
-            if (turnTakers.Count == 0)
-            {
-                GameModeManager.Instance.SwitchToRealTimeMode();
-                yield break;
-            }
-
-            CurrentTurnTaker = turnTakers[currentTurnIndex];
-
-            // NPC가 플레이어 범위 밖에 있으면 턴에서 제거
-            if (!(CurrentTurnTaker is PlayerTurnManager) && !IsNpcInRangeOfPlayer(CurrentTurnTaker, maxDistanceFromPlayer))
-            {
-                UnregisterTurnTaker(CurrentTurnTaker);
-                continue;
-            }
-
-            if (CurrentTurnTaker is PlayerTurnManager)
-            {
-                CheckForRemainingNPCs();
-            }
-
-            // 유효한 턴 참여자인지 확인
-            if (CurrentTurnTaker == null || CurrentTurnTaker as MonoBehaviour == null)
-            {
-                turnTakers.RemoveAt(currentTurnIndex);
-                if (currentTurnIndex >= turnTakers.Count)
-                {
-                    currentTurnIndex = 0;
-                }
-
-                continue;
-            }
-
-            CurrentTurnTaker.StartTurn();
-            Debug.Log($"{CurrentTurnTaker.Name}의 턴 시작");
-
-            // NPC라면 플레이어 이동 비활성화
-            if (!(CurrentTurnTaker is PlayerTurnManager))
-            {
-                var player = FindObjectOfType<PlayerTurnManager>();
-                if (player != null)
-                {
-                    player.DisableMovement();
-                }
-            }
-
-            while (!CurrentTurnTaker.IsTurnComplete)
-            {
-                yield return null;
-            }
-
-            CurrentTurnTaker.EndTurn();
-            Debug.Log($"{CurrentTurnTaker.Name}의 턴 종료");
-
-            currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
-
-            // NPC가 있는지 확인하여 실시간 모드 전환 체크
-            CheckForRealTimeMode();
+            GameModeManager.Instance.SwitchToRealTimeMode();
+            yield break;
         }
+
+        CurrentTurnTaker = turnTakers[currentTurnIndex];
+
+        // 현재 턴의 주체가 플레이어인지 확인하여 GameStateManager에 알림
+        bool isPlayerTurn = CurrentTurnTaker is PlayerTurnManager;
+        GameStateManager.Instance.SetPlayerTurnActive(isPlayerTurn);
+
+        CurrentTurnTaker.StartTurn();
+        Debug.Log($"{CurrentTurnTaker.Name}의 턴 시작");
+
+        while (!CurrentTurnTaker.IsTurnComplete)
+        {
+            yield return null;
+        }
+
+        CurrentTurnTaker.EndTurn();
+        Debug.Log($"{CurrentTurnTaker.Name}의 턴 종료");
+
+        currentTurnIndex = (currentTurnIndex + 1) % turnTakers.Count;
+        CheckForRealTimeMode();
     }
+}
 
     // 다음 턴으로 넘어가는 함수
     public void NextTurn()

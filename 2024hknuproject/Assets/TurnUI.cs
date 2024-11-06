@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;  // Image를 사용하기 위한 네임스페이스
+using UnityEngine.UI;
 using TMPro;
 
 public class TurnUI : MonoBehaviour
@@ -14,15 +14,16 @@ public class TurnUI : MonoBehaviour
             return;
         }
 
+        // Turn-based 모드에서만 TurnUI를 활성화
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
-            turnImage.gameObject.SetActive(true); // 턴제 모드일 때 turnImage 활성화
+            turnImage.gameObject.SetActive(true);
 
             var currentTurnTaker = TurnManager.Instance.CurrentTurnTaker;
-            if (currentTurnTaker != null && currentTurnTaker is MonoBehaviour)
+            if (currentTurnTaker != null && currentTurnTaker is MonoBehaviour turnTakerObj && turnTakerObj != null && turnTakerObj.gameObject != null)
             {
-                string turnTakerTag = ((MonoBehaviour)currentTurnTaker).tag;
-                if (turnTakerTag == "Player")
+                // 현재 턴이 플레이어인지 NPC인지 확인
+                if (turnTakerObj.CompareTag("Player"))
                 {
                     turnText.text = "플레이어의 턴";
                 }
@@ -33,12 +34,13 @@ public class TurnUI : MonoBehaviour
             }
             else
             {
+                // 현재 턴이 null이거나 유효하지 않은 경우 처리
                 turnText.text = "No active turn taker";
             }
         }
         else
         {
-            turnImage.gameObject.SetActive(false); // 턴제가 아닐 때 turnImage 비활성화
+            turnImage.gameObject.SetActive(false); // 턴제가 아닐 때 UI 비활성화
             turnText.text = "";
         }
     }

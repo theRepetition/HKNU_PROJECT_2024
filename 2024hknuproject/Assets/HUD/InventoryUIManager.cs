@@ -59,14 +59,30 @@ public class InventoryUIManager : MonoBehaviour
         {
             UpdateAmmoButtons();
         }
+        else
+        {
+            // 턴제 모드가 아니거나, 플레이어 턴일 때만 이동과 전투 활성화
+            if (GameModeManager.Instance.currentMode != GameModeManager.GameMode.TurnBased
+                || TurnManager.Instance.CurrentTurnTaker is PlayerTurnManager)
+            {
+                GameStateManager.Instance.ResumeGame();
+            }
+        }
     }
 
     public void CloseInventory()
     {
         inventoryPanel.SetActive(false);
         ammoInventoryPanel.SetActive(false);
-        GameStateManager.Instance.SetInventoryOpen(false);
+
+        // 턴제 모드이면서 플레이어 턴이거나, 아예 턴제 모드가 아닐 때만 GameStateManager에 InventoryOpen 상태 업데이트
+        if ((GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker is PlayerTurnManager)
+            || GameModeManager.Instance.currentMode != GameModeManager.GameMode.TurnBased)
+        {
+            GameStateManager.Instance.SetInventoryOpen(false);
+        }
     }
+
 
     private IEnumerator ResumeGameWithDelay(float delay)
     {

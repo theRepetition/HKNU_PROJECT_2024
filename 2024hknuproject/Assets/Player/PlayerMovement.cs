@@ -80,13 +80,15 @@ public class PlayerMovement : MonoBehaviour
     // 플레이어 이동을 활성화하는 함수
     public void EnableMovement()
     {
-        Debug.Log($"{gameObject.name}가 EnableMovement를 호출했습니다."); // 호출한 객체의 이름 출력
+        Debug.Log($"이동가능@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"); // 호출한 객체의 이름 출력
+        Debug.Log("EnableMovement called. StackTrace: " + new System.Diagnostics.StackTrace());
         canMove = true; // 이동 가능 상태로 설정
     }
 
     // 플레이어 이동을 비활성화하는 함수
     public void DisableMovement()
     {
+        Debug.Log($"이동불가!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"); // 호출한 객체의 이름 출력
         canMove = false; // 이동 불가능 상태로 설정
         movement = Vector2.zero; // 이동 벡터를 0으로 초기화하여 멈춤
         animator.SetBool("IsWalking", false); // 이동 멈출 때 애니메이션도 멈춤

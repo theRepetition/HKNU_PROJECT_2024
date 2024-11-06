@@ -26,8 +26,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
         currentActionPoints = maxActionPoints; // 턴 시작 시 행동 포인트를 최대치로 초기화
         isTurnComplete = false; // 턴이 완료되지 않은 상태로 설정
 
-        playerMovement.EnableMovement(); // 플레이어의 이동을 활성화
-        playerCombat.EnableCombat(); // 공격 활성화
+        GameStateManager.Instance.SetPlayerTurn(true);
         playerCombat.ResetProjectilesFired(); // 발사체 수 초기화
         Debug.Log("플레이어 턴 시작");
     }
@@ -35,8 +34,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     // 턴을 종료하는 함수
     public void EndTurn()
     {
-        playerCombat.DisableCombat(); // 공격 비활성
-        playerMovement.DisableMovement(); // 플레이어의 이동을 비활성화
+        GameStateManager.Instance.SetPlayerTurn(false);
         isTurnComplete = true; // 턴 완료 상태로 설정
         
         Debug.Log("플레이어 턴 종료");

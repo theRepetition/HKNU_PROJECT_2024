@@ -85,18 +85,24 @@ public class AmmoChamberUI : MonoBehaviour
     // 재장전 처리 함수
     public void Reload()
     {
-        Debug.Log($"Reload called from: {new System.Diagnostics.StackTrace()}");
+        Debug.Log("잘되나2");
         if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased)
         {
-            // 턴제 모드에서 플레이어의 턴일 때만 재장전 가능
+            Debug.Log("잘되나1");
             if (TurnManager.Instance.CurrentTurnTaker == playerCombat.GetComponent<PlayerTurnManager>())
             {
+                playerCombat.SetLoadedAmmo(loadedAmmo);
+                // GameStateManager에 플레이어 행동 제한을 요청
+                GameStateManager.Instance.PauseGame();
+                Debug.Log("잘되나");
+                playerTurnManager.EndTurn();
+
                 
-                playerCombat.SetLoadedAmmo(loadedAmmo); // PlayerCombat에 장전된 탄약 리스트 전달
-                playerTurnManager.EndTurn(); // 턴 종료
-                loadedAmmo.Clear(); // 장전된 탄약 리스트 초기화
+
+                loadedAmmo.Clear();
             }
         }
+        
         else
         {
             // 실시간 모드에서 재장전 처리
