@@ -250,7 +250,7 @@ public class TurnManager : MonoBehaviour
                 }
 
                 CurrentTurnTaker.StartTurn();
-                
+                Debug.Log($"{CurrentTurnTaker.Name}의 턴 시작");
 
                 CheckForRealTimeMode();
             }
