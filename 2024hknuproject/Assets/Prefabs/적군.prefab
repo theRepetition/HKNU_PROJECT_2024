@@ -64,7 +64,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: efb610b25ef0dad4a8cf4395b7a46715, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -256,6 +256,8 @@ MonoBehaviour:
   coverLayer:
     serializedVersion: 2
     m_Bits: 1024
+  pushForce: 5
+  pauseDuration: 0.2
   slideFriction: 0.8
   minSlideSpeed: 0.1
   chaseDuration: 3
