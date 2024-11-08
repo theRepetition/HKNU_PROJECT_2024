@@ -17,7 +17,9 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private GameObject player;
     private AIPath aiPath;
     private Seeker seeker;
-    private Rigidbody2D rb;
+    private Rigidbody2D rb; 
+    public float pushForce = 15f; // 상대를 밀어내는 힘의 크기
+    public float pauseDuration = 5f;
     public float slideFriction = 0.8f;  // 벽에 부딪혔을 때 속도 감쇠
     public float minSlideSpeed = 0.5f;  // 너무 느린 미끄러짐을 방지하는 최소 속도
     private Animator animator;
@@ -27,7 +29,7 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
     private bool isAttacking = false;
     public float chaseDuration = 3f; // 추적 시간
     private void Start()
-    {
+    {   
         rb = GetComponent<Rigidbody2D>();
         aiPath = GetComponent<AIPath>();
         seeker = GetComponent<Seeker>();
@@ -52,14 +54,90 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        // 벽에 부딪혔을 때 미끄러지기 시작
-        if (collision.collider.CompareTag("Wall"))
+        if (isTurnComplete)
         {
-            Vector2 normal = collision.contacts[0].normal;  // 벽의 법선 벡터
-            Vector2 slideDirection = Vector2.Perpendicular(normal);  // 벽에 수직인 방향으로 미끄러짐
-            rb.velocity = slideDirection * rb.velocity.magnitude * slideFriction;
+            Debug.Log($"현재 턴이 아님: {gameObject.name}");
+            return;
+        }
+
+        // 다른 NPC와 충돌했을 때
+        if (collision.collider.CompareTag("NPC"))
+        {
+            Debug.Log("NPC와 충돌!");
+
+            // 충돌 방향 계산
+            Vector2 collisionDirection = (collision.transform.position - transform.position).normalized;
+
+            // 밀어낼 각도 설정 (예: 30도)
+            float angle = 30f;
+
+            // 왼쪽 또는 오른쪽으로 회전
+            float pushAngle = Random.value > 0.5f ? angle : -angle;
+
+            // 밀어내는 방향 계산
+            Vector2 pushDirection = RotateVector(collisionDirection, pushAngle);
+
+            // 충돌한 상대 NPC의 aipath 가져오기
+            AIPath otherAIPath = collision.collider.GetComponent<AIPath>();
+
+            if (otherAIPath != null)
+            {
+                StartCoroutine(PauseAndPushOtherNPC(otherAIPath, pushDirection));
+            }
         }
     }
+
+    // 벡터 회전 함수
+    private Vector2 RotateVector(Vector2 vector, float degrees)
+    {
+        float radians = degrees * Mathf.Deg2Rad;
+        float sin = Mathf.Sin(radians);
+        float cos = Mathf.Cos(radians);
+
+        float x = vector.x * cos - vector.y * sin;
+        float y = vector.x * sin + vector.y * cos;
+
+        return new Vector2(x, y).normalized;
+    }
+
+    private IEnumerator PauseAndPushOtherNPC(AIPath otherAIPath, Vector2 pushDirection)
+    {
+        // 현재 AIPath의 원래 목적지 저장
+        
+
+        // 밀려날 목표 위치 계산 (Z축 0으로 설정하여 2D 환경에 맞춤)
+        float pushDistance = 1.5f; // 밀려날 거리
+        Vector2 pushOffset = pushDirection * pushDistance;
+        Vector3 pushDestination = new Vector3(
+            otherAIPath.transform.position.x + pushOffset.x,
+            otherAIPath.transform.position.y + pushOffset.y,
+            0f // Z축 값은 0으로 설정하여 2D 평면 유지
+        );
+
+        // 자신 NPC의 AIPath 가져와 이동 멈춤
+        AIPath selfAIPath = GetComponent<AIPath>();
+        selfAIPath.canMove = false;
+
+        // 상대 NPC의 목표 위치 설정
+        otherAIPath.destination = pushDestination;
+        otherAIPath.canMove = true; // 상대 NPC 이동 활성화
+        otherAIPath.endReachedDistance = 0.1f; // 목적지 도달 거리 조정
+
+        // 밀려나는 시간 동안 대기
+        float pushDuration = 0.5f;
+        yield return new WaitForSeconds(pushDuration);
+
+       
+
+        // 자신 NPC 3초 대기
+        float pauseDuration = 1.5f;
+        yield return new WaitForSeconds(pauseDuration);
+        otherAIPath.endReachedDistance = 5.0f; // 목적지 도달 거리 조정
+        // 자신 NPC 이동 재개
+        selfAIPath.canMove = true;
+    }
+    
+
     public void StartTurn()
     {
         isTurnComplete = false;
