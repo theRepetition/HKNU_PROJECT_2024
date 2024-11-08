@@ -145,6 +145,5 @@ public class AmmoChamberUI : MonoBehaviour
         {
             slot.GetComponent<Image>().sprite = customimage;
         }
-        InventoryUIManager.Instance.UpdateAmmoButtons();
     }
 }
