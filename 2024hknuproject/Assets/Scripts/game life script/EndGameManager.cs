@@ -7,6 +7,7 @@ using UnityEngine.SceneManagement;
 
 public class EndGameManager : MonoBehaviour
 {
+    private StageManager stagemanager;
     public GameObject gameEndPanel; // 게임 오버 패널
     public TextMeshProUGUI messageText; // 게임 오버 메시지
     private bool canPressButton = false; // 버튼 입력 가능 상태
@@ -34,6 +35,9 @@ public class EndGameManager : MonoBehaviour
     {
         if (canPressButton && Input.anyKeyDown)
         {
+            stagemanager = FindObjectOfType<StageManager>();
+            CycleManager.currentStage = 1;
+            stagemanager.StageReset();
             SceneManager.LoadScene("mainmenu"); // 메인 메뉴로 이동
         }
     }

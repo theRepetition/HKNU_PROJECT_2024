@@ -14,6 +14,7 @@ public class GameStateManager : MonoBehaviour
     private bool isPlayerTurn = false;
     private PlayerMovement playerMovement;
     private PlayerCombat playerCombat;
+    private StageManager stagemanager;
 
     private void Awake()
     {
@@ -38,6 +39,7 @@ public class GameStateManager : MonoBehaviour
     {
         playerCombat = FindObjectOfType<PlayerCombat>();
         playerMovement = FindObjectOfType<PlayerMovement>();
+        stagemanager = FindObjectOfType<StageManager>();
     }
 
     public void SetPauseMenuOpen(bool isOpen)
@@ -112,10 +114,13 @@ public class GameStateManager : MonoBehaviour
             (GameModeManager.Instance.currentMode != GameModeManager.GameMode.TurnBased ||
             (TurnManager.Instance.CurrentTurnTaker is PlayerTurnManager)))
         {
+            
             if (playerMovement == null || playerCombat == null) UpdatePlayerReferences();
 
             if (playerMovement != null) playerMovement.EnableMovement();
+            Debug.Log("이동기능 활성화!!!!!!!!!!");
             if (playerCombat != null) playerCombat.EnableCombat();
+            Debug.Log("공격기능 활성화!!!!!!!!!!");
         }
 
         Time.timeScale = 1f;
@@ -126,13 +131,13 @@ public class GameStateManager : MonoBehaviour
 
         if (isTurn)
         {
-            playerMovement?.EnableMovement();
-            playerCombat?.EnableCombat();
+            playerMovement.EnableMovement();
+            playerCombat.EnableCombat();
         }
         else
         {
-            playerMovement?.DisableMovement();
-            playerCombat?.DisableCombat();
+            playerMovement.DisableMovement();
+            playerCombat.DisableCombat();
         }
     }
     public bool IsPlayerTurn()
@@ -171,6 +176,8 @@ public class GameStateManager : MonoBehaviour
         isPlayerTurn = false;
 
         // 씬 리로드
+        stagemanager.StageReset();
+        CycleManager.currentStage = 1;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

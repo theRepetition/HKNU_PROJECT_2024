@@ -9,6 +9,7 @@ public class PauseMenuManager : MonoBehaviour
     private bool isPauseMenuOpen = false; // 메뉴 열림 상태 변수 추가
     private bool isInventoryOpen = false;
     private bool isRewardUIOpen = false;
+    private StageManager stagemanager;
     private void Update()
     {
         // ESC 키 입력 체크
@@ -47,7 +48,10 @@ public class PauseMenuManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        stagemanager = FindObjectOfType<StageManager>();
         GameStateManager.Instance.ResumeGame(); // 시간 재설정
+        CycleManager.currentStage = 1;
+        stagemanager.StageReset();
         SceneManager.LoadScene("mainmenu"); // 메인 메뉴 씬으로 이동
     }
 

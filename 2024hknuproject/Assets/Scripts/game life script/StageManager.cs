@@ -17,7 +17,7 @@ public class StageManager : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // 충돌한 오브젝트가 특정 태그를 가지고 있는지 확인
-        if (collision.gameObject.CompareTag("RightBoundary")) // "YourTagHere" 부분에 원하는 태그명을 입력
+        if (collision.gameObject.CompareTag("RightBoundary")) 
         {
             playermovement.DisableMovement(); // 플레이어 이동 멈춤
             TeleportPlayerToRandomBoundary(); // 랜덤 경계로 순간이동
@@ -55,5 +55,10 @@ public class StageManager : MonoBehaviour
     {   
         get { return currentStage; }
         
+    }
+
+    public void StageReset()
+    {
+       currentStage = 1;
     }
 }

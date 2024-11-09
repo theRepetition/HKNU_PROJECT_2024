@@ -41,11 +41,23 @@ public class InventoryUIManager : MonoBehaviour
 
     void Update()
     {
-        if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R)) && !GameStateManager.Instance.IsPauseMenuOpen()) // I 또는 R 키 입력 시
+        // I 또는 R 키 입력 시 인벤토리 토글 조건
+        if ((Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.R)) && !GameStateManager.Instance.IsPauseMenuOpen())
         {
-            ToggleInventory(); // 인벤토리 토글
+            // 턴제 모드일 때는 플레이어 턴일 경우에만 인벤토리 열기 가능
+            if (GameModeManager.Instance.currentMode != GameModeManager.GameMode.TurnBased ||
+                (GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker is PlayerTurnManager))
+            {
+                ToggleInventory(); // 인벤토리 토글
+            }
+            else
+            {
+                Debug.Log("턴제 모드에서 NPC 턴에는 인벤토리를 열 수 없음");
+            }
         }
     }
+
+    
 
     public void ToggleInventory()
     {
@@ -72,15 +84,14 @@ public class InventoryUIManager : MonoBehaviour
 
     public void CloseInventory()
     {
+        
         inventoryPanel.SetActive(false);
         ammoInventoryPanel.SetActive(false);
 
-        // 턴제 모드이면서 플레이어 턴이거나, 아예 턴제 모드가 아닐 때만 GameStateManager에 InventoryOpen 상태 업데이트
-        if ((GameModeManager.Instance.currentMode == GameModeManager.GameMode.TurnBased && TurnManager.Instance.CurrentTurnTaker is PlayerTurnManager)
-            || GameModeManager.Instance.currentMode != GameModeManager.GameMode.TurnBased)
-        {
-            GameStateManager.Instance.SetInventoryOpen(false);
-        }
+        
+        Debug.Log("인벤토리 닫힘");
+        GameStateManager.Instance.SetInventoryOpen(false);
+        
     }
 
 

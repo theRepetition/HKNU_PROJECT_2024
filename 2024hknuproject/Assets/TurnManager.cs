@@ -18,6 +18,12 @@ public class TurnManager : MonoBehaviour
 
     private void Awake()
     {
+        if (turnTakers.Count == 0)
+        {
+            // 실시간 모드로 전환
+            GameModeManager.Instance?.SwitchToRealTimeMode();
+            Debug.Log("No TurnTakers found. Switched to real-time mode.");
+        }
         // 싱글톤 패턴 구현
         if (Instance == null)
         {
@@ -97,6 +103,9 @@ public class TurnManager : MonoBehaviour
     // 턴제 모드를 시작하는 함수
     public void StartTurnBasedMode()
     {
+        turnTakers.Clear();  // 기존의 턴 참여자 목록 초기화
+        currentTurnIndex = 0;
+
         var playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject == null)
         {
@@ -104,28 +113,34 @@ public class TurnManager : MonoBehaviour
             return;
         }
 
-        var npcs = GameObject.FindGameObjectsWithTag("NPC");
-        foreach (var npcObject in npcs)
-        {
-            var npcTurnTaker = npcObject.GetComponent<ITurnTaker>();
-            if (npcTurnTaker != null)
-            {
-                float distanceToPlayer = Vector2.Distance(npcObject.transform.position, playerObject.transform.position);
-                if (distanceToPlayer <= maxDistanceFromPlayer)
-                {
-                    RegisterTurnTaker(npcTurnTaker);
-                }
-            }
-        }
-
-        // 플레이어도 턴 참여자 리스트에 추가
+        // 플레이어 등록
         var playerTurnTaker = playerObject.GetComponent<ITurnTaker>();
         if (playerTurnTaker != null)
         {
             RegisterTurnTaker(playerTurnTaker);
         }
 
-        StartCoroutine(TurnRoutine());
+        // NPC 등록
+        var npcs = GameObject.FindGameObjectsWithTag("NPC");
+        foreach (var npcObject in npcs)
+        {
+            var npcTurnTaker = npcObject.GetComponent<ITurnTaker>();
+            if (npcTurnTaker != null && IsNpcInRangeOfPlayer(npcTurnTaker, maxDistanceFromPlayer))
+            {
+                RegisterTurnTaker(npcTurnTaker);
+            }
+        }
+
+        if (turnTakers.Count > 0)
+        {
+            StartCoroutine(TurnRoutine());
+            Debug.Log("Turn-based mode started with turn takers.");
+        }
+        else
+        {
+            GameModeManager.Instance?.SwitchToRealTimeMode();
+            Debug.Log("No Turn Takers in range. Switched to real-time mode.");
+        }
     }
 
     // 디버깅용으로 현재 턴 참여자를 출력하는 함수

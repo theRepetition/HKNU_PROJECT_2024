@@ -10,7 +10,7 @@ public class GameoverManager : MonoBehaviour
     public GameObject gameEndPanel; // 게임 오버 패널
     public TextMeshProUGUI messageText; // 게임 오버 메시지
     private bool canPressButton = false; // 버튼 입력 가능 상태
-
+    private StageManager stagemanager;
     private void Start()
     {
         gameEndPanel.SetActive(false); // 게임 오버 패널 초기 비활성화
@@ -34,6 +34,9 @@ public class GameoverManager : MonoBehaviour
     {
         if (canPressButton && Input.anyKeyDown)
         {
+            stagemanager = FindObjectOfType<StageManager>();
+            CycleManager.currentStage = 1;
+            stagemanager.StageReset();
             SceneManager.LoadScene("mainmenu"); // 메인 메뉴로 이동
         }
     }

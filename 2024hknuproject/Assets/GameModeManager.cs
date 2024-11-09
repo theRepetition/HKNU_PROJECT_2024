@@ -12,12 +12,12 @@ public class GameModeManager : MonoBehaviour
     private TurnUI turnUI;
 
     private void Awake()
-    {
+    {   
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            turnUI = FindObjectOfType<TurnUI>(); // TurnUI ÄÄÆ÷³ÍÆ® Ã£±â
+            turnUI = FindObjectOfType<TurnUI>(); // TurnUI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® Ã£ï¿½ï¿½
         }
         else
         {
@@ -30,7 +30,7 @@ public class GameModeManager : MonoBehaviour
         currentMode = GameMode.TurnBased;
         Debug.Log("Switched to Turn-Based Mode");
 
-        // ¼±°ø±ÇÀ» ·£´ýÇÏ°Ô ¼³Á¤
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½
         ITurnTaker firstTurnTaker = TurnManager.Instance.GetRandomTurnTaker();
         TurnManager.Instance.SetFirstTurnTaker(firstTurnTaker);
 
@@ -43,7 +43,7 @@ public class GameModeManager : MonoBehaviour
         Debug.Log("Switched to Real-Time Mode");
         if (turnUI != null)
         {
-            turnUI.ClearTurnText(); // ¸ðµå ÀüÈ¯ ½Ã TurnUI ¾÷µ¥ÀÌÆ®
+            turnUI.ClearTurnText(); // ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ TurnUI ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         }
     }
 

@@ -46,7 +46,7 @@ public class SceneController : MonoBehaviour
     private void InitializeMainScene()
     {
         Debug.Log("메인 씬 초기화 중...");
-
+        
         // 예: 스테이지 초기화 및 NPC 배치 등
         CycleManager.currentStage = 1;
         CycleManager.Instance.SpawnNPCs();

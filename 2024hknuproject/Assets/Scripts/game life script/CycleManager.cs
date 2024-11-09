@@ -13,6 +13,7 @@ public class CycleManager : MonoBehaviour
     public static int currentStage;
     public GameObject randomBoundary;
 
+
     public static CycleManager Instance { get; private set; }
     public void SetRandomBoundary(GameObject boundary)
     {
@@ -117,7 +118,10 @@ public class CycleManager : MonoBehaviour
         }
     }
 
-
+    public void StageReset()
+    {
+        currentStage = 1;
+    }
     public int npcDamageIncreasePerStage = 5; // 스테이지당 공격력 증가량
     public int npcHealthIncreasePerStage = 20;
 
@@ -131,15 +135,16 @@ public class CycleManager : MonoBehaviour
         {
             // 공격력 증가
             Debug.Log("스테이지 공격력:" + currentStage);
-            npc.projectileDamage += (npcDamageIncreasePerStage*currentStage);
+            npc.projectileDamage = (10+npcDamageIncreasePerStage*currentStage);
             Debug.Log($"NPC의 공격력이 증가했습니다: {npc.projectileDamage}");
 
             // 체력 증가 (기본 체력과 최대 체력 증가)
             NPCHealth npcHealth = npc.GetComponent<NPCHealth>();
             if (npcHealth != null)
             {
-                npcHealth.currentHealth += npcHealthIncreasePerStage * currentStage; // 현재 체력 증가
-                npcHealth.maxHealth += npcHealthIncreasePerStage * currentStage; // 최대 체력 증가
+                npcHealth.maxHealth = 5+ npcHealthIncreasePerStage * currentStage; // 최대 체력 증가
+                npcHealth.currentHealth = 5+ npcHealthIncreasePerStage * currentStage; // 현재 체력 증가
+                
                 Debug.Log($"NPC의 체력이 증가했습니다: 현재 체력 = {npcHealth.currentHealth}, 최대 체력 = {npcHealth.maxHealth}");
             }
         }
