@@ -13,6 +13,7 @@ public class CycleManager : MonoBehaviour
     public static int currentStage;
     public GameObject randomBoundary;
 
+    public static CycleManager Instance { get; private set; }
     public void SetRandomBoundary(GameObject boundary)
     {
         randomBoundary = boundary;

@@ -159,7 +159,18 @@ public class GameStateManager : MonoBehaviour
     // 게임 재시작 (씬 다시 로드)
     public void RestartGame()
     {
+        // 싱글톤 인스턴스 초기화
         Instance = null;
+
+        // 필요한 초기화 코드 추가
+        isGamePaused = false;
+        isPauseMenuOpen = false;
+        isInventoryOpen = false;
+        isRewardUIOpen = false;
+        inputBlocked = false;
+        isPlayerTurn = false;
+
+        // 씬 리로드
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
