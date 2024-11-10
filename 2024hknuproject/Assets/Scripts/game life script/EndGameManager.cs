@@ -19,6 +19,9 @@ public class EndGameManager : MonoBehaviour
 
     public void ShowGameOverPanel(string message)
     {
+        CycleManager.currentStage = 1;
+        stagemanager = FindObjectOfType<StageManager>();
+        stagemanager.StageReset();
         gameEndPanel.SetActive(true); // 게임 오버 패널 표시
         messageText.text = message;
         StartCoroutine(EnableButtonAfterDelay()); // 일정 시간 후 버튼 활성화
@@ -36,8 +39,8 @@ public class EndGameManager : MonoBehaviour
         if (canPressButton && Input.anyKeyDown)
         {
             stagemanager = FindObjectOfType<StageManager>();
-            CycleManager.currentStage = 1;
-            stagemanager.StageReset();
+            
+            
             SceneManager.LoadScene("mainmenu"); // 메인 메뉴로 이동
         }
     }

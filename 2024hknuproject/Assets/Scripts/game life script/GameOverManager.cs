@@ -18,6 +18,9 @@ public class GameoverManager : MonoBehaviour
 
     public void ShowGameOverPanel(string message)
     {
+        CycleManager.currentStage = 1;
+        stagemanager = FindObjectOfType<StageManager>();
+        stagemanager.StageReset();
         gameEndPanel.SetActive(true); // 게임 오버 패널 표시
         messageText.text = message;
         StartCoroutine(EnableButtonAfterDelay()); // 일정 시간 후 버튼 활성화
@@ -27,7 +30,7 @@ public class GameoverManager : MonoBehaviour
     {
         yield return new WaitForSeconds(2f); // 5초 대기
         canPressButton = true;
-        messageText.text += "\n\nGA"; // 안내 메시지 추가
+        messageText.text += "\n\nPress any key to return to main menu"; // 안내 메시지 추가
     }
 
     private void Update()
@@ -35,8 +38,6 @@ public class GameoverManager : MonoBehaviour
         if (canPressButton && Input.anyKeyDown)
         {
             stagemanager = FindObjectOfType<StageManager>();
-            CycleManager.currentStage = 1;
-            stagemanager.StageReset();
             SceneManager.LoadScene("mainmenu"); // 메인 메뉴로 이동
         }
     }

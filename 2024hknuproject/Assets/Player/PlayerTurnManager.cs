@@ -1,5 +1,6 @@
 using UnityEngine;
 
+using TMPro;
 public class PlayerTurnManager : MonoBehaviour, ITurnTaker
 {
     public int maxActionPoints = 10; // 최대 행동 포인트
@@ -13,11 +14,14 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
         playerMovement = GetComponent<PlayerMovement>(); // PlayerMovement 스크립트를 가져옴
         playerCombat = GetComponent<PlayerCombat>(); // PlayerCombat 스크립트를 가져옴
         TurnManager.Instance.RegisterTurnTaker(this); // TurnManager에 이 오브젝트를 턴 참여자로 등록
+        currentActionPoints = maxActionPoints;
+
+
     }
 
     void Update()
     {
-        
+
     }
 
     // 턴을 시작하는 함수
@@ -36,7 +40,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     {
         GameStateManager.Instance.SetPlayerTurn(false);
         isTurnComplete = true; // 턴 완료 상태로 설정
-        
+
         Debug.Log("플레이어 턴 종료");
         TurnManager.Instance.NextTurn(); // 다음 턴으로 이동
     }
@@ -63,12 +67,22 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     public int CurrentActionPoints
     {
         get => currentActionPoints;
-        set => currentActionPoints = value;
+        set
+        {
+            currentActionPoints = value;
+
+        }
     }
     public void IncreaseMaxActionPoints(int amount)
     {
         maxActionPoints += amount;
-        currentActionPoints = Mathf.Min(currentActionPoints, maxActionPoints); // 최대 행동력 증가 후 현재 행동력 유지
+        
+        currentActionPoints = maxActionPoints;
         Debug.Log($"Max Action Points increased by {amount}. New Max Action Points: {maxActionPoints}");
     }
+    public int GetCurrentAP()
+    {
+        return currentActionPoints;
+    }
+
 }
