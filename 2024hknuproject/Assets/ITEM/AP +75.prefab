@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 2886794801291509193}
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
-  - component: {fileID: 46440242643380652}
-  - component: {fileID: -5245359363858471852}
+  - component: {fileID: -5522717007740229357}
+  - component: {fileID: 8755845257344304794}
   m_Layer: 0
-  m_Name: AP Boost 1
+  m_Name: AP +75
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8b745155575c2bd49a4611fdbb121c23, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,7 +110,7 @@ CapsuleCollider:
   m_Height: 0.16
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &46440242643380652
+--- !u!114 &-5522717007740229357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -125,10 +125,10 @@ MonoBehaviour:
   item:
     itemName: 
     description: 
-    icon: {fileID: 21300000, guid: 8b745155575c2bd49a4611fdbb121c23, type: 3}
+    icon: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
     itemType: 0
   itemPickup: {fileID: 0}
---- !u!114 &-5245359363858471852
+--- !u!114 &8755845257344304794
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,6 +143,6 @@ MonoBehaviour:
   actionPointBoostItem:
     itemName: 
     description: 
-    icon: {fileID: 21300000, guid: 8b745155575c2bd49a4611fdbb121c23, type: 3}
+    icon: {fileID: 0}
     itemType: 3
-    maxActionPointIncrease: 45
+    maxActionPointIncrease: 75

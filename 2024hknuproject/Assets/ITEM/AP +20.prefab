@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 2886794801291509193}
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
-  - component: {fileID: -5522717007740229357}
-  - component: {fileID: 8755845257344304794}
+  - component: {fileID: 1007520557972480697}
+  - component: {fileID: 6039076441868372096}
   m_Layer: 0
-  m_Name: AP Boost 2
+  m_Name: AP +20
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,25 +110,7 @@ CapsuleCollider:
   m_Height: 0.16
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &-5522717007740229357
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1399123068238988583}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd3d16ade48405c439f2783080684961, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  item:
-    itemName: 
-    description: 
-    icon: {fileID: 21300000, guid: f1773641b826dfa42ad014e98fe8b1c0, type: 3}
-    itemType: 0
-  itemPickup: {fileID: 0}
---- !u!114 &8755845257344304794
+--- !u!114 &1007520557972480697
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,6 +125,24 @@ MonoBehaviour:
   actionPointBoostItem:
     itemName: 
     description: 
-    icon: {fileID: 0}
+    icon: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
     itemType: 3
-    maxActionPointIncrease: 75
+    maxActionPointIncrease: 20
+--- !u!114 &6039076441868372096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1399123068238988583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3d16ade48405c439f2783080684961, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  item:
+    itemName: 
+    description: 
+    icon: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
+    itemType: 3
+  itemPickup: {fileID: 0}

@@ -16,8 +16,8 @@ public class StageManager : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // 충돌한 오브젝트가 특정 태그를 가지고 있는지 확인
-        if (collision.gameObject.CompareTag("RightBoundary")) 
+        // 충돌한 오브젝트가 "RightBoundary" 태그를 가지고 있고, NPC가 없을 때만 실행
+        if (collision.gameObject.CompareTag("RightBoundary") && !AreNPCsPresent())
         {
             playermovement.DisableMovement(); // 플레이어 이동 멈춤
             TeleportPlayerToRandomBoundary(); // 랜덤 경계로 순간이동
@@ -56,7 +56,11 @@ public class StageManager : MonoBehaviour
         get { return currentStage; }
         
     }
-
+    private bool AreNPCsPresent()
+    {
+        // 씬에 있는 NPC 오브젝트들을 찾음 ("NPC"는 실제 사용 중인 태그로 변경해야 함)
+        return GameObject.FindGameObjectsWithTag("NPC").Length > 0;
+    }
     public void StageReset()
     {
        currentStage = 1;

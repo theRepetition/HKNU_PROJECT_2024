@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 3574360934313525040}
   - component: {fileID: 7694274274906230496}
   - component: {fileID: 304754647227594996}
-  - component: {fileID: -6237379705175234977}
+  - component: {fileID: -7877769453792256823}
   m_Layer: 0
-  m_Name: Bullet
+  m_Name: "\uACBD\uB7C9\uD0C4"
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8803f49edbb0ac446b16a7160c6a91db, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9eb9a25f336a9e54987ffa806233cb46, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -123,14 +123,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ammo:
-    itemName: "\uC77C\uBC18 \uD0C4"
-    description: "\uC77C\uBC18\uC801\uC778 \uD0C4\uD658\uC785\uB2C8\uB2E4"
-    icon: {fileID: 21300000, guid: 8803f49edbb0ac446b16a7160c6a91db, type: 3}
+    itemName: "\uACBD\uB7C9\uD0C4\uD658"
+    description: "\uD53C\uD574\uB7C9\uC740 \uC801\uC9C0\uB9CC \uB9CE\uC740 \uC218\uB97C
+      \uD68D\uB4DD\uD560\uC218 \uC788\uC2B5\uB2C8\uB2E4"
+    icon: {fileID: 21300000, guid: 9eb9a25f336a9e54987ffa806233cb46, type: 3}
     itemType: 0
-    damage: 15
+    damage: 10
     effect: 
-    quantity: 6
---- !u!114 &-6237379705175234977
+    quantity: 12
+--- !u!114 &-7877769453792256823
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -145,6 +146,6 @@ MonoBehaviour:
   item:
     itemName: 
     description: 
-    icon: {fileID: 21300000, guid: 8803f49edbb0ac446b16a7160c6a91db, type: 3}
+    icon: {fileID: 21300000, guid: 9eb9a25f336a9e54987ffa806233cb46, type: 3}
     itemType: 0
   itemPickup: {fileID: 0}

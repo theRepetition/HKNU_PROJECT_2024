@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
   - component: {fileID: -1881627740646258546}
-  - component: {fileID: -4460499332893639142}
+  - component: {fileID: -3647859103711738355}
   m_Layer: 0
-  m_Name: Heal
+  m_Name: "HP \uCE58\uB8CC 30"
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d87f2e8dcc2b89d4caa945f7ffc3657f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -123,12 +123,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthRecoveryItem:
-    itemName: "\uCCB4\uB825 \uD68C\uBCF5 20"
+    itemName: "\uCCB4\uB825 \uD68C\uBCF5 30"
     description: 
-    icon: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
+    icon: {fileID: 21300000, guid: d87f2e8dcc2b89d4caa945f7ffc3657f, type: 3}
     itemType: 0
-    healthRestore: 20
---- !u!114 &-4460499332893639142
+    healthRestore: 30
+--- !u!114 &-3647859103711738355
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,6 +143,6 @@ MonoBehaviour:
   item:
     itemName: 
     description: 
-    icon: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
+    icon: {fileID: 21300000, guid: d87f2e8dcc2b89d4caa945f7ffc3657f, type: 3}
     itemType: 0
   itemPickup: {fileID: 0}

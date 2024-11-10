@@ -27,7 +27,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     // 턴을 시작하는 함수
     public void StartTurn()
     {
-        currentActionPoints = maxActionPoints; // 턴 시작 시 행동 포인트를 최대치로 초기화
+        
         isTurnComplete = false; // 턴이 완료되지 않은 상태로 설정
 
         GameStateManager.Instance.SetPlayerTurn(true);
@@ -40,7 +40,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     {
         GameStateManager.Instance.SetPlayerTurn(false);
         isTurnComplete = true; // 턴 완료 상태로 설정
-
+        currentActionPoints = maxActionPoints; // 턴 시작 시 행동 포인트를 최대치로 초기화
         Debug.Log("플레이어 턴 종료");
         TurnManager.Instance.NextTurn(); // 다음 턴으로 이동
     }

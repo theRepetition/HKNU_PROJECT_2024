@@ -11,10 +11,10 @@ GameObject:
   - component: {fileID: 2886794801291509193}
   - component: {fileID: 7545840065765891074}
   - component: {fileID: 4367953433913161262}
-  - component: {fileID: 1007520557972480697}
-  - component: {fileID: 6039076441868372096}
+  - component: {fileID: -1881627740646258546}
+  - component: {fileID: -4460499332893639142}
   m_Layer: 0
-  m_Name: AP Boost
+  m_Name: "HP \uCE58\uB8CC 20"
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -110,7 +110,7 @@ CapsuleCollider:
   m_Height: 0.16
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1007520557972480697
+--- !u!114 &-1881627740646258546
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -119,16 +119,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1399123068238988583}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dceae911f0d91e14e91c39108e8f1490, type: 3}
+  m_Script: {fileID: 11500000, guid: 90e07222fd9ff0e4b9e9ccd683a55032, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionPointBoostItem:
-    itemName: 
+  healthRecoveryItem:
+    itemName: "\uCCB4\uB825 \uD68C\uBCF5 20"
     description: 
-    icon: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
-    itemType: 3
-    maxActionPointIncrease: 20
---- !u!114 &6039076441868372096
+    icon: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
+    itemType: 0
+    healthRestore: 20
+--- !u!114 &-4460499332893639142
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,6 +143,6 @@ MonoBehaviour:
   item:
     itemName: 
     description: 
-    icon: {fileID: 21300000, guid: 291e14449a63a8342b9dcedaca692f97, type: 3}
-    itemType: 3
+    icon: {fileID: 21300000, guid: b476727190eab15409efba9aa9de1d3e, type: 3}
+    itemType: 0
   itemPickup: {fileID: 0}
