@@ -8,9 +8,11 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     private bool isTurnComplete = false; // 턴 완료 여부
     public PlayerMovement playerMovement; // 플레이어의 이동 스크립트
     private PlayerCombat playerCombat; // 플레이어의 전투 스크립트
+    //private GameModeManager GMM;
 
     void Start()
     {
+        //GMM = GetComponent<GameModeManager>(); 
         playerMovement = GetComponent<PlayerMovement>(); // PlayerMovement 스크립트를 가져옴
         playerCombat = GetComponent<PlayerCombat>(); // PlayerCombat 스크립트를 가져옴
         TurnManager.Instance.RegisterTurnTaker(this); // TurnManager에 이 오브젝트를 턴 참여자로 등록
@@ -21,7 +23,10 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
 
     void Update()
     {
-
+        if (GameModeManager.Instance.currentMode == GameModeManager.GameMode.RealTime)
+        {
+            currentActionPoints = maxActionPoints;
+        }
     }
 
     // 턴을 시작하는 함수
@@ -29,7 +34,7 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
     {
         
         isTurnComplete = false; // 턴이 완료되지 않은 상태로 설정
-
+        currentActionPoints = maxActionPoints;
         GameStateManager.Instance.SetPlayerTurn(true);
         playerCombat.ResetProjectilesFired(); // 발사체 수 초기화
         Debug.Log("플레이어 턴 시작");
@@ -85,4 +90,5 @@ public class PlayerTurnManager : MonoBehaviour, ITurnTaker
         return currentActionPoints;
     }
 
+    
 }

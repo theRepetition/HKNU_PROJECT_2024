@@ -33,8 +33,8 @@ public class NPCTriggerManager : MonoBehaviour
         if (GameObject.FindGameObjectsWithTag("NPC").Length == 0 && !rewardsDropped)
         {
             if (stageManager.CurrentStage == 5)
-            {   
-                gameoverManager.ShowGameOverPanel(""); // 게임 클리어 패널 표시
+            {
+                StartCoroutine(gameoverManager.ShowGameOverPanel("")); // 코루틴으로 게임 클리어 패널 표시
             }
             else
             {
@@ -43,7 +43,7 @@ public class NPCTriggerManager : MonoBehaviour
             rewardsDropped = true;
         }
     }
-    
+
     void PauseGameAndShowRewards()
 {
     GameStateManager.Instance.SetRewardUIOpen(true);

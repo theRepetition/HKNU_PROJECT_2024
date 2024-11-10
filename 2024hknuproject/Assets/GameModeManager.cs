@@ -17,7 +17,7 @@ public class GameModeManager : MonoBehaviour
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            turnUI = FindObjectOfType<TurnUI>(); // TurnUI ������Ʈ ã��
+            turnUI = FindObjectOfType<TurnUI>(); 
         }
         else
         {
@@ -30,7 +30,7 @@ public class GameModeManager : MonoBehaviour
         currentMode = GameMode.TurnBased;
         Debug.Log("Switched to Turn-Based Mode");
 
-        // �������� �����ϰ� ����
+        
         ITurnTaker firstTurnTaker = TurnManager.Instance.GetRandomTurnTaker();
         TurnManager.Instance.SetFirstTurnTaker(firstTurnTaker);
 
@@ -43,7 +43,7 @@ public class GameModeManager : MonoBehaviour
         Debug.Log("Switched to Real-Time Mode");
         if (turnUI != null)
         {
-            turnUI.ClearTurnText(); // ��� ��ȯ �� TurnUI ������Ʈ
+            turnUI.ClearTurnText(); 
         }
     }
 
