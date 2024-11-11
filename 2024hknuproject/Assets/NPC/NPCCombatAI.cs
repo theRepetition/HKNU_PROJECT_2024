@@ -245,8 +245,9 @@ public class NPCCombatAI : MonoBehaviour, ICombatant
         animator.SetTrigger("Attack");
 
         // 발사체 생성 위치를 NPC 위치보다 약간 아래로 설정
-        Vector3 projectileSpawnPosition = transform.position + Vector3.left * 0.1f + Vector3.down * 0.3f; //  (값 조정 가능)
+        Vector3 projectileSpawnPosition = transform.position + (Vector3)direction * 0.5f + Vector3.down * 0.3f; // 값 조정 가능
         GameObject projectile = Instantiate(projectilePrefab, projectileSpawnPosition, Quaternion.identity);
+
 
         Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
         rb.velocity = direction * projectileSpeed;

@@ -263,7 +263,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef46b3c71733eb34c89742d248fef4bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  viewDistance: 5
+  viewDistance: 8
   viewAngle: 360
   viewDirection: {x: 1, y: 0, z: 0}
   playerLayer:
@@ -335,7 +335,7 @@ MonoBehaviour:
   projectileDamage: 10
   maxProjectilesPerTurn: 3
   weaponRange: 3
-  moveSpeed: 5
+  moveSpeed: 3
   coverLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -455,9 +455,9 @@ MonoBehaviour:
   targetCompatibility: {fileID: 0}
   maxAcceleration: -2.5
   rotationSpeed: 360
-  slowdownDistance: 2
+  slowdownDistance: 8
   pickNextWaypointDist: 1
-  endReachedDistance: 4
+  endReachedDistance: 8
   alwaysDrawGizmos: 1
   slowWhenNotFacingTarget: 0
   whenCloseToDestination: 0
